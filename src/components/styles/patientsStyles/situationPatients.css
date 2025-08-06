@@ -1,0 +1,216 @@
+.patientSituation{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 72%;
+  height: 40vh;
+  border-radius: 8px;
+  margin-right: 2%;
+  margin-top: 1%;
+  background-color: #fff;
+}
+
+.containerSituationOptions{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 2%;
+  width: 90%;
+  border: 4px;
+  background-color: var(--body-color);
+}
+.containerSituationOptions button{
+  width: 32%;
+  height: 36px;
+
+  border: none;
+  border-radius: 4px;
+  color: var(--text-color);
+  transition: var(--tran-04);
+}
+.containerSituationOptions .selected {
+  color: var(--body-color);
+  background-color: var(--text-color);
+}
+
+.containerSituation{
+  width: 90%;
+  height: 80%;
+
+  margin-top: 12px;
+  background-color: var(--body-color);
+}
+.contentSituation{
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+}
+
+.contentSituationRegisters{
+  width: 100%;
+  height: 100%;
+}
+
+.contentSituationButton{
+  width: 28%;
+  height: 40px;
+  border: none;
+  margin: 6px;
+  border-radius: 4px;
+
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.contentSituationButton:hover{
+  cursor: pointer;
+  color: var(--body-color);
+  background-color: #383838;
+}
+
+.containerSituationForm{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+}
+.contentSituationFormButtons{
+  width: 32%;
+  padding: 20px;
+  border-radius: 6px;
+  
+  background: var(--body-color);
+}
+
+.contentSituationFormType{
+  display: flex;
+  justify-content: space-around;
+}
+.contentSituationFormType button{
+  width: 30%;
+  transition: var(--tran-08);
+}
+.contentSituationFormType button.active {
+  font-weight: bold;
+  border-bottom: 1px solid var(--text-color);
+  padding: 0 14px 0;
+}
+
+
+/* From Uiverse.io by bociKond */ 
+.contentSituationForm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.contentSituationForm .contentSituationFormSpan {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.contentSituationForm input,
+.contentSituationForm select{
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  padding: 8px 6px;
+  width: 100%;
+  border: none;
+  outline: 2px solid var(--text-color-hover);
+}
+
+.contentSituationForm input:focus,
+.contentSituationForm select:focus {
+  outline: 2px solid var(--text-color);
+}
+
+.contentSituationFormLabel {
+  align-self: flex-start;
+}
+
+.formActions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.formActions button{
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.formActions button:hover{
+  cursor: pointer;
+  color: var(--body-color);
+  background-color: #383838;
+}
+
+.listWrapper {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-left: 20px;
+  border-left: 3px solid #ddd;
+  position: relative;
+}
+
+.recordItem {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-left: 20px;
+}
+
+.recordHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recordBullet {
+  width: 6px;
+  height: 6px;
+  background-color: var(--text-color);
+  border-radius: 50%;
+  position: absolute;
+  left: -28px;
+  top: 6px;
+}
+
+.recordMain {
+  display: flex;
+  flex-direction: column;
+}
+
+.recordDetails {
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-left: 10px;
+  border-radius: 5px;
+  position: relative;
+  z-index: 10;
+}

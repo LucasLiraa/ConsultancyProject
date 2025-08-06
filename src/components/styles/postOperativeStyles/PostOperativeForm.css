@@ -1,0 +1,14 @@
+.postFormContainer {
+  display: flex;
+  width: 60%;
+  height: 90%;
+  background-color: #f9f9f9;
+}
+
+.formContent {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background-color: #fff;
+  border-left: 1px solid #eee;
+}

@@ -1,0 +1,21 @@
+.weekly-appointments {
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.weekly-appointments h2 {
+  margin-bottom: 15px;
+}
+
+.weekly-appointments ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.weekly-appointments li {
+  margin: 10px 0;
+  padding: 10px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,33 @@
+
+.containerAppointmentsWeekBar{
+  display: flex;
+  justify-content: center;
+}
+.appointmentsWeekBar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+
+  width: 90%;
+}
+
+.appointmentsWeekBar button {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  
+  margin: 4px;
+  padding: 16px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.appointmentsWeekBar button:hover {
+  color: var(--text-color);
+  background-color: var(--body-color);
+  border: 1px solid var(--text-color);
+}

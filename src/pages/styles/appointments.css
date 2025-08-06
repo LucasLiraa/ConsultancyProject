@@ -1,0 +1,46 @@
+.sectionAppointments{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  
+  transition: var(--tran-04);
+}
+.sidebar.open ~ .sectionAppointments{
+  margin-left: 220px; /* Com sidebar aberto */
+}
+.sidebar.closed ~ .sectionAppointments{
+  margin-left: 80px; /* Com sidebar fechado */
+}
+
+.sectionContainerAppointments{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 10vh;
+}
+
+.sectionAppointmentsLeft{
+  width: 70%;
+}
+.sectionAppointmentsRight{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 30%;
+}
+
+.surgeryMapButton{
+  width: 80%;
+  height: 6vh;
+
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.surgeryMapButton:hover{
+  color: var(--text-color);
+  background-color: var(--body-color);
+  border: 1px solid var(--text-color);
+}
