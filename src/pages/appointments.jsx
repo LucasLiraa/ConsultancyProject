@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
-import { app } from '../utils/firebaseConfig';
+import { db } from '../utils/firebaseConfig';
 
 import './styles/appointments.css';
 
@@ -17,7 +17,7 @@ const Appointments = () => {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const snapshot = await getDocs(collection(app, 'appointments'));
+      const snapshot = await getDocs(collection(db, 'appointments'));
       const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setEvents(events);
     };
