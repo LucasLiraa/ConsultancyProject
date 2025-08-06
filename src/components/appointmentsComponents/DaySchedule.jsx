@@ -11,7 +11,7 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { app } from '../../utils/firebaseConfig';
+import { db } from '../../utils/firebaseConfig';
 
 // Gera os horários de 30 em 30 minutos
 const generateTimeSlots = (start, end, intervalMinutes) => {
@@ -53,7 +53,7 @@ const DaySchedule = ({ selectedDate, events, setEvents }) => {
   const dateKey = selectedDate.toISOString().split('T')[0];
 
   const fetchEventsForDate = async () => {
-    const q = query(collection(app, 'appointments'), where('date', '==', dateKey));
+    const q = query(collection(db, 'appointments'), where('date', '==', dateKey));
     const snapshot = await getDocs(q);
     const dailyEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setEvents(dailyEvents);
@@ -120,11 +120,11 @@ const DaySchedule = ({ selectedDate, events, setEvents }) => {
   const handleSubmit = async () => {
     if (!formData.time || !formData.title) return alert('Preencha todos os campos obrigatórios.');
 
-    const appointmentsRef = collection(app, 'appointments');
+    const appointmentsRef = collection(db, 'appointments');
 
     try {
       if (isEditing && editId) {
-        const docRef = doc(app, 'appointments', editId);
+        const docRef = doc(db, 'appointments', editId);
         await updateDoc(docRef, {
           ...formData,
           date: dateKey,
@@ -148,7 +148,7 @@ const DaySchedule = ({ selectedDate, events, setEvents }) => {
 
   const handleDelete = async (id) => {
     try {
-      await deleteDoc(doc(app, 'appointments', id));
+      await deleteDoc(doc(db, 'appointments', id));
       await fetchEventsForDate();
     } catch (error) {
       console.error("Erro ao deletar agendamento:", error);
