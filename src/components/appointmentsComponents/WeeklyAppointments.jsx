@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/appointmentsStyles/WeeklyAppointments.css'
+import '../styles/appointmentsStyles/WeeklyAppointments.css';
+
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../utils/firebaseConfig';
 
 const WeeklyAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -7,16 +10,17 @@ const WeeklyAppointments = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchAppointments = () => {
+    const fetchAppointments = async () => {
       try {
-        const storedAppointments = localStorage.getItem('appointments');
-        if (storedAppointments) {
-          const parsedAppointments = JSON.parse(storedAppointments);
-          setAppointments(parsedAppointments);
-        } else {
-          setError('Nenhum agendamento encontrado.');
-        }
+        const snapshot = await getDocs(collection(db, 'appointments'));
+        const fetchedAppointments = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        setAppointments(fetchedAppointments);
       } catch (err) {
+        console.error(err);
         setError('Erro ao carregar agendamentos.');
       } finally {
         setLoading(false);
