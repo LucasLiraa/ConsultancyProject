@@ -1,6 +1,9 @@
 .weekly-appointments {
   padding: 12px;
   border-radius: 6px;
+  height: 100%;
+
+  overflow-y: auto;
 }
 
 .weekly-appointments h2 {
