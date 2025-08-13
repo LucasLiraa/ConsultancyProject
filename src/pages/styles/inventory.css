@@ -13,10 +13,26 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 26px;
+  margin-bottom: -16px;
+}
+.header button{
+  width: 20%;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.header button:hover{
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  background-color: var(--body-color);
 }
 
 .btn-add {
-  background-color: #3b82f6;
+  background-color: #2d2d2d;
   color: #fff;
   border: none;
   padding: 0.7rem 1.2rem;
@@ -32,16 +48,24 @@ body {
 }
 
 .card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex: 1;
   background: white;
   padding: 1rem;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
+.card i{
+  font-size: 24px;
+  color: var(--text-color);
+  cursor: pointer;
+}
 
 .card .title {
-  font-size: 14px;
-  color: #888;
+  font-size: 24px;
+  color: var(--text-color);
 }
 
 .card .total {
@@ -70,7 +94,7 @@ body {
   padding: 0.5rem 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
-  width: 250px;
+  width: 40%;
 }
 
 .actions .btn {
@@ -83,8 +107,8 @@ body {
 }
 
 .export {
+  
   background-color: #3b82f6;
-  color: white;
 }
 
 table {
@@ -147,4 +171,51 @@ td img {
   font-size: 26px;
   color: var(--body-color);
   background-color: var(--text-color);
+}
+
+.InvoicesNegative{
+  color: red;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  width: 80%;
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -1,97 +1,100 @@
-import React from "react";
+import React, { useState } from "react";
 import "./styles/inventory.css";
 import Topbar from "../components/topbar";
 
 function Inventory() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+
+  const openModal = (title) => {
+    setModalTitle(title);
+    setIsModalOpen(true);
+    document.body.style.overflow = 'hidden'; // Desabilita o scroll da página
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    document.body.style.overflow = 'auto'; // Restaura o scroll da página
+  };
 
   return (
     <section className="sectionContracts">
       <Topbar showSearch={true} />
 
-        <div class="container">
-            <header class="header">
-            <h1>Resumo de Estoque</h1>
-            <button class="btn-add">+ Adicionar Insumo</button>
-            </header>
+      <div className="container">
+        <header className="header">
+          <h1>Resumo de Estoque</h1>
+          <button className="btn-add">+ Adicionar Insumo</button>
+        </header>
 
-            <section class="summary">
-            <div class="card blue">
-                <p class="title">Categorias</p>
-                <p class="total">12 itens</p>
-            </div>
-            <div class="card orange">
-                <p class="title">Total de Produtos</p>
-                <p class="total">120</p>
-            </div>
-            <div class="card red">
-                <p class="title">Baixo Estoque</p>
-                <p class="total">6 itens</p>
-            </div>
-            </section>
+        <section className="summary">
+          <div className="card blue" onClick={() => openModal("Próteses")}>
+            <h2 className="title">Próteses</h2>
+            <i className="fa-solid fa-arrow-up-right-from-square"></i>
+          </div>
+          <div className="card orange" onClick={() => openModal("Malhas")}>
+            <h2 className="title">Malhas</h2>
+            <i className="fa-solid fa-arrow-up-right-from-square"></i>
+          </div>
+        </section>
 
-            <section class="inventory">
-            <div class="inventory-header">
-                <input type="text" placeholder="Pesquisar..." class="search" />
-                <div class="actions">
-                <button class="btn">Filtro</button>
-                <button class="btn">Data</button>
-                <button class="btn export">Exportar</button>
-                </div>
+        <section className="inventory">
+          <div className="inventory-header">
+            <input type="text" placeholder="Pesquisar..." className="search" />
+            <div className="actions">
+              <button className="btn">Filtro</button>
+              <button className="btn">Data</button>
+              <button className="btn export">Exportar</button>
             </div>
+          </div>
 
-            <table>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" /></th>
-                    <th>Produto</th>
-                    <th>Categoria</th>
-                    <th>Entrada</th>
-                    <th>Preço Unitário</th>
-                    <th>Em Estoque</th>
-                    <th>Valor Total</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td><input type="checkbox" /></td>
-                    <td><img src="https://via.placeholder.com/30" /> Luvas Cirúrgicas</td>
-                    <td>Descartáveis</td>
-                    <td>100</td>
-                    <td>R$1,00</td>
-                    <td>50</td>
-                    <td>R$50,00</td>
-                    <td class="status in-stock">Em estoque</td>
-                    <td>...</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" /></td>
-                    <td><img src="https://via.placeholder.com/30" /> Máscaras N95</td>
-                    <td>Proteção</td>
-                    <td>50</td>
-                    <td>R$5,00</td>
-                    <td>0</td>
-                    <td>R$0,00</td>
-                    <td class="status out-stock">Sem estoque</td>
-                    <td>...</td>
-                </tr>
-                </tbody>
-            </table>
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" /></th>
+                <th>Insumos</th>
+                <th>Entrada</th>
+                <th>Preço Unitário</th>
+                <th>Em Estoque</th>
+                <th>Valor Total</th>
+                <th>Status</th>
+                <th>Link produto</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td><img src="https://via.placeholder.com/30" alt="Prótese" /> Prótese </td>
+                <td>100</td>
+                <td>R$1,00</td>
+                <td>50</td>
+                <td>R$50,00</td>
+                <td className="status in-stock">Em estoque</td>
+                <td>Link</td>
+                <td>...</td>
+              </tr>
+            </tbody>
+          </table>
 
-            <div class="pagination">
+          <div className="pagination"></div>
+        </section>
+      </div>
 
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <span className="close-btn" onClick={closeModal}>&times;</span>
+            <h2>{modalTitle}</h2>
+            <div className="modal-body">
+              {/* Conteúdo do modal pode ser adicionado aqui */}
+              <p>Conteúdo em branco para {modalTitle}</p>
             </div>
-            </section>
-
-            <div className="sectionsInventory">
-                <button><p>Próteses</p><p>12</p></button>
-                <button><p>Malhas</p><p>08</p></button>
-                <button><p>Kits Cirúrgicos</p><p>02</p></button>
-            </div>
+          </div>
         </div>
-
-     </section>
+      )}
+    </section>
   );
 }
 

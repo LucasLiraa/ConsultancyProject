@@ -9,7 +9,6 @@
 }
 
 .postOperativeButtonNew {
-  margin-top: 20px;
   display: flex;
-  justify-content: flex-start; /* Ajuste conforme o alinhamento que deseja */
+  justify-content: flex-start;
 }

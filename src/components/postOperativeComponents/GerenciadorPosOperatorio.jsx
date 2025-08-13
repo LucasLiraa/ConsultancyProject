@@ -18,7 +18,7 @@ function GerenciadorPosOperatorio({ acompanhamentos = [], onSelecionarPaciente, 
 
       {/* Botão para iniciar novo pós-operatório */}
       <div className="postOperativeButtonNew">
-        <button onClick={() => setShowNovoPos(true)}>
+        <button onClick={() => setMostrarNovo(true)}>
           Iniciar um novo pós-operatório
         </button>
       </div>

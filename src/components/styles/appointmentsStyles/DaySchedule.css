@@ -21,6 +21,12 @@
 
   color: var(--body-color);
   background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.appointmentsDayButton button:hover{
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  background-color: var(--body-color);
 }
 
 .appointmentsForm {

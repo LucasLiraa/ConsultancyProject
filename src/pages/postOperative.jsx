@@ -1,56 +1,79 @@
 import React, { useState, useEffect } from "react";
-import GerenciadorPosOperatorio from "../components/postOperativeComponents/GerenciadorPosOperatorio";
+import "./styles/postOperative.css";
+import Topbar from "../components/topbar";
 import NovoPosOperatorioCard from "../components/postOperativeComponents/NovoPosOperatorioCard";
 import PostOperativeForm from "../components/postOperativeComponents/PostOperativeForm";
-import "./styles/postOperative.css";
+import PostOperativeStatus from "../components/postOperativeComponents/PostOperativeStatus";
+import PostOperativeList from "../components/postOperativeComponents/PostOperativeList";
 
 function PostOperative() {
-  const [pacientes, setPacientes] = useState([]);
-  const [showNovoPos, setShowNovoPos] = useState(false);
+  const [mostrarNovo, setMostrarNovo] = useState(false);
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
+  const [pacientes, setPacientes] = useState([]);
 
   useEffect(() => {
-    const pacientesSalvos = JSON.parse(localStorage.getItem("pacientes")) || [];
-    setPacientes(pacientesSalvos);
+    const armazenados = JSON.parse(localStorage.getItem("pacientesPos")) || [];
+    setPacientes(armazenados);
   }, []);
 
-  const handleIniciar = (paciente) => {
-    setPacienteSelecionado(paciente);
-    setShowNovoPos(false);
+  const salvarPacientes = (lista) => {
+    setPacientes(lista);
+    localStorage.setItem("pacientesPos", JSON.stringify(lista));
   };
 
-  const handleVoltar = () => {
+  const handleIniciar = (paciente) => {
+    const lista = [...pacientes, paciente];
+    salvarPacientes(lista);
+    setPacienteSelecionado(paciente);
+    setMostrarNovo(false);
+  };
+
+  const handleSalvar = (pacienteAtualizado) => {
+    const lista = pacientes.map((p) =>
+      p.id === pacienteAtualizado.id ? pacienteAtualizado : p
+    );
+    salvarPacientes(lista);
+    setPacienteSelecionado(pacienteAtualizado);
+  };
+
+  const handleDarAlta = (pacienteAtualizado) => {
+    const lista = pacientes.map((p) =>
+      p.id === pacienteAtualizado.id ? pacienteAtualizado : p
+    );
+    salvarPacientes(lista);
     setPacienteSelecionado(null);
-    setShowNovoPos(false);
   };
 
   return (
     <section className="sectionPostOperative">
+      <Topbar showSearch={true} />
+
       <div className="containerPostOperative">
-
-        {/* Botão de iniciar novo pós */}
-        {!showNovoPos && !pacienteSelecionado && (
-          <>
-            <GerenciadorPosOperatorio />
-          </>
-        )}
-
-        {/* Modal para selecionar paciente */}
-        {showNovoPos && !pacienteSelecionado && (
+        {mostrarNovo && (
           <NovoPosOperatorioCard
-            onClose={() => setShowNovoPos(false)}
+            onClose={() => setMostrarNovo(false)}
             onIniciar={handleIniciar}
           />
         )}
 
-        {/* Formulário do paciente */}
-        {pacienteSelecionado && (
+        {pacienteSelecionado ? (
           <PostOperativeForm
             paciente={pacienteSelecionado}
-            onFinalizar={handleVoltar}
+            onSalvar={handleSalvar}
+            onDarAlta={handleDarAlta}
+            onVoltar={() => setPacienteSelecionado(null)}
           />
+        ) : (
+          <>
+            <PostOperativeStatus pacientes={pacientes} />
+            <div className="postOperativeButtonNew">
+              <button onClick={() => setMostrarNovo(true)}>
+                Iniciar um novo pós-operatório
+              </button>
+            </div>
+            <PostOperativeList pacientes={pacientes} onSelecionar={setPacienteSelecionado} />
+          </>
         )}
-
       </div>
     </section>
   );

@@ -212,7 +212,7 @@ const DaySchedule = ({ selectedDate, events, setEvents }) => {
         </div>
       ))}
 
-      {!showForm && <button onClick={() => handleOpenForm()}>+ Novo Agendamento</button>}
+      {!showForm && <div className="appointmentsDayButton"><button onClick={() => handleOpenForm()}>+ Novo Agendamento</button></div>}
 
       {showForm && (
         <div className='appointmentsForm'>

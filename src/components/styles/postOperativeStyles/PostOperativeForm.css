@@ -1,14 +1,14 @@
 .postFormContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
-  width: 60%;
-  height: 90%;
-  background-color: #f9f9f9;
-}
-
-.formContent {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-  background-color: #fff;
-  border-left: 1px solid #eee;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 100;
 }

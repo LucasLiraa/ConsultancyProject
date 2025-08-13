@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import '../styles/postOperativeStyles/SemanaPosOperatorio.css'
 
 function SemanaPosOperatorio({ semanaId, dados, onSalvar, paciente }) {
   const [campos, setCampos] = useState(dados || {});

@@ -1,9 +1,12 @@
 .informacoesIniciais {
-  max-width: 800px;
   margin: auto;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  background-color: var(--body-color);
 }
 
 .informacoesIniciais input,

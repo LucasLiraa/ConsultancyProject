@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SidebarProgresso from "./SidebarProgresso";
 import InformacoesIniciais from "./InformacoesIniciais";
 import SemanaPosOperatorio from "./SemanaPosOperatorio";
-import '../styles/postOperativeStyles/PostOperativeForm.css';
+import "../styles/postOperativeStyles/PostOperativeForm.css";
 
 function PostOperativeForm({ paciente, onFinalizar }) {
   const [etapaAtual, setEtapaAtual] = useState("informacoes");
@@ -10,25 +10,30 @@ function PostOperativeForm({ paciente, onFinalizar }) {
     nome: paciente.nome || "",
     cirurgia: paciente.cirurgia || "",
     dataCirurgia: paciente.dataCirurgia || "",
-    auxiliar: "",
-    instrumentadora: "",
-    diasAtestado: "",
-    anestesia: [],
-    observacoes: ""
+    auxiliar: paciente.auxiliar || "",
+    instrumentadora: paciente.instrumentadora || "",
+    diasAtestado: paciente.diasAtestado || "",
+    anestesia: paciente.anestesia || [],
+    observacoes: paciente.observacoes || ""
   });
 
-  const [semanas, setSemanas] = useState([{ id: 1, dados: {} }]);
+  const [semanas, setSemanas] = useState(paciente.semanas || [{ id: 1, dados: {} }]);
 
   const handleAdicionarSemana = () => {
     const novaSemana = { id: semanas.length + 1, dados: {} };
-    setSemanas([...semanas, novaSemana]);
+    const novasSemanas = [...semanas, novaSemana];
+    setSemanas(novasSemanas);
     setEtapaAtual(`semana-${novaSemana.id}`);
+
+    salvarNoLocalStorage(novasSemanas);
   };
 
   const handleExcluirSemana = (id) => {
     const novas = semanas.filter((s) => s.id !== id);
     setSemanas(novas);
     setEtapaAtual("informacoes");
+
+    salvarNoLocalStorage(novas);
   };
 
   const handleSalvarSemana = (id, dados) => {
@@ -36,62 +41,59 @@ function PostOperativeForm({ paciente, onFinalizar }) {
       s.id === id ? { ...s, dados } : s
     );
     setSemanas(atualizadas);
+
+    salvarNoLocalStorage(atualizadas);
   };
 
-  const [altaDada, setAltaDada] = useState(false);
+  const salvarNoLocalStorage = (semanasAtualizadas) => {
+    const pacientesPos = JSON.parse(localStorage.getItem("pacientesPos") || "[]");
+    const index = pacientesPos.findIndex(p => p.id === paciente.id);
 
-  const darAlta = () => {
-    const pacientesSalvos = JSON.parse(localStorage.getItem("pacientesPos")) || [];
-    const atualizado = pacientesSalvos.map((p) =>
-      p.nome === paciente.nome ? { ...p, alta: true } : p
-    );
-    localStorage.setItem("pacientesPos", JSON.stringify(atualizado));
-    setAltaDada(true);
+    if (index !== -1) {
+      pacientesPos[index] = {
+        ...pacientesPos[index],
+        ...informacoesIniciais,
+        semanas: semanasAtualizadas
+      };
+    } else {
+      pacientesPos.push({
+        ...paciente,
+        ...informacoesIniciais,
+        semanas: semanasAtualizadas
+      });
+    }
+
+    localStorage.setItem("pacientesPos", JSON.stringify(pacientesPos));
   };
-
-
-  useEffect(() => {
-    const pacientesSalvos = JSON.parse(localStorage.getItem("pacientesPos")) || [];
-    const atualizado = pacientesSalvos.map((p) =>
-      p.nome === paciente.nome ? { ...p, semanas } : p
-    );
-    localStorage.setItem("pacientesPos", JSON.stringify(atualizado));
-  }, [semanas]);
 
   return (
-    <div className="novoPosOverlay">
-      <div className="postFormContainer">
-        <SidebarProgresso
-          etapaAtual={etapaAtual}
-          setEtapaAtual={setEtapaAtual}
-          semanas={semanas}
-          onAdicionarSemana={handleAdicionarSemana}
-          onExcluirSemana={handleExcluirSemana}
-        />
+    <div className="postFormContainer">
+      <SidebarProgresso
+        etapaAtual={etapaAtual}
+        setEtapaAtual={setEtapaAtual}
+        semanas={semanas}
+        onAdicionarSemana={handleAdicionarSemana}
+        onExcluirSemana={handleExcluirSemana}
+      />
 
-        <div className="formContent">
-          {etapaAtual === "informacoes" && (
-            <InformacoesIniciais
-              dados={informacoesIniciais}
-              setDados={setInformacoesIniciais}
+      <div className="formContent">
+        {etapaAtual === "informacoes" && (
+          <InformacoesIniciais
+            dados={informacoesIniciais}
+            setDados={setInformacoesIniciais}
+          />
+        )}
+
+        {semanas.map((semana) =>
+          etapaAtual === `semana-${semana.id}` ? (
+            <SemanaPosOperatorio
+              key={semana.id}
+              semanaId={semana.id}
+              dados={semana.dados}
+              onSalvar={handleSalvarSemana}
             />
-          )}
-
-          {semanas.map((semana) =>
-            etapaAtual === `semana-${semana.id}` ? (
-              <SemanaPosOperatorio
-                key={semana.id}
-                semanaId={semana.id}
-                dados={semana.dados}
-                onSalvar={handleSalvarSemana}
-                paciente={paciente} // <-- importante
-              />
-            ) : null
-          )}
-          <button onClick={darAlta} className="btnAlta">
-            Dar Alta
-          </button>
-        </div>
+          ) : null
+        )}
       </div>
     </div>
   );

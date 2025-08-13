@@ -36,10 +36,10 @@ function Invoices() {
                     </div>
                     <div className="contentInvoicesBalanceUpRight">
                         <h4>Entradas deste mês:</h4>
-                        <p>R$ 40.000,00</p>
+                        <p>R$ 27.611,00</p>
                         <div className="divisor"></div>
                         <h4>Saídas deste mês:</h4>
-                        <p>R$ 20.000,00</p>
+                        <p>R$ 8.453,17</p>
                     </div>
                 </div>
                 <div className="contentInvoiceBalanceDown">
@@ -48,65 +48,78 @@ function Invoices() {
                         <h4>Valor (R$)</h4>
                         <h4>Forma de pagamento</h4>
                         <h4>Data</h4>
-                        <h4>Comprovante</h4>
+                        <h4>Tipo</h4>
                     </div>
                     
-                    
                     <div className="contentInvoiceBalanceDownCelis">
-                        <p>Fabina Silva</p>
-                        <p>R$ 12.000,00</p>
+                        <p>Aluguel Consultorio</p>
+                        <p>R$ 3.547,88</p>
                         <p>Pix</p>
-                        <p>01 de Agosto de 2025</p>
-                        <p>comprovante</p>
+                        <p>10 de Agosto</p>
+                        <p className="InvoicesNegative">Saída</p>
                     </div>
                     <div className="contentInvoiceBalanceDownCelis">
-                        <p>Fabina Silva</p>
-                        <p>R$ 12.000,00</p>
-                        <p>Pix</p>
-                        <p>01 de Agosto de 2025</p>
-                        <p>comprovante</p>
+                        <p>Imac Doutor</p>
+                        <p>R$ 306,65</p>
+                        <p>Crédito</p>
+                        <p>10 de Agosto</p>
+                        <p className="InvoicesNegative">Saída</p>
                     </div>
                     <div className="contentInvoiceBalanceDownCelis">
-                        <p>Fabina Silva</p>
-                        <p>R$ 12.000,00</p>
-                        <p>Pix</p>
-                        <p>01 de Agosto de 2025</p>
-                        <p>comprovante</p>
+                        <p>Canva Design</p>
+                        <p>R$ 34,90</p>
+                        <p>Crédito</p>
+                        <p>10 de Agosto</p>
+                        <p className="InvoicesNegative">Saída</p>
                     </div>
                     <div className="contentInvoiceBalanceDownCelis">
-                        <p>Fabina Silva</p>
-                        <p>R$ 12.000,00</p>
-                        <p>Pix</p>
-                        <p>01 de Agosto de 2025</p>
-                        <p>comprovante</p>
+                        <p>Capcut Edit</p>
+                        <p>R$ 32,90</p>
+                        <p>Crédito</p>
+                        <p>10 de Agosto</p>
+                        <p className="InvoicesNegative">Saída</p>
                     </div>
                     <div className="contentInvoiceBalanceDownCelis">
-                        <p>Fabina Silva</p>
-                        <p>R$ 12.000,00</p>
-                        <p>Pix</p>
-                        <p>01 de Agosto de 2025</p>
-                        <p>comprovante</p>
+                        <p>Malhas NewForm</p>
+                        <p>R$ 479,52</p>
+                        <p>Crédito</p>
+                        <p>10 de Agosto</p>
+                        <p className="InvoicesNegative">Saída</p>
                     </div>
                     <div className="contentInvoiceBalanceDownCelis">
-                        <p>Fabina Silva</p>
-                        <p>R$ 12.000,00</p>
+                        <p>Internet/Telefone</p>
+                        <p>R$ 200,00</p>
                         <p>Pix</p>
-                        <p>01 de Agosto de 2025</p>
-                        <p>comprovante</p>
+                        <p>10 de Agosto</p>
+                        <p className="InvoicesNegative">Saída</p>
                     </div>
                     <div className="contentInvoiceBalanceDownCelis">
-                        <p>Fabina Silva</p>
-                        <p>R$ 12.000,00</p>
+                        <p>Conta energia</p>
+                        <p>R$ 60,00</p>
                         <p>Pix</p>
-                        <p>01 de Agosto de 2025</p>
-                        <p>comprovante</p>
+                        <p>10 de Agosto</p>
+                        <p className="InvoicesNegative">Saída</p>
+                    </div>
+                    <div className="contentInvoiceBalanceDownCelis">
+                        <p>Salário Vanusa</p>
+                        <p>R$ 840,00</p>
+                        <p>Pix</p>
+                        <p>10 de Agosto</p>
+                        <p className="InvoicesNegative">Saída</p>
+                    </div>
+                    <div className="contentInvoiceBalanceDownCelis">
+                        <p>Contabilidade Honorário</p>
+                        <p>R$ 420,00</p>
+                        <p>Pix</p>
+                        <p>01 de Agosto</p>
+                        <p className="InvoicesNegative">Saída</p>
                     </div>
                 </div>
             </div>
             <div className="contentInvoiceBalanceDir">
                 <div className="contentInvoceBalancePositive">
                     <h4>Entradas futuras</h4>
-                    <h1>R$ 42.000,00</h1>
+                    <h1>R$ 27.611,00</h1>
 
                     <div className="contentInvoceBalanceList">
                         <h4>Descrição</h4>
@@ -114,49 +127,95 @@ function Invoices() {
                         <h4>Data</h4>
                     </div>
                     <div className="contentInvoceBalanceCelis">
-                        <p>Juliana Nascimento</p>
-                        <p>R$ 12.000,00</p>
+                        <p>Elizangela Aparecida</p>
+                        <p>R$ 7.500,00</p>
                         <p>15 de agosto</p>
                     </div>
                     <div className="contentInvoceBalanceCelis">
-                        <p>Juliana Nascimento</p>
-                        <p>R$ 12.000,00</p>
+                        <p>Marilia Arruda</p>
+                        <p>R$ 2.500,00</p>
                         <p>15 de agosto</p>
                     </div>
                     <div className="contentInvoceBalanceCelis">
-                        <p>Juliana Nascimento</p>
-                        <p>R$ 12.000,00</p>
-                        <p>15 de agosto</p>
+                        <p>Claudia Maria</p>
+                        <p>R$ 3.284,00</p>
+                        <p>20 de agosto</p>
+                    </div>
+                    <div className="contentInvoceBalanceCelis">
+                        <p>Mel Pereira</p>
+                        <p>R$ 1.327,00</p>
+                        <p>20 de agosto</p>
+                    </div>
+                    <div className="contentInvoceBalanceCelis">
+                        <p>Leonora Felix</p>
+                        <p>R$ 13.000,00</p>
+                        <p>30 de agosto</p>
                     </div>
                 </div>
                 <div className="contentInvoceBalanceNegative">
                     <h4>Saídas futuras</h4>
-                    <h1>R$ 12.000,00</h1>
+                    <h1>R$ 8.453,17</h1>
 
                     <div className="contentInvoceBalanceList">
                         <h4>Descrição</h4>
                         <h4>Valor</h4>
                         <h4>Data</h4>
                     </div>
+                    
                     <div className="contentInvoceBalanceCelis">
-                        <p>Aluguel Consultorio</p>
-                        <p>R$ 4.000,00</p>
-                        <p>15 de agosto</p>
+                        <p>Contabilidade Honorário</p>
+                        <p>R$ 420,00</p>
+                        <p>05 de agosto</p>
+                    </div>
+                    <div className="contentInvoceBalanceCelis">
+                        <p>Saláio Vanusa</p>
+                        <p>R$ 2.824,00</p>
+                        <p>08 de agosto</p>
                     </div>
                     <div className="contentInvoceBalanceCelis">
                         <p>Aluguel Consultorio</p>
-                        <p>R$ 4.000,00</p>
-                        <p>15 de agosto</p>
+                        <p>R$ 3.547,88</p>
+                        <p>10 de agosto</p>
                     </div>
                     <div className="contentInvoceBalanceCelis">
-                        <p>Aluguel Consultorio</p>
-                        <p>R$ 4.000,00</p>
-                        <p>15 de agosto</p>
+                        <p>Imac Doutor</p>
+                        <p>R$ 306,65</p>
+                        <p>10 de agosto</p>
                     </div>
                     <div className="contentInvoceBalanceCelis">
-                        <p>Aluguel Consultorio</p>
-                        <p>R$ 4.000,00</p>
-                        <p>15 de agosto</p>
+                        <p>Canva Design</p>
+                        <p>R$ 34,90</p>
+                        <p>10 de agosto</p>
+                    </div>
+                    <div className="contentInvoceBalanceCelis">
+                        <p>Capcut Edit</p>
+                        <p>R$ 32,90</p>
+                        <p>10 de agosto</p>
+                    </div>
+                    <div className="contentInvoceBalanceCelis">
+                        <p>Malhas NewForm</p>
+                        <p>R$ 479,52</p>
+                        <p>10 de agosto</p>
+                    </div>
+                    <div className="contentInvoceBalanceCelis">
+                        <p>Conta energia</p>
+                        <p>R$ 60,00</p>
+                        <p>10 de agosto</p>
+                    </div>
+                    <div className="contentInvoceBalanceCelis">
+                        <p>Internet/Telefone</p>
+                        <p>R$ 200,00</p>
+                        <p>10 de agosto</p>
+                    </div>
+                    <div className="contentInvoceBalanceCelis">
+                        <p>Parcela DAS</p>
+                        <p>R$ 353,97</p>
+                        <p>29 de agosto</p>
+                    </div>
+                    <div className="contentInvoceBalanceCelis">
+                        <p>Salário Alane</p>
+                        <p>R$ 500,00</p>
+                        <p>29 de agosto</p>
                     </div>
 
                 </div>
