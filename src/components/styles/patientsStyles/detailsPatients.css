@@ -114,7 +114,9 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  position: relative;
   width: 100%;
+  height: 100%;
 }
 .containerPatientInfo{
   display: flex;
@@ -134,7 +136,82 @@
   font-weight: bold;
 }
 
+/* Container das tabs */
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  position: sticky;  
+  top: 0;
+  gap: 8px;
 
+  width: 100%;
+  height: 60px;
+
+  border-bottom: 4px solid var(--body-color);
+  z-index: 10;
+}
+
+/* Botões das tabs */
+.tabs button {
+  border: none;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  
+  background: transparent;
+  color: var(--text-color);
+  transition: var(--tran-04);
+}
+
+.tabs button:hover {
+  background: #eee;
+}
+
+/* Aba ativa */
+.tabs button.active,
+.tabs button:focus {
+  background: #007bff;   /* cor de destaque */
+  color: #fff;
+}
+
+/* Seção de conteúdo */
+.sectionPatientInfo {
+  width: 80%;
+  height: 80%;
+  overflow: auto;
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #fafafa;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.sectionPatientInfo h3,
+.sectionPatientInfo h4 {
+  margin-bottom: 12px;
+  color: #333;
+  border-left: 4px solid #007bff;
+  padding-left: 8px;
+}
+
+/* Listas internas */
+.sectionPatientInfo ul {
+  margin: 10px 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.sectionPatientInfo li {
+  margin-bottom: 6px;
+}
+
+/* Animação suave */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 
 

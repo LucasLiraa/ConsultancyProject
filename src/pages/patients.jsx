@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { db } from '../utils/firebaseConfig';
+import { collection, getDocs, addDoc, updateDoc, doc } from 'firebase/firestore';
 import "./styles/patients.css";
 
 import Topbar from '../components/topbar';
-import FormButton from '../components/patientsComponents/btn_newPatients';
+import FormButton from '../components/patientsComponents/formsPatients';
 import ListaPacientes from '../components/patientsComponents/listPatients';
 
 function Patients() {
@@ -10,13 +12,29 @@ function Patients() {
   const [pacientes, setPacientes] = useState([]);
 
   useEffect(() => {
-    const pacientesSalvos = JSON.parse(localStorage.getItem("pacientes")) || [];
-    setPacientes(pacientesSalvos);
+    const fetchPacientes = async () => {
+      const pacientesCollection = collection(db, 'pacientes');
+      const pacientesSnapshot = await getDocs(pacientesCollection);
+      const pacientesList = pacientesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setPacientes(pacientesList);
+    };
+
+    fetchPacientes();
   }, []);
 
-  const atualizarPacientes = (novos) => {
+  const atualizarPacientes = async (novos) => {
     setPacientes(novos);
-    localStorage.setItem("pacientes", JSON.stringify(novos));
+    for (const paciente of novos) {
+      const pacienteRef = doc(db, 'pacientes', paciente.id);
+      await updateDoc(pacienteRef, paciente);
+    }
+  };
+
+  const adicionarPaciente = async (novoPaciente) => {
+    const pacientesCollection = collection(db, 'pacientes');
+    await addDoc(pacientesCollection, novoPaciente);
+    // Atualiza a lista de pacientes após adicionar
+    setPacientes(prev => [...prev, novoPaciente]);
   };
 
   return (
@@ -34,6 +52,7 @@ function Patients() {
           setPacienteEditando={setPacienteEditando}
           pacientes={pacientes}
           atualizarPacientes={atualizarPacientes}
+          adicionarPaciente={adicionarPaciente} // Passa a função para adicionar pacientes
         />
       </div>
     </section>

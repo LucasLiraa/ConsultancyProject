@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../styles/patientsStyles/btn_styles.css";
+import "../styles/patientsStyles/formsPatients.css";
 
 export default function FiltrosPacientes({ onFilter }) {
   const [statusSelecionado, setStatusSelecionado] = useState("");
