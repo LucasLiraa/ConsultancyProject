@@ -3,8 +3,6 @@ import '../styles/budgetsStyles/FormulariosStyles.css';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-
-
 const PrevisualizacaoOrcamento = ({ formData, modulosSelecionados, onVoltar }) => {
   const [camposFinais, setCamposFinais] = useState({
     paciente: '',
@@ -95,7 +93,7 @@ const PrevisualizacaoOrcamento = ({ formData, modulosSelecionados, onVoltar }) =
             <ul>
                 {typeof dados === 'object' && dados !== null ? (
                 Object.entries(dados).map(([chave, valor]) => (
-                    <li key={chave}>
+                    <li key={chave + 1}>
                     <strong>{chave}:</strong>{' '}
                     {typeof valor === 'object' && valor !== null ? (
                         <ul style={{ marginTop: '4px' }}>

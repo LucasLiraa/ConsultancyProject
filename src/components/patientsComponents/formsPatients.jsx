@@ -17,6 +17,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
     email: "",
     profissao: "",
     estadoCivil: "",
+    foto: null,
     acimaPeso: "",
     gorduraVisceral: "",
     formatoCorporal: "", // Adicionado para o formato corporal
@@ -72,6 +73,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
         email: pacienteEditando.email || "",
         profissao: pacienteEditando.profissao || "",
         estadoCivil: pacienteEditando.estadoCivil || "",
+        foto: pacienteEditando.foto || null,
         acimaPeso: pacienteEditando.acimaPeso || "",
         gorduraVisceral: pacienteEditando.gorduraVisceral || "",
         formatoCorporal: pacienteEditando.formatoCorporal || "",
@@ -168,6 +170,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
         email: "",
         profissao: "",
         estadoCivil: "",
+        foto: null,
         acimaPeso: "",
         gorduraVisceral: "",
         formatoCorporal: "",
@@ -232,6 +235,14 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
     }
     // Sua lógica para atualizar a lista de pacientes...
   }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]; // pega o primeiro arquivo selecionado
+    setFormData({
+      ...formData,
+      foto: file, // salva o arquivo no estado
+    });
+  };
 
   const opcoesObjetivos = [
     { value: "abdomen_definido", label: "Abdômen mais definido" },
@@ -325,12 +336,13 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
                 value={formData.profissao}
                 onChange={handleChange}
               />
-              <label>Estado Civil:</label>
+              <label>Foto:</label>
               <input
-                type="text"
-                name="estadoCivil"
-                value={formData.estadoCivil}
-                onChange={handleChange}
+                type="file"
+                name="foto"
+                value={formData.foto}
+                accept="image/*" // permite apenas imagens
+                onChange={(e) => handleFileChange(e)}
               />
           </div>
         );
@@ -564,7 +576,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
             <input
               type="text"
               name="condicoesMedicas"
-              value={formData.nome}
+              value={formData.condicoesMedicas}
               onChange={handleChange}
             />
 

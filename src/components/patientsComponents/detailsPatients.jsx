@@ -8,6 +8,7 @@ import '../styles/patientsStyles/detailsPatients.css';
 import PatientNotes from '../patientsComponents/notePatients';
 import PatientSituation from '../patientsComponents/situationPatients';
 import TabComponent from "../patientsComponents/situationPatients";
+import FormButton from "../patientsComponents/formsPatients"; // 🔹 importa o formulário
 
 export default function PacienteDetalhes() {
   const { id } = useParams();
@@ -16,6 +17,8 @@ export default function PacienteDetalhes() {
   const [paciente, setPaciente] = useState(null);
   const [secaoAtiva, setSecaoAtiva] = useState("dados");
   const [selectedButton, setSelectedButton] = useState("inicio");
+  const [pacienteEditando, setPacienteEditando] = useState(null); // 🔹 paciente em edição
+  const [pacientes, setPacientes] = useState([]); // 🔹 lista de pacientes (se quiser atualizar depois)
 
   useEffect(() => {
     const fetchPaciente = async () => {
@@ -43,6 +46,15 @@ export default function PacienteDetalhes() {
     return value === selectedButton ? "selected" : "";
   };
 
+  // 🔹 função para atualizar lista e recarregar paciente após edição
+  const atualizarPacientes = (novosPacientes = []) => {
+    setPacientes(novosPacientes);
+    if (novosPacientes.length > 0) {
+      const atualizado = novosPacientes.find((p) => p.id === id);
+      if (atualizado) setPaciente(atualizado);
+    }
+  };
+
   if (!paciente) {
     return <p>Carregando...</p>;
   }
@@ -57,13 +69,16 @@ export default function PacienteDetalhes() {
         </div>
         
         <div className="buttonsPatientHeader">
-          <button className="buttonPatientHeader"><i class="fa fa-pen-to-square"></i>Editar paciente</button>
-          <button className="buttonPatientHeader" onClick={() => navigate("/pacientes")}><i className="fa fa-chevron-right"></i></button>
+          <button className="buttonPatientHeader">
+            <i className="fa fa-pen-to-square"></i>Editar paciente
+          </button>
+          <button className="buttonPatientHeader" onClick={() => navigate("/pacientes")}>
+            <i className="fa fa-chevron-right"></i>
+          </button>
         </div>
       </div>
 
       <div className="containerPatientDetails">
-
         {/* Cartão do paciente */}
         <div className="patientGeneralInfo">
           <div className="patientGeneralInfoEsq">
@@ -73,7 +88,10 @@ export default function PacienteDetalhes() {
               className="paciente-foto"
             />
             <h4>{paciente.nome}</h4>
-            <button>Editar Informações</button>
+            {/* 🔹 botão para abrir formulário de edição */}
+            <button onClick={() => setPacienteEditando(paciente)}>
+              Editar Informações
+            </button>
           </div>
         
           <div className="patientGeneralInfoDir">
@@ -117,7 +135,7 @@ export default function PacienteDetalhes() {
               </button>
             </div>
 
-            {/* Conteúdo */}
+            {/* Conteúdo das abas */}
             {secaoAtiva === "dados" && (
               <div className="sectionPatientInfo">
                 <h4>Dados do Paciente</h4>
@@ -160,7 +178,6 @@ export default function PacienteDetalhes() {
             {secaoAtiva === "queixas" && (
               <div className="sectionPatientInfo">
                 <h4>Queixas e Objetivos Cirúrgicos</h4>
-
                 <ul>
                   {paciente.objetivos?.map((item, index) => (
                     <li key={index}>{item}</li>
@@ -171,13 +188,12 @@ export default function PacienteDetalhes() {
               </div>
             )}
 
-
             {secaoAtiva === "historico" && (
               <div className="sectionPatientInfo">
                 <h4>Histórico Clínico e Cirúrgico</h4>
                 <p><b>Já realizou alguma cirurgia?</b> {paciente.realizouCirurgia}</p>
                 <p><b>Qual cirurgia?</b> {paciente.descricaoCirurgia}</p>
-                <p><b>Houve complicações ou resultados indesejados?</b> {paciente.complicacoes}</p>
+                <p><b>Houve complicações?</b> {paciente.complicacoes}</p>
                 <p><b>Cicatrização anterior foi boa?</b> {paciente.cicatrizacao}</p>
                 <p><b>Queloide?</b> {paciente.queloide}</p>
                 <p><b>Possui alergias?</b> {paciente.alergias}</p>
@@ -192,7 +208,7 @@ export default function PacienteDetalhes() {
                 <p><b>Usa substâncias recreativas?</b> {paciente.substanciasRecreativas}</p>
                 <p><b>Quais substâncias?</b> {paciente.descricaoSubstancias}</p>
                 <p><b>Possui assimetria mamária?</b> {paciente.assimetriaMamaria}</p>
-                <p><b>Alterações posturais (escoliose, hiperlordose, etc)?</b> {paciente.alteracoesPosturais}</p>
+                <p><b>Alterações posturais?</b> {paciente.alteracoesPosturais}</p>
               </div>
             )}
 
@@ -206,8 +222,8 @@ export default function PacienteDetalhes() {
             {secaoAtiva === "anotacoes" && (
               <div className="sectionPatientInfo">
                 <h3>Anotações Gerais (para o médico)</h3>
-                <p><b>QP (Queixa principal):</b> {paciente.qp}</p>
-                <p><b>HPP (Histórico patológico pregresso):</b> {paciente.hpp}</p>
+                <p><b>QP:</b> {paciente.qp}</p>
+                <p><b>HPP:</b> {paciente.hpp}</p>
                 <p><b>Histórico de alergias/medicamentos:</b> {paciente.historicoAlergiasMedicamentos}</p>
                 <p><b>Histórico cirúrgico:</b> {paciente.historicoCirurgico}</p>
                 <p><b>Histórico ginecológico:</b> {paciente.historicoGinecologico}</p>
@@ -232,59 +248,16 @@ export default function PacienteDetalhes() {
             <h4>Arquivos/Documentos</h4>
             <button>Adicionar</button>
           </div>
-
-          <div className="containerPatientDocumentation">
-
-            <div className="contentPatientDocumentation">
-              <div className="contentDocInfo">
-                <i className="fa-solid fa-file-lines"></i>
-                <p>Proposta de Adesão.pdf</p>
-              </div>
-              <div className="contentDocIcons">
-                <i className="fa-solid fa-cloud-arrow-down"></i>
-                <i className="fa-solid fa-trash-can"></i>
-              </div>
-            </div>
-
-            <div className="contentPatientDocumentation">
-              <div className="contentDocInfo">
-                <i className="fa-solid fa-file-lines"></i>
-                <p>Ficha Anamnese.pdf</p>
-              </div>
-              <div className="contentDocIcons">
-                <i className="fa-solid fa-cloud-arrow-down"></i>
-                <i className="fa-solid fa-trash-can"></i>
-              </div>
-            </div>
-
-            <div className="contentPatientDocumentation">
-              <div className="contentDocInfo">
-                <i className="fa-solid fa-file-lines"></i>
-                <p>Contrato Cirurgico.pdf</p>
-              </div>
-              <div className="contentDocIcons">
-                <i className="fa-solid fa-cloud-arrow-down"></i>
-                <i className="fa-solid fa-trash-can"></i>
-              </div>
-            </div>
-
-            <div className="contentPatientDocumentation">
-              <div className="contentDocInfo">
-                <i className="fa-solid fa-file-lines"></i>
-                <p>Orçamento Aprovado.pdf</p>
-              </div>
-              <div className="contentDocIcons">
-                <i className="fa-solid fa-cloud-arrow-down"></i>
-                <i className="fa-solid fa-trash-can"></i>
-              </div>
-            </div>
-          </div>
-          
         </div>
-        
+
+        {/* 🔹 Formulário de edição */}
+        <FormButton
+          pacienteEditando={pacienteEditando}
+          setPacienteEditando={setPacienteEditando}
+          pacientes={pacientes}
+          atualizarPacientes={atualizarPacientes}
+        />
       </div>
     </div>
   );
 }
-
-
