@@ -1,0 +1,104 @@
+/* Overlay escuro */
+.selectorOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Modal branco */
+.selectorModal {
+  background: #fff;
+  border-radius: 12px;
+  width: 46%;
+  max-width: 90%;
+  max-height: 80%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+}
+
+/* Header */
+.selectorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.selectorHeader h2 {
+  margin: 0;
+}
+
+/* Input */
+.searchInput {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+/* Lista */
+.patientList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.patientItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fafafa;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.patientItem span {
+  font-weight: 500;
+}
+
+.vazio {
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.selectorHeader button{
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--text-color);
+  border: none;
+  background: transparent;
+}
+.selectorHeader button:hover{
+  opacity: 0.6;
+}
+
+.patientItem button{
+  border: none;
+  width: 40%;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.patientItem button:hover{
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  background-color: var(--body-color);
+}

@@ -30,6 +30,7 @@
   border-radius: 4px;
   color: var(--text-color);
   transition: var(--tran-04);
+  cursor: pointer;
 }
 .containerSituationOptions .selected {
   color: var(--body-color);
@@ -102,7 +103,10 @@
   justify-content: space-around;
 }
 .contentSituationFormType button{
+  border: none;
   width: 30%;
+  cursor: pointer;
+  background: transparent;
   transition: var(--tran-08);
 }
 .contentSituationFormType button.active {
@@ -112,7 +116,7 @@
 }
 
 
-/* From Uiverse.io by bociKond */ 
+
 .contentSituationForm {
   display: flex;
   align-items: center;
@@ -121,7 +125,6 @@
   width: 100%;
   margin-top: 30px;
 }
-
 .contentSituationForm .contentSituationFormSpan {
   display: flex;
   flex-direction: column;
@@ -139,7 +142,6 @@
   border: none;
   outline: 2px solid var(--text-color-hover);
 }
-
 .contentSituationForm input:focus,
 .contentSituationForm select:focus {
   outline: 2px solid var(--text-color);
@@ -172,7 +174,7 @@
 .listWrapper {
   max-height: 400px;
   overflow-y: auto;
-  padding-left: 20px;
+  padding: 12px;
   border-left: 3px solid #ddd;
   position: relative;
 }
@@ -181,23 +183,33 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  margin-left: 20px;
-}
+  padding: 12px;
+  margin: 10px;
 
-.recordHeader {
+  border-radius: 6px;
+  background-color: #007bff2b;
+}
+.recordHeader{
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
 }
-
-.recordBullet {
-  width: 6px;
-  height: 6px;
-  background-color: var(--text-color);
-  border-radius: 50%;
-  position: absolute;
-  left: -28px;
-  top: 6px;
+.recordHeaderLeft {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.recordHeader span{
+  margin-top: 8px;
+  font-size: 20px;
+  font-weight: bold;
+}
+.recordHeader button{
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .recordMain {
@@ -206,11 +218,21 @@
 }
 
 .recordDetails {
-  background-color: #f8f9fa;
-  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
   padding: 10px;
-  margin-left: 10px;
+  margin-top: 10px;
   border-radius: 5px;
   position: relative;
+  border: 1px solid #ccc;
+  background-color: #f8f9fa;
   z-index: 10;
+}
+.recordDetails button{
+  margin: 12px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
 }

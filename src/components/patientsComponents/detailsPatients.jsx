@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { db } from '../../utils/firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { supabase } from "../../utils/supabaseClient";
 
 import '../styles/patientsStyles/detailsPatients.css';
 
 import PatientNotes from '../patientsComponents/notePatients';
-import PatientSituation from '../patientsComponents/situationPatients';
 import TabComponent from "../patientsComponents/situationPatients";
-import FormButton from "../patientsComponents/formsPatients"; // 🔹 importa o formulário
+import FormButton from "../patientsComponents/formsPatients";
 
 export default function PacienteDetalhes() {
   const { id } = useParams();
@@ -23,12 +21,17 @@ export default function PacienteDetalhes() {
   useEffect(() => {
     const fetchPaciente = async () => {
       try {
-        const pacienteRef = doc(db, "pacientes", id);
-        const pacienteSnap = await getDoc(pacienteRef);
-        if (pacienteSnap.exists()) {
-          setPaciente({ id: pacienteSnap.id, ...pacienteSnap.data() });
-        } else {
+        const { data, error } = await supabase
+          .from("pacientes")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (error || !data) {
+          console.error("Erro ao buscar paciente:", error?.message);
           navigate("/pacientes");
+        } else {
+          setPaciente(data);
         }
       } catch (error) {
         console.error("Erro ao buscar paciente:", error);
@@ -58,6 +61,26 @@ export default function PacienteDetalhes() {
   if (!paciente) {
     return <p>Carregando...</p>;
   }
+
+  const objetivosMap = {
+    "abdomen_definido": "Abdômen mais definido",
+    "reducao_abdomen": "Redução de abdômen",
+    "reducao_flancos": "Redução de flancos",
+    "aumento_gluteos": "Aumento dos glúteos",
+    "reducao_gluteos": "Redução dos glúteos",
+    "reducao_coxas": "Redução da gordura das coxas",
+    "aumento_coxas": "Aumento das coxas (enxertia)",
+    "contorno_harmonico": "Contorno corporal mais harmônico",
+    "lipo_hd": "Lipo HD",
+    "aumento_mamas": "Aumento e firmeza das mamas",
+    "reducao_mamas": "Redução das mamas",
+    "mastopexia": "Mastopexia",
+    "rejuvenescimento": "Rejuvenescimento facial",
+    "cicatriz": "Correção de cicatriz",
+    "outros": "Outros"
+  };
+
+
 
   return (
     <div className="sectionPatientDetails">
@@ -179,12 +202,42 @@ export default function PacienteDetalhes() {
               <div className="sectionPatientInfo">
                 <h4>Queixas e Objetivos Cirúrgicos</h4>
                 <ul>
-                  {paciente.objetivos?.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
+                  {(() => {
+                    let objetivos = paciente.objetivos;
+
+                    // Se for string no formato JSON -> parse
+                    if (typeof objetivos === "string") {
+                      try {
+                        objetivos = JSON.parse(objetivos);
+                      } catch {
+                        // Se não for JSON válido, tenta quebrar por vírgula
+                        objetivos = objetivos.split(",");
+                      }
+                    }
+
+                    // Se depois disso ainda não for array, força como []
+                    if (!Array.isArray(objetivos)) {
+                      objetivos = [];
+                    }
+
+                    return objetivos.length > 0 ? (
+                      objetivos.map((item, index) => (
+                        <li key={index}>{objetivosMap[item.trim()] || item.trim()}</li>
+                      ))
+                    ) : (
+                      <li>Nenhum objetivo informado</li>
+                    );
+                  })()}
                 </ul>
-                <br />
-                <p><b>Descrição dos outros:</b>{paciente.outrosTexto}</p>
+
+                {paciente.outrosTexto && (
+                  <>
+                    <br />
+                    <p>
+                      <b>Descrição dos outros:</b> {paciente.outrosTexto}
+                    </p>
+                  </>
+                )}
               </div>
             )}
 
@@ -237,7 +290,7 @@ export default function PacienteDetalhes() {
         </div>
 
         {/* Notas */} 
-        <PatientNotes />
+        <PatientNotes pacienteId={paciente.id} />
 
         {/* Situação */}
         <TabComponent />

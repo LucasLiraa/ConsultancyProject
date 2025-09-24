@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
-import { db } from '../../utils/firebaseConfig';
-import { addDoc, collection, updateDoc, doc, getDocs } from 'firebase/firestore';
-import '../styles/patientsStyles/formsPatients.css';
+import { supabase } from "../../utils/supabaseClient"; // <-- novo import
+import "../styles/patientsStyles/formsPatients.css";
 
-export default function FormButton({ pacienteEditando, setPacienteEditando, pacientes, atualizarPacientes }) {
+export default function FormButton({
+  pacienteEditando,
+  setPacienteEditando,
+  pacientes,
+  atualizarPacientes,
+}) {
   const [modalAberto, setModalAberto] = useState(false);
   const [formStep, setFormStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -17,16 +21,16 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
     email: "",
     profissao: "",
     estadoCivil: "",
-    foto: null,
+    foto: "",
     acimaPeso: "",
     gorduraVisceral: "",
-    formatoCorporal: "", // Adicionado para o formato corporal
+    formatoCorporal: "",
     busto: "",
     cintura: "",
     quadril: "",
     coxa: "",
-    panturilha: "",
-    objetivos: [],
+    panturrilha: "",
+    objetivos: "",
     outrosTexto: "",
     realizouCirurgia: "",
     descricaoCirurgia: "",
@@ -39,6 +43,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
     descricaoMedicamentos: "",
     medicamentosControlados: "",
     condicoesMedicas: "",
+    descricaoMedicamentosControlados: "",
     fumante: "",
     fumanteQuantidade: "",
     jaFumou: "",
@@ -56,63 +61,16 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
     qualidadeCicatriz: "",
     convenio: "",
     indicacaoCirurgica: "",
-    outrasAnotacoes: ""
+    outrasAnotacoes: "",
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (pacienteEditando) {
       setFormData({
-        nome: pacienteEditando.nome || "",
-        data: pacienteEditando.data || "",
-        sexo: pacienteEditando.sexo || "",
-        altura: pacienteEditando.altura || "",
-        peso: pacienteEditando.peso || "",
-        imc: pacienteEditando.imc || "",
-        telefone: pacienteEditando.telefone || "",
-        email: pacienteEditando.email || "",
-        profissao: pacienteEditando.profissao || "",
-        estadoCivil: pacienteEditando.estadoCivil || "",
-        foto: pacienteEditando.foto || null,
-        acimaPeso: pacienteEditando.acimaPeso || "",
-        gorduraVisceral: pacienteEditando.gorduraVisceral || "",
-        formatoCorporal: pacienteEditando.formatoCorporal || "",
-        busto: pacienteEditando.busto || "",
-        cintura: pacienteEditando.cintura || "",
-        quadril: pacienteEditando.quadril || "",
-        coxa: pacienteEditando.coxa || "",
-        panturilha: pacienteEditando.panturilha || "",
-        objetivos: pacienteEditando.objetivos || [], // carrega checkboxes marcados
-        outrosTexto: pacienteEditando.outrosTexto || "",
-        realizouCirurgia: pacienteEditando.realizouCirurgia || "",
-        descricaoCirurgia: pacienteEditando.descricaoCirurgia || "",
-        complicacoes: pacienteEditando.complicacoes || "",
-        cicatrizacao: pacienteEditando.cicatrizacao || "",
-        queloide: pacienteEditando.queloide || "",
-        alergias: pacienteEditando.alergias || "",
-        descricaoAlergia: pacienteEditando.descricaoAlergia || "",
-        medicamentos: pacienteEditando.medicamentos || "",
-        descricaoMedicamentos: pacienteEditando.descricaoMedicamentos || "",
-        medicamentosControlados: pacienteEditando.medicamentosControlados || "",
-        condicoesMedicas: pacienteEditando.condicoesMedicas || "",
-        fumante: pacienteEditando.fumante || "",
-        fumanteQuantidade: pacienteEditando.fumanteQuantidade || "",
-        jaFumou: pacienteEditando.jaFumou || "",
-        substanciasRecreativas: pacienteEditando.substanciasRecreativas || "",
-        descricaoSubstancias: pacienteEditando.descricaoSubstancias || "",
-        assimetriaMamaria: pacienteEditando.assimetriaMamaria || "",
-        alteracoesPosturais: pacienteEditando.alteracoesPosturais || "",
-        descricaoPosturais: pacienteEditando.descricaoPosturais || "",
-        expectativas: pacienteEditando.expectativas || "",
-        qp: pacienteEditando.qp || "",
-        hpp: pacienteEditando.hpp || "",
-        historicoAlergiasMedicamentos: pacienteEditando.historicoAlergiasMedicamentos || "",
-        historicoCirurgico: pacienteEditando.historicoCirurgico || "",
-        historicoGinecologico: pacienteEditando.historicoGinecologico || "",
-        qualidadeCicatriz: pacienteEditando.qualidadeCicatriz || "",
-        convenio: pacienteEditando.convenio || "",
-        indicacaoCirurgica: pacienteEditando.indicacaoCirurgica || "",
-        outrasAnotacoes: pacienteEditando.outrasAnotacoes || ""
+        ...formData,
+        ...pacienteEditando,
+        objetivos: pacienteEditando.objetivos || [],
       });
       setModalAberto(true);
     }
@@ -127,35 +85,65 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
         objetivos: checked
           ? [...prev.objetivos, value]
           : prev.objetivos.filter((item) => item !== value),
-        // se desmarcar "outros", limpa o texto
-        outrosTexto: value === "outros" && !checked ? "" : prev.outrosTexto
+        outrosTexto:
+          value === "outros" && !checked ? "" : prev.outrosTexto,
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
+
+  // 🔹 Upload da foto para Supabase Storage
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const fileName = `${crypto.randomUUID()}-${file.name}`;
+      const { data, error } = await supabase.storage
+        .from("pacientes_fotos")
+        .upload(`pacientes/${fileName}`, file);
+
+      if (error) throw error;
+
+      const { data: publicUrl } = supabase.storage
+        .from("pacientes_fotos")
+        .getPublicUrl(`pacientes/${fileName}`);
+
+      setFormData({ ...formData, foto: publicUrl.publicUrl });
+
+      // limpa o input depois de salvar
+      e.target.value = "";
+    } catch (err) {
+      console.error("Erro ao fazer upload da foto:", err.message);
+    }
+  };
+
+  // 🔹 Salvar paciente no Supabase
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setLoading(true);
     try {
       if (pacienteEditando) {
-        const pacienteRef = doc(db, "pacientes", pacienteEditando.id);
-        await updateDoc(pacienteRef, formData);
+        const { error } = await supabase
+          .from("pacientes")
+          .update(formData)
+          .eq("id", pacienteEditando.id);
+
+        if (error) throw error;
       } else {
-        await addDoc(collection(db, "pacientes"), formData);
+        const { error } = await supabase
+          .from("pacientes")
+          .insert([formData]);
+
+        if (error) throw error;
       }
-      // Busque os pacientes atualizados
-      const novosPacientes = await fetchPacientes(); // Certifique-se de que isso retorna um array
-      console.log("Novos Pacientes:", novosPacientes); // Adicione um log para verificar o que está sendo retornado
-      if (Array.isArray(novosPacientes)) {
-        atualizarPacientes(novosPacientes);
-      } else {
-        console.error("Dados inválidos recebidos:", novosPacientes);
-        atualizarPacientes([]); // Passe um array vazio como fallback
-      }
+
+      const novosPacientes = await fetchPacientes();
+      atualizarPacientes(novosPacientes);
 
       setModalAberto(false);
       setFormStep(0);
@@ -170,7 +158,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
         email: "",
         profissao: "",
         estadoCivil: "",
-        foto: null,
+        foto: "",
         acimaPeso: "",
         gorduraVisceral: "",
         formatoCorporal: "",
@@ -179,7 +167,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
         quadril: "",
         coxa: "",
         panturrilha: "",
-        objetivos: [],
+        objetivos: "",
         outrosTexto: "",
         realizouCirurgia: "",
         descricaoCirurgia: "",
@@ -191,6 +179,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
         medicamentos: "",
         descricaoMedicamentos: "",
         medicamentosControlados: "",
+        descricaoMedicamentosControlados: "",
         condicoesMedicas: "",
         fumante: "",
         fumanteQuantidade: "",
@@ -209,40 +198,31 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
         qualidadeCicatriz: "",
         convenio: "",
         indicacaoCirurgica: "",
-        outrasAnotacoes: ""
+        outrasAnotacoes: "",
       });
       setPacienteEditando(null);
-      atualizarPacientes();
     } catch (error) {
-    console.error("Erro ao salvar paciente:", error);
+      console.error("Erro ao salvar paciente:", error.message);
     } finally {
       setLoading(false);
     }
   };
+
+  // 🔹 Buscar pacientes do Supabase
   async function fetchPacientes() {
     try {
-      const querySnapshot = await getDocs(collection(db, "pacientes"));
-      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-      console.error("Erro ao buscar pacientes:", error);
-      return []; // Retorne um array vazio em caso de erro
-    }
-  }
-  function atualizarPacientes(novosPacientes = []) { // Valor padrão para array vazio
-    if (!Array.isArray(novosPacientes)) {
-      console.error("Parâmetro inválido para atualizarPacientes:", novosPacientes);
-      return;
-    }
-    // Sua lógica para atualizar a lista de pacientes...
-  }
+      const { data, error } = await supabase
+        .from("pacientes")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]; // pega o primeiro arquivo selecionado
-    setFormData({
-      ...formData,
-      foto: file, // salva o arquivo no estado
-    });
-  };
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error("Erro ao buscar pacientes:", error.message);
+      return [];
+    }
+  }
 
   const opcoesObjetivos = [
     { value: "abdomen_definido", label: "Abdômen mais definido" },
@@ -259,10 +239,10 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
     { value: "mastopexia", label: "Mastopexia" },
     { value: "rejuvenescimento", label: "Rejuvenescimento facial" },
     { value: "cicatriz", label: "Correção de cicatriz" },
-    { value: "outros", label: "Outros" }
+    { value: "outros", label: "Outros" },
   ];
 
-  // Renderização condicional por etapas
+  // 🔹 Renderização condicional (mantida igual ao seu código original)
   const renderStep = () => {
     switch (formStep) {
       case 0:
@@ -339,10 +319,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
               <label>Foto:</label>
               <input
                 type="file"
-                name="foto"
-                value={formData.foto}
-                accept="image/*" // permite apenas imagens
-                onChange={(e) => handleFileChange(e)}
+                onChange={handleFileChange}
               />
           </div>
         );
@@ -565,8 +542,8 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
                 <label>Quais medicamentos?</label>
                 <input
                   type="text"
-                  name="descricaoMedicamentos"
-                  value={formData.descricaoMedicamentos}
+                  name="descricaoMedicamentosControlados"
+                  value={formData.descricaoMedicamentosControlados}
                   onChange={handleChange}
                 />
               </div>
@@ -596,7 +573,7 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
                 <input
                   type="text"
                   name="fumanteQuantidade"
-                  value={formData.descricaoMedicamentos}
+                  value={formData.fumanteQuantidade}
                   onChange={handleChange}
                 />
               </div>
@@ -753,32 +730,45 @@ export default function FormButton({ pacienteEditando, setPacienteEditando, paci
   return (
     <>
       <div className="contentButton">
-        <button className="btn_newPatients" onClick={() => setModalAberto(true)}>
+        <button
+          className="btn_newPatients"
+          onClick={() => setModalAberto(true)}
+        >
           Adicionar Paciente
         </button>
       </div>
 
       {modalAberto && (
-        <div className="containerNewPatient" onClick={() => setModalAberto(false)}>
-          <div className="contentNewPatient" onClick={e => e.stopPropagation()}>
+        <div
+          className="containerNewPatient"
+          onClick={() => setModalAberto(false)}
+        >
+          <div
+            className="contentNewPatient"
+            onClick={(e) => e.stopPropagation()}
+          >
             <form onSubmit={handleSubmit}>
-              <div className="contentNewPatientBody">
-                {renderStep()}
-              </div>
+              <div className="contentNewPatientBody">{renderStep()}</div>
 
               <div className="contentNewPatientButton">
                 {formStep > 0 && (
-                  <button type="button" onClick={() => setFormStep(prev => prev - 1)}>
+                  <button
+                    type="button"
+                    onClick={() => setFormStep((prev) => prev - 1)}
+                  >
                     Voltar
                   </button>
                 )}
                 {formStep < 5 && (
-                  <button type="button" onClick={() => setFormStep(prev => prev + 1)}>
+                  <button
+                    type="button"
+                    onClick={() => setFormStep((prev) => prev + 1)}
+                  >
                     Avançar
                   </button>
                 )}
                 <button type="submit" disabled={loading}>
-                  {loading ? 'Salvando...' : 'Salvar'}
+                  {loading ? "Salvando..." : "Salvar"}
                 </button>
               </div>
             </form>

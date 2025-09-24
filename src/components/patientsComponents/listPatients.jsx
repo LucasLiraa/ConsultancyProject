@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../utils/firebaseConfig';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { supabase } from "../../utils/supabaseClient";
+
 import FiltrosPacientes from './filterPatients';
 import '../styles/patientsStyles/listPatients.css';
 
@@ -11,22 +11,28 @@ export default function ListaPacientes() {
   const [menuAberto, setMenuAberto] = useState(null);
   const navigate = useNavigate();
 
+  // 🔹 Buscar pacientes ao carregar a tela
   useEffect(() => {
-    const fetchPacientes = async () => {
+    async function fetchPacientes() {
       try {
-        const pacientesCollection = collection(db, 'pacientes');
-        const pacientesSnapshot = await getDocs(pacientesCollection);
-        const pacientesList = pacientesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPacientes(pacientesList);
-        setPacientesFiltrados(pacientesList);
+        const { data, error } = await supabase
+          .from("pacientes")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        setPacientes(data || []);
+        setPacientesFiltrados(data || []);
       } catch (error) {
-        console.error("Erro ao buscar pacientes:", error);
+        console.error("Erro ao buscar pacientes:", error.message);
       }
-    };
+    }
 
     fetchPacientes();
   }, []);
 
+  // 🔹 Aplicar filtros
   const aplicarFiltros = (nome) => {
     let filtrados = pacientes;
 
@@ -38,17 +44,31 @@ export default function ListaPacientes() {
 
     setPacientesFiltrados(filtrados);
   };
+
+  // 🔹 Remover paciente no Supabase
   const removerPaciente = async (id) => {
-    await deleteDoc(doc(db, 'pacientes', id)); // Remove o paciente do Firestore
-    const novaLista = pacientes.filter((p) => p.id !== id);
-    setPacientes(novaLista);
-    setPacientesFiltrados(novaLista);
-    setMenuAberto(null); // Fecha o menu após ação
+    try {
+      const { error } = await supabase
+        .from("pacientes")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      const novaLista = pacientes.filter((p) => p.id !== id);
+      setPacientes(novaLista);
+      setPacientesFiltrados(novaLista);
+      setMenuAberto(null);
+    } catch (err) {
+      console.error("Erro ao remover paciente:", err.message);
+    }
   };
+
+  // 🔹 Visualizar paciente
   const visualizarPaciente = (id) => {
-    navigate(`/paciente/${id}`); // Redireciona para a página do paciente
+    navigate(`/paciente/${id}`);
   };
-  
+
   return (
     <div className="containerPatientsList">
       <FiltrosPacientes onFilter={aplicarFiltros} />
@@ -58,7 +78,9 @@ export default function ListaPacientes() {
         ) : (
           pacientesFiltrados.map((patient) => (
             <div key={patient.id} className="patientCard">
-              <div className="noPhoto"><img src="/profile-icon.jpg"/></div>
+              <div className="noPhoto">
+                <img src={patient.foto || "/profile-icon.jpg"} alt={patient.nome} />
+              </div>
 
               <div className="patientDetails">
                 <h3>{patient.nome}</h3>

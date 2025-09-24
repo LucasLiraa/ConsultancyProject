@@ -1,78 +1,84 @@
 import React, { useState, useEffect } from "react";
+import { supabase } from "../utils/supabaseClient"; 
+
 import "./styles/postOperative.css";
+
 import Topbar from "../components/topbar";
-import NovoPosOperatorioCard from "../components/postOperativeComponents/NovoPosOperatorioCard";
-import PostOperativeForm from "../components/postOperativeComponents/PostOperativeForm";
-import PostOperativeStatus from "../components/postOperativeComponents/PostOperativeStatus";
-import PostOperativeList from "../components/postOperativeComponents/PostOperativeList";
+import Banners from "../components/banners";
+
+import PostOperativeDashboard from "../components/postOperativeComponents/PostOperativeDashboard";
+import PostOperativePatientSelector from "../components/postOperativeComponents/PostOperativePatientSelector";
+import PostOperativeManager from "../components/postOperativeComponents/PostOperativeManager";
 
 function PostOperative() {
-  const [mostrarNovo, setMostrarNovo] = useState(false);
-  const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
   const [pacientes, setPacientes] = useState([]);
+  const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
+  const [mostrarSelector, setMostrarSelector] = useState(false);
 
+  // Buscar pacientes com contagem de retornos
   useEffect(() => {
-    const armazenados = JSON.parse(localStorage.getItem("pacientesPos")) || [];
-    setPacientes(armazenados);
+    const fetchPacientes = async () => {
+      const { data, error } = await supabase
+        .from("paciente_pos")
+        .select("*, pos_operatorio(count)")
+        .order("criado_em", { ascending: false });
+
+      if (!error) {
+        const withCounts = data.map((p) => ({
+          ...p,
+          retorno_count: p.pos_operatorio[0]?.count || 0,
+        }));
+        setPacientes(withCounts);
+      } else {
+        console.error("Erro ao buscar pacientes:", error.message);
+      }
+    };
+    fetchPacientes();
   }, []);
-
-  const salvarPacientes = (lista) => {
-    setPacientes(lista);
-    localStorage.setItem("pacientesPos", JSON.stringify(lista));
-  };
-
-  const handleIniciar = (paciente) => {
-    const lista = [...pacientes, paciente];
-    salvarPacientes(lista);
-    setPacienteSelecionado(paciente);
-    setMostrarNovo(false);
-  };
-
-  const handleSalvar = (pacienteAtualizado) => {
-    const lista = pacientes.map((p) =>
-      p.id === pacienteAtualizado.id ? pacienteAtualizado : p
-    );
-    salvarPacientes(lista);
-    setPacienteSelecionado(pacienteAtualizado);
-  };
-
-  const handleDarAlta = (pacienteAtualizado) => {
-    const lista = pacientes.map((p) =>
-      p.id === pacienteAtualizado.id ? pacienteAtualizado : p
-    );
-    salvarPacientes(lista);
-    setPacienteSelecionado(null);
-  };
 
   return (
     <section className="sectionPostOperative">
       <Topbar showSearch={true} />
 
       <div className="containerPostOperative">
-        {mostrarNovo && (
-          <NovoPosOperatorioCard
-            onClose={() => setMostrarNovo(false)}
-            onIniciar={handleIniciar}
+        <div className="contentPostOperativeHeader">
+          <Banners />
+        </div>
+        <div className="contentPostOperativeButton">
+          <button className="primary" onClick={() => setMostrarSelector(true)}>
+            Novo paciente
+          </button>
+          <button className="primary" onClick={() => setMostrarSelector(true)}>
+            Procurar
+          </button>
+        </div>
+      </div>
+
+      <div className="contentPostOperative">
+        {/* Dashboard sempre no fundo */}
+        <PostOperativeDashboard
+          pacientes={pacientes}
+          onNovo={() => setMostrarSelector(true)}
+          onSelecionar={(paciente) => setPacienteSelecionado(paciente)}
+        />
+
+        {/* Overlay do selector */}
+        {mostrarSelector && (
+          <PostOperativePatientSelector
+            onVoltar={() => setMostrarSelector(false)}
+            onIniciar={(paciente) => {
+              setMostrarSelector(false);
+              setPacienteSelecionado(paciente);
+            }}
           />
         )}
 
-        {pacienteSelecionado ? (
-          <PostOperativeForm
+        {/* Overlay do manager */}
+        {pacienteSelecionado && (
+          <PostOperativeManager
             paciente={pacienteSelecionado}
-            onSalvar={handleSalvar}
-            onDarAlta={handleDarAlta}
             onVoltar={() => setPacienteSelecionado(null)}
           />
-        ) : (
-          <>
-            <PostOperativeStatus pacientes={pacientes} />
-            <div className="postOperativeButtonNew">
-              <button onClick={() => setMostrarNovo(true)}>
-                Iniciar um novo pós-operatório
-              </button>
-            </div>
-            <PostOperativeList pacientes={pacientes} onSelecionar={setPacienteSelecionado} />
-          </>
         )}
       </div>
     </section>

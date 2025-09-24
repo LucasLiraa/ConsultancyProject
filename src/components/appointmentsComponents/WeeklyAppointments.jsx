@@ -1,38 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/appointmentsStyles/WeeklyAppointments.css';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../../utils/firebaseConfig';
+import { supabase } from "../../utils/supabaseClient"; 
 
 const typeColors = {
-  "Consulta presencial": "blue",
-  "Consulta online": "blue",
+  "Consulta presencial": "#3b52d3",
+  "Consulta online": "#3b52d3",
   "Cirúrgia": "navy",
-  "Entrega de exames": "purple",
-  "Dúvidas presencial": "orange",
-  "Dúvidas online": "orange",
-  "Fechamento": "green",
-  "Drenagem": "darked",
+  "Entrega de exames": "#8c3bd3ff",
+  "Dúvidas presencial": "#c6962fff",
+  "Dúvidas online": "#c6962fff",
+  "Fechamento": "#2fc67dff",
+  "Drenagem": "#c62f4bff",
   "Pós-operatório": "pink",
-  "Drenagem + pós-operatório": "linear-gradient(90deg, pink, darkred)",
+  "Drenagem + pós-operatório": "linear-gradient(90deg, pink, #c62f4bff)",
   "Procedimento facial": "gray"
 };
 
 const WeeklyAppointments = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const todayKey = new Date().toISOString().split('T')[0]; // string YYYY-MM-DD
+  const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+  const today = new Date();
+
+  // Calcula o domingo da semana atual
+  const startOfWeek = new Date(selectedDate);
+  startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay());
+
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const dayDate = new Date(startOfWeek);
+    dayDate.setDate(startOfWeek.getDate() + i);
+    return {
+      name: weekDays[i],
+      number: dayDate.getDate(),
+      date: dayDate,
+      isToday: dayDate.toDateString() === today.toDateString(),
+    };
+  });
+
+  // Formata data YYYY-MM-DD para consulta no Supabase
+  const formatKey = (date) => date.toISOString().split("T")[0];
 
   useEffect(() => {
     const fetchAppointments = async () => {
+      setLoading(true);
       try {
-        const q = query(collection(db, 'appointments'), where('date', '==', todayKey));
-        const snapshot = await getDocs(q);
-        const fetched = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const { data, error } = await supabase
+          .from("agendamentos")
+          .select("*")
+          .eq("date", formatKey(selectedDate));
 
-        fetched.sort((a, b) => a.time.localeCompare(b.time));
+        if (error) {
+          console.error(error);
+          setAppointments([]);
+          return;
+        }
 
-        setAppointments(fetched);
+        setAppointments(data.sort((a, b) => a.time.localeCompare(b.time)));
       } catch (err) {
         console.error(err);
       } finally {
@@ -41,49 +66,51 @@ const WeeklyAppointments = () => {
     };
 
     fetchAppointments();
-  }, [todayKey]);
-
-  const formatDate = (dateString) => {
-    const [year, month, day] = dateString.split('-');
-    return `${day}/${month}/${year}`;
-  };
-
-  if (loading) return <div>Carregando agendamentos...</div>;
+  }, [selectedDate]);
 
   return (
-    <div className="weekly-appointments">
-      <h2>Agendamentos de Hoje</h2>
-      {appointments.length === 0 && <p>Nenhum agendamento hoje.</p>}
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {appointments.map((appointment) => (
-          <li
-            key={appointment.id}
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'stretch',
-              border: '1px solid #eee',
-              borderRadius: '6px',
-              marginBottom: '6px',
-              background: '#fff',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-            }}
+    <div className="weekBarContainer">
+      <div className="weekBarHeader">
+        <h3>Agendamentos</h3>
+      </div>
+
+      {/* Barra de dias da semana */}
+      <div className="weekDays">
+        {days.map((d, idx) => (
+          <button
+            key={idx}
+            className={`dayButton ${
+              selectedDate.toDateString() === d.date.toDateString()
+                ? "selected"
+                : ""
+            } ${d.isToday ? "today" : ""}`}
+            onClick={() => setSelectedDate(d.date)}
           >
-            <div style={{ padding: '8px 12px', flex: 1 }}>
-              <strong>{appointment.title}</strong> ({appointment.type})<br />
-              <span>{formatDate(appointment.date)} - {appointment.time}</span>
-            </div>
-            <div
-              style={{
-                width: '8px',
-                borderTopRightRadius: '6px',
-                borderBottomRightRadius: '6px',
-                background: typeColors[appointment.type] || 'gray',
-              }}
-            ></div>
-          </li>
+            <span className="dayName">{d.name}</span>
+            <span className="dayNumber">{d.number}</span>
+          </button>
         ))}
-      </ul>
+      </div>
+
+      {/* Lista de agendamentos */}
+      <div className="weekDaysList">
+        <p>24 de Setembro</p>
+        <ul className="dayAgenda">
+          {appointments.map((appointment) => (
+            <li key={appointment.id}>
+              <span className="time">{appointment.time}</span>
+              <span
+                className="typeDot"
+                style={{ background: typeColors[appointment.type] || "gray" }}
+              />
+              <div className="info">
+                <strong>{appointment.title}</strong>
+                <span>{appointment.type}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

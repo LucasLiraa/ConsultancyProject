@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import './index.css';
 import NavSidebar from './components/sidebar';
 import Topbar from './components/topbar';
+import Banners from './components/banners';
+
 import PacienteDetalhes from './components/patientsComponents/detailsPatients';
 import WeeklyAppointments from './components/appointmentsComponents/WeeklyAppointments'
 
@@ -53,20 +55,7 @@ const HomePage = ({ isSidebarOpen }) => {
       <div className="containerHomeContent">
         <div className="containerHomeContentEsq">
           <div className="containerHomeContentUp">
-            <h3>Nossos novos pacientes</h3>
-            <div className='contentHome'>
-              <h3>12</h3>
-              <h1>12</h1>
-            </div>
-            <div className='contentHomeStatus'>
-              <h4>Aguardando contrato</h4>
-              <p>04 pacientes</p>
-
-              <div className='contentHomeDivisor'></div>
-
-              <h4>Em fechamento</h4>
-              <p>08 pacientes</p>
-            </div>
+            <Banners />
           </div>
           <div className="containerHomeContentDown">
             <h3>Pacientes em pós-Operatórios</h3>
@@ -92,8 +81,7 @@ const HomePage = ({ isSidebarOpen }) => {
           <WeeklyAppointments />
         </div>
       </div>
-
-
+      
     </section>
   );
 };

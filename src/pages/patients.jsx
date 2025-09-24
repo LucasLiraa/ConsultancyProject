@@ -1,40 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../utils/firebaseConfig';
-import { collection, getDocs, addDoc, updateDoc, doc } from 'firebase/firestore';
+import React, { useState, useEffect } from "react";
 import "./styles/patients.css";
 
-import Topbar from '../components/topbar';
-import FormButton from '../components/patientsComponents/formsPatients';
-import ListaPacientes from '../components/patientsComponents/listPatients';
+import Topbar from "../components/topbar";
+import FormButton from "../components/patientsComponents/formsPatients";
+import ListaPacientes from "../components/patientsComponents/listPatients";
+
+import { supabase } from "../utils/supabaseClient";
 
 function Patients() {
   const [pacienteEditando, setPacienteEditando] = useState(null);
   const [pacientes, setPacientes] = useState([]);
 
+  // 🔹 Buscar pacientes ao carregar
   useEffect(() => {
     const fetchPacientes = async () => {
-      const pacientesCollection = collection(db, 'pacientes');
-      const pacientesSnapshot = await getDocs(pacientesCollection);
-      const pacientesList = pacientesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setPacientes(pacientesList);
+      try {
+        const { data, error } = await supabase
+          .from("pacientes")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setPacientes(data || []);
+      } catch (err) {
+        console.error("Erro ao buscar pacientes:", err.message);
+      }
     };
 
     fetchPacientes();
   }, []);
 
-  const atualizarPacientes = async (novos) => {
-    setPacientes(novos);
-    for (const paciente of novos) {
-      const pacienteRef = doc(db, 'pacientes', paciente.id);
-      await updateDoc(pacienteRef, paciente);
+  // 🔹 Atualizar pacientes (recarrega lista do Supabase)
+  const atualizarPacientes = async (novos = null) => {
+    try {
+      if (novos) {
+        setPacientes(novos);
+      } else {
+        const { data, error } = await supabase
+          .from("pacientes")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setPacientes(data || []);
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar pacientes:", err.message);
     }
   };
 
+  // 🔹 Adicionar paciente
   const adicionarPaciente = async (novoPaciente) => {
-    const pacientesCollection = collection(db, 'pacientes');
-    await addDoc(pacientesCollection, novoPaciente);
-    // Atualiza a lista de pacientes após adicionar
-    setPacientes(prev => [...prev, novoPaciente]);
+    try {
+      const { data, error } = await supabase
+        .from("pacientes")
+        .insert([novoPaciente])
+        .select();
+
+      if (error) throw error;
+
+      // adiciona à lista local sem precisar refazer fetch
+      setPacientes((prev) => [...prev, ...data]);
+    } catch (err) {
+      console.error("Erro ao adicionar paciente:", err.message);
+    }
   };
 
   return (
@@ -42,17 +71,18 @@ function Patients() {
       <Topbar showSearch={true} />
 
       <div className="containerPatients">
-        <ListaPacientes 
-          pacientes={pacientes} 
-          setPacientes={atualizarPacientes} 
-          setPacienteEditando={setPacienteEditando} 
+        <ListaPacientes
+          pacientes={pacientes}
+          setPacientes={setPacientes}
+          setPacienteEditando={setPacienteEditando}
         />
-        <FormButton 
-          pacienteEditando={pacienteEditando} 
+
+        <FormButton
+          pacienteEditando={pacienteEditando}
           setPacienteEditando={setPacienteEditando}
           pacientes={pacientes}
           atualizarPacientes={atualizarPacientes}
-          adicionarPaciente={adicionarPaciente} // Passa a função para adicionar pacientes
+          adicionarPaciente={adicionarPaciente}
         />
       </div>
     </section>

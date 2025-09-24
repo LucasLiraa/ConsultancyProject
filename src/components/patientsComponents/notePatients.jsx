@@ -1,52 +1,62 @@
 import React, { useEffect, useState } from 'react';
+import { supabase } from "../../utils/supabaseClient"; // ajuste o caminho
 import '../styles/patientsStyles/notePatients.css';
 
-const PatientNotes = () => {
-  const [notes, setNotes] = useState(() => {
-    const storedNotes = localStorage.getItem('patientNotes');
-    return storedNotes ? JSON.parse(storedNotes) : [];
-  });
-
+const PatientNotes = ({ pacienteId }) => {
+  const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState('');
+  const [author, setAuthor] = useState('Dr. Paulo'); // valor padrão
   const [showAllNotes, setShowAllNotes] = useState(false);
 
-  const LOCAL_STORAGE_KEY = 'patientNotes';
-
+  // 🔹 Buscar anotações do paciente no Supabase
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
-  }, [notes]);
+    const fetchNotes = async () => {
+      const { data, error } = await supabase
+        .from("anotacoes")
+        .select("*")
+        .eq("paciente_id", pacienteId)
+        .order("data_criacao", { ascending: true });
 
-  const handleAddNote = () => {
-    if (noteText.trim()) {
-      const newNote = {
-        text: noteText,
-        author: 'Dr. Paulo Vasconcelos', // Em breve será dinâmico via login
-        date: new Date(),
-        expanded: false,
-      };
-      setNotes((prevNotes) => [...prevNotes, newNote]);
+      if (error) {
+        console.error("Erro ao carregar anotações:", error.message);
+      } else {
+        setNotes(data || []);
+      }
+    };
+
+    if (pacienteId) fetchNotes();
+  }, [pacienteId]);
+
+  // 🔹 Adicionar anotação
+  const handleAddNote = async () => {
+    if (!noteText.trim()) return;
+
+    const { data, error } = await supabase
+      .from("anotacoes")
+      .insert([
+        {
+          paciente_id: pacienteId,
+          autor: author,
+          texto: noteText,
+        },
+      ])
+      .select();
+
+    if (error) {
+      console.error("Erro ao salvar anotação:", error.message);
+    } else {
+      setNotes((prev) => [...prev, data[0]]);
       setNoteText('');
     }
   };
 
-  const formatDate = (date) => {
-    const options = { day: 'numeric', month: 'long' };
-    return new Intl.DateTimeFormat('pt-BR', options).format(new Date(date));
-  };
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
 
-  const formatTime = (date) => {
-    const options = { hour: '2-digit', minute: '2-digit' };
-    return new Intl.DateTimeFormat('pt-BR', options).format(new Date(date));
-  };
-
-  const toggleExpand = (index) => {
-    const updatedNotes = [...notes];
-    updatedNotes[index].expanded = !updatedNotes[index].expanded;
-    setNotes(updatedNotes);
-  };
+  const formatTime = (date) =>
+    new Date(date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
   const lastNote = notes[notes.length - 1];
-
 
   return (
     <div className="patientNotes">
@@ -59,62 +69,55 @@ const PatientNotes = () => {
         )}
       </div>
 
+      {/* Input para nova anotação */}
       <div className="containerPatientNotes">
         <textarea
           placeholder="Adicione uma anotação..."
           value={noteText}
           onChange={(e) => setNoteText(e.target.value)}
         />
-        <button onClick={handleAddNote}>Adicionar anotação</button>
+
+        <div className="contentPatientOptions">
+          <select value={author} onChange={(e) => setAuthor(e.target.value)}>
+            <option value="Dr. Paulo">Dr. Paulo Vasconcelos</option>
+            <option value="Vanusa">Vanusa de Paula Araújo</option>
+            <option value="Alane">Alane</option>
+          </select>
+
+          <button onClick={handleAddNote}>Adicionar anotação</button>
+        </div>
       </div>
 
+      {/* Última anotação */}
       {lastNote && (
         <div className="contentPatientNotes">
           <h4>Última anotação</h4>
           <div className="contentPatientNotesUser">
             <div className="contentPatientNotesUserInfo">
-              <img
-                src={`${process.env.PUBLIC_URL}/profile-icon.jpg`}
-                alt="User"
-                className="contentPatientNotesImage"
-              />
-              <span>{lastNote.author}</span>
+              <img src="/profile-icon.jpg" alt="User" className="contentPatientNotesImage" />
+              <span>{lastNote.autor}</span>
             </div>
-            <p>
-              {formatDate(lastNote.date)} às {formatTime(lastNote.date)}
-            </p>
+            <p>{formatDate(lastNote.data_criacao)} às {formatTime(lastNote.data_criacao)}</p>
           </div>
         </div>
       )}
 
+      {/* Histórico */}
       {showAllNotes && (
         <div className="allNotesList">
           <h4>Histórico de Anotações</h4>
           <ul>
-            {notes.map((note, index) => (
-              <li key={index} className="noteItem">
+            {notes.map((note) => (
+              <li key={note.id} className="noteItem">
                 <div className="noteHeader">
-                  <img
-                    src={`${process.env.PUBLIC_URL}/profile-icon.jpg`}
-                    alt="User"
-                  />
+                  <img src="/profile-icon.jpg" alt="User" />
                   <div>
-                    <strong>{note.author}</strong>
-                    <p>
-                      {formatDate(note.date)} às {formatTime(note.date)}
-                    </p>
+                    <strong>{note.autor}</strong>
+                    <p>{formatDate(note.data_criacao)} às {formatTime(note.data_criacao)}</p>
                   </div>
                 </div>
-                
                 <div className="noteContent">
-                  <p className={note.expanded ? 'expandedText' : 'collapsedText'}>
-                    {note.text}
-                  </p>
-                  {note.text.length > 60 && (
-                    <button onClick={() => toggleExpand(index)} className="toggleButton">
-                      {note.expanded ? 'Ver menos' : 'Ver mais'}
-                    </button>
-                  )}
+                  <p>{note.texto}</p>
                 </div>
               </li>
             ))}

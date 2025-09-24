@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../utils/firebaseConfig';
-
 import './styles/appointments.css';
 
 import Topbar from "../components/topbar";
@@ -10,6 +7,8 @@ import Calendar from '../components/appointmentsComponents/Calendar';
 import DaySchedule from '../components/appointmentsComponents/DaySchedule';
 import SurgicalMapOverlay from '../components/appointmentsComponents/SurgicalMapOverlay';
 
+import { supabase } from "../utils/supabaseClient"; 
+
 const Appointments = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState([]);
@@ -17,9 +16,20 @@ const Appointments = () => {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const snapshot = await getDocs(collection(db, 'appointments'));
-      const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setEvents(events);
+      try {
+        const { data, error } = await supabase
+          .from('agendamentos')
+          .select('*'); // pega todos os agendamentos
+
+        if (error) {
+          console.error('Erro ao buscar agendamentos:', error);
+          return;
+        }
+
+        setEvents(data);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     fetchAppointments();
@@ -29,7 +39,6 @@ const Appointments = () => {
     <section className='sectionAppointments'>
       <Topbar showSearch={true} />
 
-
       {showSurgeryMap && (
         <SurgicalMapOverlay
           events={events}
@@ -37,14 +46,22 @@ const Appointments = () => {
         />
       )}
 
+      <WeekBar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+
       <div className="sectionContainerAppointments">
+        {/* Esquerda → agenda do dia */}
         <div className="sectionAppointmentsLeft">
-          <WeekBar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
-          <DaySchedule selectedDate={selectedDate} events={events} setEvents={setEvents} />
+          <DaySchedule 
+            selectedDate={selectedDate} 
+            events={events} 
+            setEvents={setEvents} 
+          />
         </div>
+
+        {/* Direita → calendário mensal + botão */}
         <div className="sectionAppointmentsRight">
           <Calendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
-            <button
+          <button
             className="surgeryMapButton"
             onClick={() => setShowSurgeryMap(true)}
           >

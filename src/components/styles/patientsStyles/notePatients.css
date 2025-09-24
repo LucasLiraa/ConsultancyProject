@@ -47,14 +47,12 @@
 .containerPatientNotes button {
   width: 40%;
   height: 46px;
-  margin: 10px;
   border: none;
   border-radius: 4px;
   color: var(--body-color);
   background-color: var(--text-color);
   transition: var(--tran-04);
 }
-
 .containerPatientNotes button:hover {
   cursor: pointer;
   opacity: 0.8;
@@ -70,7 +68,6 @@
   justify-content: space-between;
   font-size: 14px;
 }
-
 .contentPatientNotesUser p {
   opacity: 0.5;
   font-size: 12px;
@@ -79,7 +76,6 @@
   display: flex;
   align-items: center;
 }
-
 .contentPatientNotesImage {
   width: 30px;
   height: 30px;
@@ -138,30 +134,25 @@
   line-height: 1.4;
   margin-bottom: 6px;
 }
-
 .expandedText {
   word-wrap: break-word;
   line-height: 1.4;
   margin-bottom: 6px;
 }
-
 .noteContent {
   position: relative;
 }
 
-.toggleButton {
-  background: none;
-  border: none;
-  color: var(--text-color);
-  cursor: pointer;
-  font-size: 0.9rem;
-  padding: 0;
-}
+.contentPatientOptions{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
 
-button {
-  cursor: pointer;
-  border: none;
-  background-color: transparent;
-  color: var(--text-color);
+  width: 100%;
+  padding: 4px;
 }
-
+.contentPatientOptions select{
+  width: 50%;
+  height: 36px;
+}

@@ -205,26 +205,39 @@ const TabComponent = () => {
         <div className='contentSituationRegisters listWrapper'>
           {filteredRecords.map((r, i) => (
             <div key={i} className='recordItem'>
-              <div className='recordBullet' />
               <div className='recordMain'>
                 <div className='recordHeader'>
-                  <strong>{r.titulo}</strong>
-                  <small>{r.data}</small>
-                  {r.tipo === 'financeiro' && <small>R$ {r.valor}</small>}
-                  <button onClick={() => setShowDetailsIndex(i)}>Ver mais</button>
+                  <div className='recordHeaderLeft'>
+                    <h3>{r.titulo}</h3>
+                    <p>
+                      {new Date(r.data).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric'
+                      })}
+                    </p>
+                    {r.tipo === 'financeiro' && <span>R$ {r.valor}</span>}
+                  </div>
+                  <div>
+                    <button onClick={() => setShowDetailsIndex(i)}>Ver mais</button>
+                  </div>
                 </div>
                 {showDetailsIndex === i && (
                   <div className='recordDetails'>
-                    <p><strong>Descrição:</strong> {r.descricao}</p>
-                    {r.tipo === 'financeiro' && (
-                      <>
-                        <p><strong>Forma:</strong> {r.formaPagamento}</p>
-                        <p><strong>Tipo:</strong> {r.tipoPagamento}</p>
-                      </>
-                    )}
-                    <button onClick={() => handleEdit(i)}>Editar</button>
-                    <button onClick={() => handleDelete(i)}>Excluir</button>
-                    <button onClick={() => setShowDetailsIndex(null)}>Fechar</button>
+                    <div className="recordDetailsTop">
+                      <p><strong>Descrição:</strong> {r.descricao}</p>
+                      {r.tipo === 'financeiro' && (
+                        <>
+                          <p><strong>Forma:</strong> {r.formaPagamento}</p>
+                          <p><strong>Tipo:</strong> {r.tipoPagamento}</p>
+                        </>
+                      )}
+                    </div>
+                    <div>
+                      <button onClick={() => handleEdit(i)}>Editar</button>
+                      <button onClick={() => handleDelete(i)}>Excluir</button>
+                      <button onClick={() => setShowDetailsIndex(null)}>Fechar</button>
+                    </div>
                   </div>
                 )}
               </div>
