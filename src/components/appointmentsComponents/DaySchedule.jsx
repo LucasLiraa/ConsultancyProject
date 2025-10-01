@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import '../styles/appointmentsStyles/DaySchedule.css';
 import { supabase } from "../../utils/supabaseClient"; 
 
-// Mapa de cores
+// cores por tipo
 const typeColors = {
   "Consulta presencial": "blue",
   "Consulta online": "blue",
-  "Cirúrgia": "navy",
+  "Cirurgia": "navy",
   "Entrega de exames": "purple",
   "Dúvidas presencial": "orange",
   "Dúvidas online": "orange",
@@ -17,7 +17,6 @@ const typeColors = {
   "Procedimento facial": "gray"
 };
 
-// Gera horários
 const generateTimeSlots = (start, end, intervalMinutes) => {
   const slots = [];
   let [h, m] = start.split(':').map(Number);
@@ -34,12 +33,18 @@ const generateTimeSlots = (start, end, intervalMinutes) => {
   return slots;
 };
 
-const DaySchedule = ({ selectedDate, events, setEvents }) => {
-  const [showForm, setShowForm] = useState(false);
+const DaySchedule = ({
+  selectedDate,
+  events,
+  setEvents,
+  abrirModal,
+  setAbrirModal,
+  onSelectEvent,
+  editTarget,
+  reloadKey,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [instrumentadoras, setInstrumentadoras] = useState([""]);
-
   const [formData, setFormData] = useState({
     time: '',
     title: '',
@@ -48,41 +53,73 @@ const DaySchedule = ({ selectedDate, events, setEvents }) => {
     procedure: '',
     hospital: '',
     auxiliar: '',
+    instrumentadora: [''],
     protese: '',
-    kitCirurgico: '',
     tecnologia: '',
   });
 
-  const dateKey = selectedDate.toISOString().split('T')[0];
+  // data para DB sem timezone
+  const dateKey = selectedDate.toLocaleDateString('en-CA'); 
+  // exibição PT-BR
+  const formattedDisplayDate = selectedDate.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 
-  // Função para buscar eventos do dia
+  // fetch quando date ou reloadKey mudar
   const fetchEventsForDate = async () => {
-    const { data, error } = await supabase
-      .from('agendamentos')
-      .select('*')
-      .eq('date', dateKey);
+    try {
+      const { data, error } = await supabase
+        .from('agendamentos')
+        .select('*')
+        .eq('date', dateKey)
+        .order('time', { ascending: true });
 
-    if (error) {
-      console.error('Erro ao buscar agendamentos:', error);
-      return;
+      if (error) throw error;
+      // instrumentadora pode ser JSON string ou array — ajustar
+      const normalized = (data || []).map((d) => ({
+        ...d,
+        instrumentadora: d.instrumentadora ? (typeof d.instrumentadora === 'string' ? JSON.parse(d.instrumentadora) : d.instrumentadora) : [],
+      }));
+      setEvents(normalized);
+    } catch (err) {
+      console.error("Erro ao buscar agendamentos:", err);
     }
-
-    const dailyEvents = data.sort((a, b) => a.time.localeCompare(b.time));
-    setEvents(dailyEvents);
   };
 
   useEffect(() => {
     fetchEventsForDate();
-  }, [selectedDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, reloadKey]);
+
+  // quando editTarget for definido pelo pai, abrir modal preenchido
+  useEffect(() => {
+    if (editTarget) {
+      setIsEditing(true);
+      setEditId(editTarget.id || null);
+      setFormData({
+        ...editTarget,
+        instrumentadora: editTarget.instrumentadora
+          ? (Array.isArray(editTarget.instrumentadora) ? editTarget.instrumentadora : JSON.parse(editTarget.instrumentadora))
+          : [''],
+      });
+      setAbrirModal(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editTarget]);
 
   const handleOpenForm = (event = null) => {
-    setShowForm(true);
     setIsEditing(!!event);
     setEditId(event?.id || null);
-    setInstrumentadoras(event?.instrumentadoras || [""]);
     setFormData(
       event
-        ? { ...event }
+        ? {
+            ...event,
+            instrumentadora: event.instrumentadora
+              ? (Array.isArray(event.instrumentadora) ? event.instrumentadora : JSON.parse(event.instrumentadora))
+              : [''],
+          }
         : {
             time: '',
             title: '',
@@ -91,18 +128,18 @@ const DaySchedule = ({ selectedDate, events, setEvents }) => {
             procedure: '',
             hospital: '',
             auxiliar: '',
+            instrumentadora: [''],
             protese: '',
-            kitCirurgico: '',
             tecnologia: '',
           }
     );
+    setAbrirModal(true);
   };
 
   const handleCloseForm = () => {
-    setShowForm(false);
-    setEditId(null);
+    setAbrirModal(false);
     setIsEditing(false);
-    setInstrumentadoras([""]);
+    setEditId(null);
     setFormData({
       time: '',
       title: '',
@@ -111,23 +148,36 @@ const DaySchedule = ({ selectedDate, events, setEvents }) => {
       procedure: '',
       hospital: '',
       auxiliar: '',
+      instrumentadora: [''],
       protese: '',
-      kitCirurgico: '',
       tecnologia: '',
     });
   };
 
-  const handleSubmit = async () => {
-    if (!formData.time || !formData.title) return alert('Preencha todos os campos obrigatórios.');
+  const handleInstrumentadoraChange = (index, value) => {
+    const updated = [...(formData.instrumentadora || [])];
+    updated[index] = value;
+    setFormData({ ...formData, instrumentadora: updated });
+  };
 
-    const payload = {
-      ...formData,
-      date: dateKey,
-      instrumentadoras,
-      updated_at: new Date(),
-    };
+  const handleAddInstrumentadora = () => {
+    setFormData({ ...formData, instrumentadora: [...(formData.instrumentadora || []), ''] });
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.time || !formData.title) {
+      alert('Preencha todos os campos obrigatórios.');
+      return;
+    }
 
     try {
+      const payload = {
+        ...formData,
+        date: dateKey,
+        instrumentadora: JSON.stringify(formData.instrumentadora || []),
+        updated_at: new Date(),
+      };
+
       if (isEditing && editId) {
         const { error } = await supabase
           .from('agendamentos')
@@ -145,194 +195,131 @@ const DaySchedule = ({ selectedDate, events, setEvents }) => {
 
       await fetchEventsForDate();
       handleCloseForm();
-    } catch (error) {
-      console.error("Erro ao salvar agendamento:", error);
+    } catch (err) {
+      console.error("Erro ao salvar agendamento:", err);
+      alert("Erro ao salvar. Veja console.");
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      const { error } = await supabase
-        .from('agendamentos')
-        .delete()
-        .eq('id', id);
-
+      const ok = window.confirm('Confirma exclusão?');
+      if (!ok) return;
+      const { error } = await supabase.from('agendamentos').delete().eq('id', id);
       if (error) throw error;
       await fetchEventsForDate();
-    } catch (error) {
-      console.error("Erro ao excluir:", error);
+      // se estava sendo mostrado nos detalhes, deixar o pai limpar (pai deve reagir ao reloadKey)
+      onSelectEvent && onSelectEvent(null);
+    } catch (err) {
+      console.error("Erro ao excluir:", err);
+      alert("Erro ao excluir. Veja console.");
     }
   };
 
   const handleReschedule = async (id, oldData) => {
     const newDate = prompt('Nova data (AAAA-MM-DD):', oldData.date);
     const newTime = prompt('Novo horário (HH:mm):', oldData.time);
-
-    if (newDate && newTime) {
-      try {
-        const { error } = await supabase
-          .from('agendamentos')
-          .update({ ...oldData, date: newDate, time: newTime })
-          .eq('id', id);
-
-        if (error) throw error;
-        await fetchEventsForDate();
-      } catch (error) {
-        console.error("Erro ao reagendar:", error);
-      }
+    if (!newDate || !newTime) return;
+    try {
+      const { error } = await supabase
+        .from('agendamentos')
+        .update({ date: newDate, time: newTime, updated_at: new Date() })
+        .eq('id', id);
+      if (error) throw error;
+      await fetchEventsForDate();
+    } catch (err) {
+      console.error("Erro ao reagendar:", err);
+      alert("Erro ao reagendar. Veja console.");
     }
   };
 
-  const handleAddInstrumentadora = () => {
-    setInstrumentadoras([...instrumentadoras, ""]);
-  };
-
-  const handleChangeInstrumentadora = (index, value) => {
-    const updated = [...instrumentadoras];
-    updated[index] = value;
-    setInstrumentadoras(updated);
-  };
-
-  const formattedDate = selectedDate.toLocaleDateString('pt-BR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-
   return (
     <div className='appointmentsDay'>
-      <h3>Agendamentos para {formattedDate}</h3>
+      <h3>Agendamentos para {formattedDisplayDate}</h3>
 
-      {events.length === 0 && <p>Nenhum agendamento.</p>}
+      {events.length === 0 && <p className="noEvents">Nenhum agendamento.</p>}
 
-      {events.map((event) => (
-        <div
-          key={event.id}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            width: '90%',
-            alignItems: 'stretch',
-            border: '1px solid #eee',
-            borderRadius: '6px',
-            marginBottom: '6px',
-            background: '#fff',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-          }}
-        >
-          <div style={{ padding: '8px 12px', flex: 1 }}>
-            <strong>{event.time}</strong> - {event.title} ({event.type})
-            {event.description && <p>Descrição: {event.description}</p>}
-            <div>
-              <button onClick={() => handleOpenForm(event)}>Editar</button>
-              <button onClick={() => handleReschedule(event.id, event)}>Reagendar</button>
-              <button onClick={() => handleDelete(event.id)} style={{ color: 'red' }}>Excluir</button>
+      <div className="appointmentsList">
+        {events.map((event) => (
+          <div 
+            key={event.id} 
+            className="appointmentCard"
+            /* não chame onSelectEvent no card inteiro, deixamos botão */
+          >
+            <div className="appointmentInfo">
+              <div>
+                <strong className="appointmentTime">{event.time}</strong>
+                <h4 className="appointmentTitle">{event.title}</h4>
+                {event.description && <p className="appointmentDescription">{event.description}</p>}
+              </div>
+              <span className="appointmentType" style={{ background: typeColors[event.type] || '#999' }}>
+                {event.type}
+              </span>
+            </div>
+
+            <div className="appointmentActions">
+              <button onClick={() => onSelectEvent && onSelectEvent(event)}>Ver detalhes</button>
             </div>
           </div>
-          <div
-            style={{
-              width: '8px',
-              borderTopRightRadius: '6px',
-              borderBottomRightRadius: '6px',
-              background: typeColors[event.type] || 'gray',
-            }}
-          ></div>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      {!showForm && (
-        <div className="appointmentsDayButton">
-          <button onClick={() => handleOpenForm()}>+ Novo Agendamento</button>
-        </div>
-      )}
+      {abrirModal && (
+        <div className="appointmentsFormOverlay" onClick={handleCloseForm}>
+          <div className="appointmentsForm" onClick={(e) => e.stopPropagation()}>
+            <h4>{isEditing ? 'Editar Agendamento' : 'Novo Agendamento'}</h4>
 
-      {showForm && (
-        <div className='appointmentsForm'>
-          <h4>{isEditing ? 'Editar Agendamento' : 'Novo Agendamento'}</h4>
+            <label>Título:</label>
+            <input value={formData.title || ''} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
 
-          <label>Título:</label>
-          <input
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          />
+            <label>Tipo:</label>
+            <select value={formData.type || 'Consulta presencial'} onChange={(e) => setFormData({ ...formData, type: e.target.value })}>
+              {Object.keys(typeColors).map((t) => <option key={t}>{t}</option>)}
+            </select>
 
-          <label>Tipo:</label>
-          <select
-            value={formData.type}
-            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-          >
-            {Object.keys(typeColors).map((t) => <option key={t}>{t}</option>)}
-          </select>
+            <label>Horário:</label>
+            <select value={formData.time || ''} onChange={(e) => setFormData({ ...formData, time: e.target.value })}>
+              <option value="">Selecione um horário</option>
+              {generateTimeSlots('06:00', '20:00', 30).map((time) => <option key={time} value={time}>{time}</option>)}
+            </select>
 
-          <label>Horário:</label>
-          <select
-            value={formData.time}
-            onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-          >
-            <option value="">Selecione um horário</option>
-            {generateTimeSlots('06:00', '20:00', 30).map((time) => (
-              <option key={time} value={time}>{time}</option>
-            ))}
-          </select>
+            <label>Descrição:</label>
+            <input value={formData.description || ''} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
 
-          <label>Descrição:</label>
-          <input
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
+            {(formData.type === 'Cirurgia' || formData.type === 'Cirúrgia') && (
+              <>
+                <label>Procedimento:</label>
+                <input value={formData.procedure || ''} onChange={(e) => setFormData({ ...formData, procedure: e.target.value })} />
 
-          {/* Campos extras só para Cirúrgia */}
-          {formData.type === "Cirúrgia" && (
-            <div className="cirurgiaFields">
-              <label>Procedimento:</label>
-              <input
-                value={formData.procedure}
-                onChange={(e) => setFormData({ ...formData, procedure: e.target.value })}
-              />
+                <label>Médico Auxiliar:</label>
+                <input value={formData.auxiliar || ''} onChange={(e) => setFormData({ ...formData, auxiliar: e.target.value })} />
 
-              <label>Médico Auxiliar:</label>
-              <input
-                value={formData.auxiliar}
-                onChange={(e) => setFormData({ ...formData, auxiliar: e.target.value })}
-              />
+                <label>Instrumentadora(s):</label>
+                {(formData.instrumentadora || ['']).map((inst, i) => (
+                  <input 
+                    key={i}
+                    value={inst}
+                    onChange={(e) => handleInstrumentadoraChange(i, e.target.value)}
+                    placeholder={`Instrumentadora ${i + 1}`}
+                  />
+                ))}
+                <button type="button" onClick={handleAddInstrumentadora}>+ Adicionar Instrumentadora</button>
 
-              <label>Instrumentadora(s):</label>
-              {instrumentadoras.map((inst, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  placeholder={`Instrumentadora ${index + 1}`}
-                  value={inst}
-                  onChange={(e) => handleChangeInstrumentadora(index, e.target.value)}
-                />
-              ))}
-              <button type="button" onClick={handleAddInstrumentadora}>
-                + Adicionar Instrumentadora
-              </button>
+                <label>Hospital:</label>
+                <input value={formData.hospital || ''} onChange={(e) => setFormData({ ...formData, hospital: e.target.value })} />
 
-              <label>Hospital:</label>
-              <input
-                value={formData.hospital}
-                onChange={(e) => setFormData({ ...formData, hospital: e.target.value })}
-              />
+                <label>Tecnologia:</label>
+                <input value={formData.tecnologia || ''} onChange={(e) => setFormData({ ...formData, tecnologia: e.target.value })} />
 
-              <label>Tecnologia:</label>
-              <input
-                value={formData.tecnologia}
-                onChange={(e) => setFormData({ ...formData, tecnologia: e.target.value })}
-              />
+                <label>Prótese:</label>
+                <input value={formData.protese || ''} onChange={(e) => setFormData({ ...formData, protese: e.target.value })} />
+              </>
+            )}
 
-              <label>Prótese:</label>
-              <input
-                value={formData.protese}
-                onChange={(e) => setFormData({ ...formData, protese: e.target.value })}
-              />
+            <div className="formActions">
+              <button onClick={handleSubmit}>{isEditing ? 'Salvar' : 'Adicionar'}</button>
+              <button onClick={handleCloseForm}>Cancelar</button>
             </div>
-          )}
-
-          <div>
-            <button onClick={handleSubmit}>{isEditing ? 'Salvar' : 'Adicionar'}</button>
-            <button onClick={handleCloseForm}>Cancelar</button>
           </div>
         </div>
       )}

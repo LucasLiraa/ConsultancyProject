@@ -34,7 +34,6 @@
   justify-content: space-between;
   align-items: center;
 }
-
 .postManagerHeader h2 {
   margin: 0;
   font-size: 1.5rem;
@@ -71,7 +70,7 @@
 
 .tabs button.active {
   border-bottom: 2px solid #007bff;
-  color: #007bff;
+  color: #fff;
 }
 
 /* Conteúdo da aba */
@@ -143,3 +142,76 @@
   font-size: 1rem;
   font-weight: 600;
 }
+
+/* 🔁 Navegação entre semanas */
+.semanaNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.semanaNav button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background-color: #f6f6f6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.semanaNav button:hover:not(:disabled) {
+  background-color: #e8e8e8;
+  transform: translateY(-1px);
+}
+
+.semanaNav button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.semanaAtualLabel {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* 🧭 Retorno Card (semana ativa) */
+.retornoCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.retornoCard h4 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.retornoCard textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* ➕ Botão de criar próxima semana */
+button.primary {
+  display: inline-block;
+  margin-top: 10px;
+}
+
+/* 🔴 Botão de alta */
+button.danger {
+  display: inline-block;
+  margin-top: 15px;
+}
+
+

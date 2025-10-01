@@ -5,10 +5,11 @@ import "../styles/postOperativeStyles/postOperativeManager.css";
 function PostOperativeManager({ paciente, onVoltar }) {
   const [activeTab, setActiveTab] = useState("info");
   const [loading, setLoading] = useState(false);
+  const [loadingRetornos, setLoadingRetornos] = useState(false);
 
-  // Estado com informações iniciais do paciente
   const [formData, setFormData] = useState({
-    id: paciente?.id || null,
+    paciente_id: paciente?.id || null,
+    pos_id: null,
     nome: paciente?.nome || "",
     cirurgia: paciente?.cirurgia || "",
     cirurgiao: "Dr. Paulo Vasconcelos",
@@ -16,139 +17,335 @@ function PostOperativeManager({ paciente, onVoltar }) {
     instrumentadoras: [""],
     tecnologia: "",
     data_cirurgia: "",
-    dias_atestado: 0,
+    data_pos: "",
+    dias_atestado: "",
     anestesia: "",
   });
 
-  // Lista de retornos semanais
   const [retornos, setRetornos] = useState([]);
+  const [semanaAtual, setSemanaAtual] = useState(1);
 
+  // Atualiza formData ao mudar paciente, mas mantém pos_id se já existir para não perder dados carregados
   useEffect(() => {
-    if (paciente?.id) {
-      fetchRetornos(paciente.id);
-    }
+    if (!paciente) return;
+
+    setFormData((prev) => {
+      if (prev.pos_id) return prev; // mantém dados carregados
+
+      return {
+        paciente_id: paciente.id,
+        pos_id: null,
+        nome: paciente.nome || "",
+        cirurgia: paciente.cirurgia || "",
+        cirurgiao: "Dr. Paulo Vasconcelos",
+        auxiliar: "",
+        instrumentadoras: [""],
+        tecnologia: "",
+        data_cirurgia: "",
+        data_pos: "",
+        dias_atestado: "",
+        anestesia: "",
+      };
+    });
+
+    setRetornos([]);
+    setSemanaAtual(1);
+    setActiveTab("info");
   }, [paciente]);
 
-  const fetchRetornos = async (pacienteId) => {
-    const { data, error } = await supabase
-      .from("pacientes_pos")
-      .select("*")
-      .eq("paciente_id", pacienteId)
-      .order("semana", { ascending: true });
+  // Busca o registro pacientes_pos para o paciente e atualiza formData
+  useEffect(() => {
+    const fetchPacientePos = async () => {
+      if (!paciente?.id) return;
 
-    if (!error && data) {
-      setRetornos(data);
+      try {
+        const { data, error } = await supabase
+          .from("pacientes_pos")
+          .select("*")
+          .eq("paciente_id", paciente.id)
+          .limit(1)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Erro ao buscar pacientes_pos:", error);
+          return;
+        }
+
+        if (data) {
+          setFormData((prev) => ({
+            ...prev,
+            pos_id: data.id,
+            nome: paciente.nome || "",
+            cirurgia: paciente.cirurgia || "",
+            cirurgiao: data.cirurgiao || "Dr. Paulo Vasconcelos",
+            auxiliar: data.auxiliar || "",
+            instrumentadoras: data.instrumentadoras || [""],
+            tecnologia: data.tecnologia || "",
+            data_cirurgia: data.data_cirurgia || "",
+            data_pos: data.data_pos || "",
+            dias_atestado: data.dias_atestado || "",
+            anestesia: data.anestesia || "",
+          }));
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            pos_id: null,
+            nome: paciente.nome || "",
+            cirurgia: paciente.cirurgia || "",
+          }));
+        }
+      } catch (err) {
+        console.error("Erro ao buscar pacientes_pos:", err);
+      }
+    };
+
+    fetchPacientePos();
+  }, [paciente]);
+
+  // Busca as semanas (retornos) sempre que pos_id mudar
+  useEffect(() => {
+    if (!formData.pos_id) {
+      setRetornos([]);
+      setSemanaAtual(1);
+      return;
     }
-  };
 
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+    const fetchRetornos = async () => {
+      setLoadingRetornos(true);
+      try {
+        const { data, error } = await supabase
+          .from("pos_operatorio")
+          .select("*")
+          .eq("paciente_pos_id", formData.pos_id)
+          .order("semana", { ascending: true });
 
-  const handleInstrumentadoraChange = (index, value) => {
-    const updated = [...formData.instrumentadoras];
-    updated[index] = value;
-    setFormData((prev) => ({ ...prev, instrumentadoras: updated }));
-  };
+        if (error) throw error;
 
-  const addInstrumentadora = () => {
-    setFormData((prev) => ({
-      ...prev,
-      instrumentadoras: [...prev.instrumentadoras, ""],
-    }));
-  };
+        setRetornos(data || []);
 
+        if (data && data.length > 0) {
+          setSemanaAtual(data[data.length - 1].semana); // última semana
+        } else {
+          setSemanaAtual(1);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar retornos:", err);
+      } finally {
+        setLoadingRetornos(false);
+      }
+    };
+
+    fetchRetornos();
+  }, [formData.pos_id]);
+
+  // Função para salvar informações iniciais (pacientes_pos)
   const salvarPaciente = async () => {
     setLoading(true);
     try {
-      if (formData.id) {
-        // Update
+      const today = new Date().toISOString().split("T")[0];
+
+      if (formData.pos_id) {
+        // Atualiza registro existente
         const { error } = await supabase
           .from("pacientes_pos")
           .update({
             cirurgia: formData.cirurgia,
             cirurgiao: formData.cirurgiao,
             auxiliar: formData.auxiliar,
-            instrumentadora: formData.instrumentadoras,
+            instrumentadoras: formData.instrumentadoras,
             tecnologia: formData.tecnologia,
             data_cirurgia: formData.data_cirurgia,
+            data_pos: formData.data_pos || today,
             dias_atestado: formData.dias_atestado,
             anestesia: formData.anestesia,
           })
-          .eq("id", formData.id);
+          .eq("id", formData.pos_id);
 
         if (error) throw error;
+
+        // Recarrega semanas
+        const { data, error: errRetornos } = await supabase
+          .from("pos_operatorio")
+          .select("*")
+          .eq("paciente_pos_id", formData.pos_id)
+          .order("semana", { ascending: true });
+
+        if (errRetornos) throw errRetornos;
+
+        setRetornos(data || []);
+        if (data && data.length > 0) setSemanaAtual(data[data.length - 1].semana);
+        setActiveTab("retornos");
       } else {
-        // Insert
+        // Insere novo registro pacientes_pos
+        const payload = {
+          paciente_id: formData.paciente_id,
+          nome: formData.nome,
+          cirurgia: formData.cirurgia,
+          cirurgiao: formData.cirurgiao,
+          auxiliar: formData.auxiliar,
+          instrumentadoras: formData.instrumentadoras,
+          tecnologia: formData.tecnologia,
+          data_cirurgia: formData.data_cirurgia,
+          data_pos: formData.data_pos || today,
+          dias_atestado: formData.dias_atestado,
+          anestesia: formData.anestesia,
+        };
+
         const { data, error } = await supabase
           .from("pacientes_pos")
-          .insert([formData])
-          .select();
+          .insert([payload])
+          .select()
+          .single();
 
         if (error) throw error;
-        setFormData((prev) => ({ ...prev, id: data[0].id }));
+
+        const pacientePosId = data.id;
+
+        // Cria semana 1 no pos_operatorio
+        const { data: weekData, error: errWeek } = await supabase
+          .from("pos_operatorio")
+          .insert([
+            {
+              paciente_pos_id: pacientePosId,
+              semana: 1,
+              data_retorno: today,
+            },
+          ])
+          .select()
+          .single();
+
+        if (errWeek) throw errWeek;
+
+        setFormData((prev) => ({ ...prev, pos_id: pacientePosId }));
+        setRetornos([weekData]);
+        setSemanaAtual(1);
+        setActiveTab("retornos");
       }
-      alert("Paciente salvo com sucesso!");
+
+      alert("Informações salvas com sucesso!");
     } catch (err) {
-      console.error("Erro ao salvar paciente:", err.message);
+      console.error("Erro ao salvar paciente:", err);
+      alert("Erro ao salvar paciente. Veja console.");
     } finally {
       setLoading(false);
     }
   };
 
-  const adicionarRetorno = async () => {
-    if (!formData.id) {
-      alert("Salve as informações iniciais primeiro.");
-      return;
-    }
-    const semana = retornos.length + 1;
-    const { data, error } = await supabase
-      .from("pos_operatorio")
-      .insert([
-        {
-          paciente_id: formData.id,
-          semana,
-          observacoes: "",
-        },
-      ])
-      .select();
+  // Cria próxima semana
+  const criarProximaSemana = async () => {
+    if (!formData.pos_id) return alert("Salve o paciente primeiro.");
 
-    if (!error && data) {
-      setRetornos((prev) => [...prev, data[0]]);
-    }
-  };
+    const proximaSemana = retornos.length === 0 ? 1 : retornos[retornos.length - 1].semana + 1;
+    try {
+      const { data, error } = await supabase
+        .from("pos_operatorio")
+        .insert([
+          {
+            paciente_pos_id: formData.pos_id,
+            semana: proximaSemana,
+            data_retorno: new Date().toISOString().split("T")[0],
+          },
+        ])
+        .select()
+        .single();
 
-  const salvarRetorno = async (index, value) => {
-    const retorno = retornos[index];
-    const { error } = await supabase
-      .from("pos_operatorio")
-      .update({ observacoes: value })
-      .eq("id", retorno.id);
+      if (error) throw error;
 
-    if (!error) {
-      const updated = [...retornos];
-      updated[index].observacoes = value;
-      setRetornos(updated);
+      setRetornos((prev) => [...prev, data].sort((a, b) => a.semana - b.semana));
+      setSemanaAtual(proximaSemana);
+    } catch (err) {
+      console.error("Erro ao criar próxima semana:", err);
+      alert("Erro ao criar próxima semana. Veja console.");
     }
   };
 
+  // Salvar campo da semana (atualiza no banco e no estado local)
+  const salvarCampoSemana = async (campo, valor) => {
+    const retorno = retornos.find((r) => r.semana === semanaAtual);
+    if (!retorno) return;
+
+    const prevRetornos = [...retornos];
+    const idx = retornos.findIndex((r) => r.id === retorno.id);
+
+    const updated = [...retornos];
+    updated[idx] = { ...updated[idx], [campo]: valor };
+    setRetornos(updated);
+
+    try {
+      const { error } = await supabase
+        .from("pos_operatorio")
+        .update({ [campo]: valor })
+        .eq("id", retorno.id);
+
+      if (error) {
+        setRetornos(prevRetornos);
+        throw error;
+      }
+    } catch (err) {
+      console.error("Erro ao salvar campo da semana:", err);
+      alert("Erro ao salvar. Veja console.");
+    }
+  };
+
+  // Salvar semana (recarrega dados para garantir sincronia)
+  const salvarSemana = async () => {
+    if (!formData.pos_id) return alert("Salve o paciente antes.");
+    try {
+      const { data, error } = await supabase
+        .from("pos_operatorio")
+        .select("*")
+        .eq("paciente_pos_id", formData.pos_id)
+        .order("semana", { ascending: true });
+
+      if (error) throw error;
+
+      setRetornos(data || []);
+      if (data && data.length > 0) setSemanaAtual(data[data.length - 1].semana);
+      alert(`Semana ${semanaAtual} salva.`);
+    } catch (err) {
+      console.error("Erro ao salvar semana:", err);
+      alert("Erro ao salvar semana. Veja console.");
+    }
+  };
+
+  // Dar alta após 6 semanas
   const darAlta = async () => {
     if (retornos.length < 6) {
       alert("Só é possível dar alta após 6 semanas.");
       return;
     }
-    const { error } = await supabase
-      .from("pacientes_pos")
-      .update({ alta: true })
-      .eq("id", formData.id);
-
-    if (!error) {
+    try {
+      const { error } = await supabase
+        .from("pacientes_pos")
+        .update({ alta: true })
+        .eq("id", formData.pos_id);
+      if (error) throw error;
       alert("Paciente recebeu alta!");
       onVoltar();
+    } catch (err) {
+      console.error("Erro ao dar alta:", err);
     }
   };
 
-  return (
+  // Função para atualizar formData simples
+  const handleChange = (field, value) =>
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+  // Semana atual para renderizar
+  const retornoAtual = retornos.find((r) => r.semana === semanaAtual) || null;
+
+  // Checklist fixo
+  const checklistFields = [
+    { key: "edema", label: "Edema" },
+    { key: "fibrose", label: "Fibrose" },
+    { key: "seroma", label: "Seroma" },
+    { key: "cicatrizacao", label: "Cicatrização" },
+    { key: "drenagem", label: "Drenagem" },
+    { key: "fita_silicone", label: "Fita de silicone" },
+    { key: "oleo_rosa_mosqueta", label: "Óleo de rosa mosqueta" },
+  ];
+
+    return (
     <div className="postManagerOverlay">
       <div className="postManagerContainer">
         <div className="postManagerHeader">
@@ -156,7 +353,6 @@ function PostOperativeManager({ paciente, onVoltar }) {
           <button onClick={onVoltar}>Voltar</button>
         </div>
 
-        {/* Tabs */}
         <div className="tabs">
           <button
             className={activeTab === "info" ? "active" : ""}
@@ -167,12 +363,12 @@ function PostOperativeManager({ paciente, onVoltar }) {
           <button
             className={activeTab === "retornos" ? "active" : ""}
             onClick={() => setActiveTab("retornos")}
+            disabled={!formData.pos_id}
           >
             Retornos semanais
           </button>
         </div>
 
-        {/* Tab Content */}
         <div className="tabContent">
           {activeTab === "info" && (
             <div className="infoTab">
@@ -187,7 +383,11 @@ function PostOperativeManager({ paciente, onVoltar }) {
               />
 
               <label>Cirurgião</label>
-              <input type="text" value={formData.cirurgiao} disabled />
+              <input
+                type="text"
+                value={formData.cirurgiao}
+                onChange={(e) => handleChange("cirurgiao", e.target.value)}
+              />
 
               <label>Auxiliar</label>
               <input
@@ -203,18 +403,31 @@ function PostOperativeManager({ paciente, onVoltar }) {
                   type="text"
                   value={inst}
                   onChange={(e) =>
-                    handleInstrumentadoraChange(idx, e.target.value)
+                    setFormData((prev) => {
+                      const updated = [...prev.instrumentadoras];
+                      updated[idx] = e.target.value;
+                      return { ...prev, instrumentadoras: updated };
+                    })
                   }
                 />
               ))}
-              <button onClick={addInstrumentadora}>+ Adicionar</button>
+              <button
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    instrumentadoras: [...prev.instrumentadoras, ""],
+                  }))
+                }
+              >
+                + Adicionar
+              </button>
 
               <label>Tecnologia utilizada</label>
               <select
                 value={formData.tecnologia}
                 onChange={(e) => handleChange("tecnologia", e.target.value)}
               >
-                <option value="">Selecione...</option>
+                <option value="">Selecione.</option>
                 <option value="Tecnologia A">Tecnologia A</option>
                 <option value="Tecnologia B">Tecnologia B</option>
                 <option value="Tecnologia C">Tecnologia C</option>
@@ -225,6 +438,13 @@ function PostOperativeManager({ paciente, onVoltar }) {
                 type="date"
                 value={formData.data_cirurgia}
                 onChange={(e) => handleChange("data_cirurgia", e.target.value)}
+              />
+
+              <label>Data do Pós-Operatório</label>
+              <input
+                type="date"
+                value={formData.data_pos}
+                onChange={(e) => handleChange("data_pos", e.target.value)}
               />
 
               <label>Dias de atestado</label>
@@ -239,7 +459,7 @@ function PostOperativeManager({ paciente, onVoltar }) {
                 value={formData.anestesia}
                 onChange={(e) => handleChange("anestesia", e.target.value)}
               >
-                <option value="">Selecione...</option>
+                <option value="">Selecione.</option>
                 <option value="Peridural">Peridural</option>
                 <option value="Geral">Geral</option>
                 <option value="Geral com intubação">Geral com intubação</option>
@@ -248,7 +468,11 @@ function PostOperativeManager({ paciente, onVoltar }) {
                 <option value="Local">Local</option>
               </select>
 
-              <button className="primary" onClick={salvarPaciente} disabled={loading}>
+              <button
+                className="primary"
+                onClick={salvarPaciente}
+                disabled={loading}
+              >
                 {loading ? "Salvando..." : "Salvar informações"}
               </button>
             </div>
@@ -257,20 +481,144 @@ function PostOperativeManager({ paciente, onVoltar }) {
           {activeTab === "retornos" && (
             <div className="retornosTab">
               <h3>Retornos semanais</h3>
-              {retornos.map((r, idx) => (
-                <div key={r.id} className="retornoCard">
-                  <h4>Semana {r.semana}</h4>
-                  <textarea
-                    value={r.observacoes || ""}
-                    onChange={(e) => salvarRetorno(idx, e.target.value)}
-                  />
+
+              {loadingRetornos ? (
+                <p>Carregando dados...</p>
+              ) : retornos.length === 0 ? (
+                <div className="retornoEmpty">
+                  <p>Nenhum retorno criado ainda.</p>
+                  <button className="primary" onClick={criarProximaSemana}>
+                    🚀 Iniciar Pós-operatório
+                  </button>
                 </div>
-              ))}
-              <button onClick={adicionarRetorno}>+ Adicionar retorno</button>
-              {retornos.length >= 6 && (
-                <button className="danger" onClick={darAlta}>
-                  Dar alta
-                </button>
+              ) : (
+                <>
+                  <div className="semanaNav">
+                    <button
+                      onClick={() => setSemanaAtual((prev) => Math.max(prev - 1, 1))}
+                      disabled={semanaAtual <= 1}
+                    >
+                      ◀ Semana {semanaAtual - 1}
+                    </button>
+
+                    <span className="semanaAtualLabel">Semana {semanaAtual}</span>
+
+                    <button
+                      onClick={() =>
+                        setSemanaAtual((prev) =>
+                          retornos.find((r) => r.semana === prev + 1) ? prev + 1 : prev
+                        )
+                      }
+                      disabled={!retornos.find((r) => r.semana === semanaAtual + 1)}
+                    >
+                      Semana {semanaAtual + 1} ▶
+                    </button>
+                  </div>
+
+                  {retornoAtual ? (
+                    <div className="retornoCard">
+                      <h4>Semana {semanaAtual}</h4>
+
+                      <label>Data do retorno</label>
+                      <input
+                        type="date"
+                        value={retornoAtual.data_retorno || ""}
+                        onChange={(e) =>
+                          salvarCampoSemana("data_retorno", e.target.value)
+                        }
+                      />
+
+                      <div className="checklistContainer">
+                        <h5>Checklist</h5>
+                        {checklistFields.map(({ key, label }) => (
+                          <label key={key}>
+                            <input
+                              type="checkbox"
+                              checked={!!retornoAtual[key]}
+                              onChange={(e) =>
+                                salvarCampoSemana(key, e.target.checked)
+                              }
+                            />
+                            {label}
+                          </label>
+                        ))}
+                      </div>
+
+                                            <label>Curativos informados</label>
+                      <textarea
+                        value={retornoAtual.curativos || ""}
+                        onChange={(e) =>
+                          salvarCampoSemana("curativos", e.target.value)
+                        }
+                      />
+
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={!!retornoAtual.atestado}
+                          onChange={(e) =>
+                            salvarCampoSemana("atestado", e.target.checked)
+                          }
+                        />
+                        Atestado
+                      </label>
+
+                      <label>Liberada para dirigir</label>
+                      <input
+                        type="text"
+                        value={retornoAtual.liberada_dirigir || ""}
+                        onChange={(e) =>
+                          salvarCampoSemana("liberada_dirigir", e.target.value)
+                        }
+                      />
+
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={!!retornoAtual.foto_tirada}
+                          onChange={(e) =>
+                            salvarCampoSemana("foto_tirada", e.target.checked)
+                          }
+                        />
+                        Fotos tiradas?
+                      </label>
+
+                      <label>Outras observações</label>
+                      <textarea
+                        value={retornoAtual.outras_observacoes || ""}
+                        onChange={(e) =>
+                          salvarCampoSemana("outras_observacoes", e.target.value)
+                        }
+                      />
+
+                      <button className="primary" onClick={salvarSemana}>
+                        💾 Salvar Semana {semanaAtual}
+                      </button>
+
+                      {semanaAtual === retornos.length && (
+                        <button
+                          className="primary"
+                          onClick={criarProximaSemana}
+                          style={{ marginTop: "1rem" }}
+                        >
+                          ➕ Iniciar próxima semana
+                        </button>
+                      )}
+
+                      {retornos.length >= 6 && (
+                        <button
+                          className="danger"
+                          onClick={darAlta}
+                          style={{ marginTop: "1rem" }}
+                        >
+                          ✅ Dar alta
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <p>Semana não encontrada.</p>
+                  )}
+                </>
               )}
             </div>
           )}

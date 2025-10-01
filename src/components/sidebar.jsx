@@ -53,7 +53,7 @@ const NavSidebar = () => {
 
             {/* Configurações */}
             <div className='navSettings'>
-                <Link><i className="fa-solid fa-gear"></i>{isOpen && <span>Configurações</span>}</Link>
+                <Link to="/login"><i className="fa-solid fa-gear"></i>{isOpen && <span>Configurações</span>}</Link>
             </div>
         </nav>
     );

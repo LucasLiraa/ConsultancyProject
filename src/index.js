@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { FaHeartbeat, FaClock, FaCheckCircle } from "react-icons/fa";
 
 import './index.css';
 import NavSidebar from './components/sidebar';
@@ -17,6 +18,7 @@ import Appointments from './pages/appointments';
 import Budgets from './pages/budgets';
 import Invoices from './pages/invoices';
 import Inventory from './pages/inventory'
+import loginPage from './pages/loginPage'
 
 const HomePage = ({ isSidebarOpen }) => {
   return (
@@ -58,19 +60,27 @@ const HomePage = ({ isSidebarOpen }) => {
             <Banners />
           </div>
           <div className="containerHomeContentDown">
-            <h3>Pacientes em pós-Operatórios</h3>
-            <div className='contentHomeDown'>
-              <div className='contentHomeDownPos'>
+            <h3>Pacientes em Pós-Operatórios</h3>
+
+            <div className="contentHomeDown">
+              <div className="contentHomeDownPos iniciar">
+                <FaHeartbeat className="iconHomeDown" />
                 <h4>Iniciando</h4>
+                <h1>01</h1>
+              </div>
+
+              <div className="contentHomeDivisorR"></div>
+
+              <div className="contentHomeDownPos andamento">
+                <FaClock className="iconHomeDown" />
+                <h4>Em andamento</h4>
                 <h1>02</h1>
               </div>
-              <div className='contentHomeDivisorR'></div>
-              <div className='contentHomeDownPos'>
-                <h4>Em andamento</h4>
-                <h1>03</h1>
-              </div>
-              <div className='contentHomeDivisorR'></div>
-              <div className='contentHomeDownPos'>
+
+              <div className="contentHomeDivisorR"></div>
+
+              <div className="contentHomeDownPos concluindo">
+                <FaCheckCircle className="iconHomeDown" />
                 <h4>Concluindo</h4>
                 <h1>06</h1>
               </div>
@@ -102,6 +112,7 @@ const App = () => {
         <Route path="/orcamentos" element={<Budgets />} />
         <Route path="/faturamentos" element={<Invoices />} />
         <Route path="/insumos" element={<Inventory />} />
+        <Route path="/login" element={<loginPage />} />
       </Routes>
     </Router>
   );

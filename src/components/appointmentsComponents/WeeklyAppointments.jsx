@@ -40,7 +40,10 @@ const WeeklyAppointments = () => {
   });
 
   // Formata data YYYY-MM-DD para consulta no Supabase
-  const formatKey = (date) => date.toISOString().split("T")[0];
+  const formatKey = (date) => {
+    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return local.toISOString().split("T")[0];
+  };
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -69,13 +72,13 @@ const WeeklyAppointments = () => {
   }, [selectedDate]);
 
   return (
-    <div className="weekBarContainer">
-      <div className="weekBarHeader">
+    <div className="weeklyBarContainer">
+      <div className="weeklyBarHeader">
         <h3>Agendamentos</h3>
       </div>
 
       {/* Barra de dias da semana */}
-      <div className="weekDays">
+      <div className="weeklyDays">
         {days.map((d, idx) => (
           <button
             key={idx}
@@ -93,7 +96,7 @@ const WeeklyAppointments = () => {
       </div>
 
       {/* Lista de agendamentos */}
-      <div className="weekDaysList">
+      <div className="weeklyDaysList">
         <p>24 de Setembro</p>
         <ul className="dayAgenda">
           {appointments.map((appointment) => (
