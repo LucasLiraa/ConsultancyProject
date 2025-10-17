@@ -1,104 +1,30 @@
-/* Overlay escuro */
 .selectorOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  background: rgba(0,0,0,0.35);
+  z-index: 9999;
 }
 
-/* Modal branco */
-.selectorModal {
+.selectorContainer {
+  width: 420px;
+  max-height: 80vh;
   background: #fff;
-  border-radius: 12px;
-  width: 46%;
-  max-width: 90%;
-  max-height: 80%;
-  padding: 2rem;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  overflow-y: auto;
 }
 
-/* Header */
-.selectorHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
+.selectorHeader { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.searchRow { display:flex; gap:8px; align-items:center; padding:8px; border-radius:8px; background:#f3f4f6; margin-bottom:8px; }
+.searchRow input { border:none; outline:none; background:transparent; flex:1; padding:6px; }
 
-.selectorHeader h2 {
-  margin: 0;
-}
-
-/* Input */
-.searchInput {
-  padding: 0.7rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
-}
-
-/* Lista */
-.patientList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.patientItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fafafa;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  border: 1px solid #eee;
-}
-
-.patientItem span {
-  font-weight: 500;
-}
-
-.vazio {
-  text-align: center;
-  color: #888;
-  font-size: 0.9rem;
-  margin-top: 1rem;
-}
-
-.selectorHeader button{
-  font-size: 28px;
-  cursor: pointer;
-  color: var(--text-color);
-  border: none;
-  background: transparent;
-}
-.selectorHeader button:hover{
-  opacity: 0.6;
-}
-
-.patientItem button{
-  border: none;
-  width: 40%;
-  padding: 12px;
-  font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: var(--body-color);
-  background-color: var(--text-color);
-  transition: var(--tran-04);
-}
-.patientItem button:hover{
-  border: 1px solid var(--text-color);
-  color: var(--text-color);
-  background-color: var(--body-color);
-}
+.patientList { overflow:auto; flex:1; display:flex; flex-direction:column; gap:6px; }
+.patientRow { padding:10px; border-radius:8px; cursor:pointer; }
+.patientRow:hover { background:#eef2ff; color:#3730a3; }
+.emptyList { color:#9ca3af; text-align:center; padding:12px; }
+.btnIcon { background:transparent; border:none; cursor:pointer; }

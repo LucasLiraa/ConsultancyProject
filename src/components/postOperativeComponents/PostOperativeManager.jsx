@@ -1,631 +1,350 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "../../utils/supabaseClient";
+import PostOperativePatientSelector from "./PostOperativePatientSelector";
+import SurgeryInfoForm from "./SurgeryInfoForm";
+import PostOpSidebar from "./PostOpSidebar";
+import WeeklyControlForm from "./WeeklyControlForm";
 import "../styles/postOperativeStyles/postOperativeManager.css";
 
-function PostOperativeManager({ paciente, onVoltar }) {
-  const [activeTab, setActiveTab] = useState("info");
-  const [loading, setLoading] = useState(false);
-  const [loadingRetornos, setLoadingRetornos] = useState(false);
+/**
+ * Gerencia todo o fluxo do pós-operatório:
+ * - lista de pós ativos
+ * - novo pós (selector -> form -> semana 1 criada automaticamente)
+ * - abrir pós existente (calcula próxima semana)
+ */
+const PostOperatoryManager = ({ onVoltar }) => {
+  const [showSelector, setShowSelector] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState(null); // { id, nome }
+  const [selectedPostOp, setSelectedPostOp] = useState(null); // registro pacientes_pos
+  const [weeks, setWeeks] = useState([]); // semanas do pos_operatorio
+  const [selectedWeek, setSelectedWeek] = useState(null); // objeto semana selecionada ou null
+  const [postsList, setPostsList] = useState([]); // lista de pacientes_pos ativos (alta = false)
+  const [loadingPosts, setLoadingPosts] = useState(false);
 
-  const [formData, setFormData] = useState({
-    paciente_id: paciente?.id || null,
-    pos_id: null,
-    nome: paciente?.nome || "",
-    cirurgia: paciente?.cirurgia || "",
-    cirurgiao: "Dr. Paulo Vasconcelos",
-    auxiliar: "",
-    instrumentadoras: [""],
-    tecnologia: "",
-    data_cirurgia: "",
-    data_pos: "",
-    dias_atestado: "",
-    anestesia: "",
-  });
-
-  const [retornos, setRetornos] = useState([]);
-  const [semanaAtual, setSemanaAtual] = useState(1);
-
-  // Atualiza formData ao mudar paciente, mas mantém pos_id se já existir para não perder dados carregados
-  useEffect(() => {
-    if (!paciente) return;
-
-    setFormData((prev) => {
-      if (prev.pos_id) return prev; // mantém dados carregados
-
-      return {
-        paciente_id: paciente.id,
-        pos_id: null,
-        nome: paciente.nome || "",
-        cirurgia: paciente.cirurgia || "",
-        cirurgiao: "Dr. Paulo Vasconcelos",
-        auxiliar: "",
-        instrumentadoras: [""],
-        tecnologia: "",
-        data_cirurgia: "",
-        data_pos: "",
-        dias_atestado: "",
-        anestesia: "",
-      };
-    });
-
-    setRetornos([]);
-    setSemanaAtual(1);
-    setActiveTab("info");
-  }, [paciente]);
-
-  // Busca o registro pacientes_pos para o paciente e atualiza formData
-  useEffect(() => {
-    const fetchPacientePos = async () => {
-      if (!paciente?.id) return;
-
-      try {
-        const { data, error } = await supabase
-          .from("pacientes_pos")
-          .select("*")
-          .eq("paciente_id", paciente.id)
-          .limit(1)
-          .maybeSingle();
-
-        if (error) {
-          console.error("Erro ao buscar pacientes_pos:", error);
-          return;
-        }
-
-        if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            pos_id: data.id,
-            nome: paciente.nome || "",
-            cirurgia: paciente.cirurgia || "",
-            cirurgiao: data.cirurgiao || "Dr. Paulo Vasconcelos",
-            auxiliar: data.auxiliar || "",
-            instrumentadoras: data.instrumentadoras || [""],
-            tecnologia: data.tecnologia || "",
-            data_cirurgia: data.data_cirurgia || "",
-            data_pos: data.data_pos || "",
-            dias_atestado: data.dias_atestado || "",
-            anestesia: data.anestesia || "",
-          }));
-        } else {
-          setFormData((prev) => ({
-            ...prev,
-            pos_id: null,
-            nome: paciente.nome || "",
-            cirurgia: paciente.cirurgia || "",
-          }));
-        }
-      } catch (err) {
-        console.error("Erro ao buscar pacientes_pos:", err);
-      }
-    };
-
-    fetchPacientePos();
-  }, [paciente]);
-
-  // Busca as semanas (retornos) sempre que pos_id mudar
-  useEffect(() => {
-    if (!formData.pos_id) {
-      setRetornos([]);
-      setSemanaAtual(1);
-      return;
+  // Carrega lista de pós ativos (para a coluna / lista interna)
+  const fetchPostsList = async () => {
+    setLoadingPosts(true);
+    const { data, error } = await supabase
+      .from("pacientes_pos")
+      .select("*")
+      .eq("alta", false) // apenas ativos
+      .order("data_pos", { ascending: false, nullsFirst: false });
+    if (error) {
+      console.error("Erro ao carregar lista de pós:", error.message);
+    } else {
+      setPostsList(data || []);
     }
-
-    const fetchRetornos = async () => {
-      setLoadingRetornos(true);
-      try {
-        const { data, error } = await supabase
-          .from("pos_operatorio")
-          .select("*")
-          .eq("paciente_pos_id", formData.pos_id)
-          .order("semana", { ascending: true });
-
-        if (error) throw error;
-
-        setRetornos(data || []);
-
-        if (data && data.length > 0) {
-          setSemanaAtual(data[data.length - 1].semana); // última semana
-        } else {
-          setSemanaAtual(1);
-        }
-      } catch (err) {
-        console.error("Erro ao buscar retornos:", err);
-      } finally {
-        setLoadingRetornos(false);
-      }
-    };
-
-    fetchRetornos();
-  }, [formData.pos_id]);
-
-  // Função para salvar informações iniciais (pacientes_pos)
-  const salvarPaciente = async () => {
-    setLoading(true);
-    try {
-      const today = new Date().toISOString().split("T")[0];
-
-      if (formData.pos_id) {
-        // Atualiza registro existente
-        const { error } = await supabase
-          .from("pacientes_pos")
-          .update({
-            cirurgia: formData.cirurgia,
-            cirurgiao: formData.cirurgiao,
-            auxiliar: formData.auxiliar,
-            instrumentadoras: formData.instrumentadoras,
-            tecnologia: formData.tecnologia,
-            data_cirurgia: formData.data_cirurgia,
-            data_pos: formData.data_pos || today,
-            dias_atestado: formData.dias_atestado,
-            anestesia: formData.anestesia,
-          })
-          .eq("id", formData.pos_id);
-
-        if (error) throw error;
-
-        // Recarrega semanas
-        const { data, error: errRetornos } = await supabase
-          .from("pos_operatorio")
-          .select("*")
-          .eq("paciente_pos_id", formData.pos_id)
-          .order("semana", { ascending: true });
-
-        if (errRetornos) throw errRetornos;
-
-        setRetornos(data || []);
-        if (data && data.length > 0) setSemanaAtual(data[data.length - 1].semana);
-        setActiveTab("retornos");
-      } else {
-        // Insere novo registro pacientes_pos
-        const payload = {
-          paciente_id: formData.paciente_id,
-          nome: formData.nome,
-          cirurgia: formData.cirurgia,
-          cirurgiao: formData.cirurgiao,
-          auxiliar: formData.auxiliar,
-          instrumentadoras: formData.instrumentadoras,
-          tecnologia: formData.tecnologia,
-          data_cirurgia: formData.data_cirurgia,
-          data_pos: formData.data_pos || today,
-          dias_atestado: formData.dias_atestado,
-          anestesia: formData.anestesia,
-        };
-
-        const { data, error } = await supabase
-          .from("pacientes_pos")
-          .insert([payload])
-          .select()
-          .single();
-
-        if (error) throw error;
-
-        const pacientePosId = data.id;
-
-        // Cria semana 1 no pos_operatorio
-        const { data: weekData, error: errWeek } = await supabase
-          .from("pos_operatorio")
-          .insert([
-            {
-              paciente_pos_id: pacientePosId,
-              semana: 1,
-              data_retorno: today,
-            },
-          ])
-          .select()
-          .single();
-
-        if (errWeek) throw errWeek;
-
-        setFormData((prev) => ({ ...prev, pos_id: pacientePosId }));
-        setRetornos([weekData]);
-        setSemanaAtual(1);
-        setActiveTab("retornos");
-      }
-
-      alert("Informações salvas com sucesso!");
-    } catch (err) {
-      console.error("Erro ao salvar paciente:", err);
-      alert("Erro ao salvar paciente. Veja console.");
-    } finally {
-      setLoading(false);
-    }
+    setLoadingPosts(false);
   };
 
-  // Cria próxima semana
-  const criarProximaSemana = async () => {
-    if (!formData.pos_id) return alert("Salve o paciente primeiro.");
+  useEffect(() => {
+    fetchPostsList();
+  }, []);
 
-    const proximaSemana = retornos.length === 0 ? 1 : retornos[retornos.length - 1].semana + 1;
-    try {
-      const { data, error } = await supabase
-        .from("pos_operatorio")
-        .insert([
-          {
-            paciente_pos_id: formData.pos_id,
-            semana: proximaSemana,
-            data_retorno: new Date().toISOString().split("T")[0],
-          },
-        ])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setRetornos((prev) => [...prev, data].sort((a, b) => a.semana - b.semana));
-      setSemanaAtual(proximaSemana);
-    } catch (err) {
-      console.error("Erro ao criar próxima semana:", err);
-      alert("Erro ao criar próxima semana. Veja console.");
-    }
-  };
-
-  // Salvar campo da semana (atualiza no banco e no estado local)
-  const salvarCampoSemana = async (campo, valor) => {
-    const retorno = retornos.find((r) => r.semana === semanaAtual);
-    if (!retorno) return;
-
-    const prevRetornos = [...retornos];
-    const idx = retornos.findIndex((r) => r.id === retorno.id);
-
-    const updated = [...retornos];
-    updated[idx] = { ...updated[idx], [campo]: valor };
-    setRetornos(updated);
-
-    try {
-      const { error } = await supabase
-        .from("pos_operatorio")
-        .update({ [campo]: valor })
-        .eq("id", retorno.id);
-
-      if (error) {
-        setRetornos(prevRetornos);
-        throw error;
+  // Carrega semanas do selectedPostOp
+  useEffect(() => {
+    const fetchWeeks = async () => {
+      if (!selectedPostOp?.id) {
+        setWeeks([]);
+        return;
       }
-    } catch (err) {
-      console.error("Erro ao salvar campo da semana:", err);
-      alert("Erro ao salvar. Veja console.");
-    }
-  };
-
-  // Salvar semana (recarrega dados para garantir sincronia)
-  const salvarSemana = async () => {
-    if (!formData.pos_id) return alert("Salve o paciente antes.");
-    try {
       const { data, error } = await supabase
         .from("pos_operatorio")
         .select("*")
-        .eq("paciente_pos_id", formData.pos_id)
-        .order("semana", { ascending: true });
+        .eq("paciente_pos_id", selectedPostOp.id)
+        .order("created_at", { ascending: true }); // order arbitrary — we'll use semana
+      if (error) {
+        console.error("Erro ao carregar semanas:", error.message);
+        setWeeks([]);
+      } else {
+        // garantir ordenação por número da semana (semana é text -> converte)
+        const sorted = (data || []).sort((a, b) => {
+          const na = Number(a.semana || "0");
+          const nb = Number(b.semana || "0");
+          return na - nb;
+        });
+        setWeeks(sorted);
+      }
+    };
+    fetchWeeks();
+  }, [selectedPostOp]);
 
-      if (error) throw error;
-
-      setRetornos(data || []);
-      if (data && data.length > 0) setSemanaAtual(data[data.length - 1].semana);
-      alert(`Semana ${semanaAtual} salva.`);
-    } catch (err) {
-      console.error("Erro ao salvar semana:", err);
-      alert("Erro ao salvar semana. Veja console.");
-    }
+  // Abre modal seletor
+  const handleOpenSelector = () => {
+    setShowSelector(true);
+    setSelectedPatient(null);
+    setSelectedPostOp(null);
+    setSelectedWeek(null);
   };
 
-  // Dar alta após 6 semanas
-  const darAlta = async () => {
-    if (retornos.length < 6) {
-      alert("Só é possível dar alta após 6 semanas.");
+  // Quando um paciente é selecionado no modal
+  const handlePatientSelected = async (patient) => {
+    console.log("Paciente selecionado (selector):", patient);
+    setSelectedPatient(patient);
+    setShowSelector(false);
+
+    // Verifica se já existe pacientes_pos para esse paciente
+    const { data: postOp, error } = await supabase
+      .from("pacientes_pos")
+      .select("*")
+      .eq("paciente_id", patient.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Erro ao buscar pacientes_pos:", error.message);
       return;
     }
-    try {
-      const { error } = await supabase
-        .from("pacientes_pos")
-        .update({ alta: true })
-        .eq("id", formData.pos_id);
-      if (error) throw error;
-      alert("Paciente recebeu alta!");
-      onVoltar();
-    } catch (err) {
-      console.error("Erro ao dar alta:", err);
+
+    if (postOp) {
+      // já existe: abre gerenciamento e carrega semanas
+      setSelectedPostOp(postOp);
+      // semanas serão carregadas pelo useEffect que observa selectedPostOp
+      // seleciona próxima semana automaticamente:
+      // determinamos a próxima semana com base no fetch de semanas (aguardar fetch)
+      // mas como fetchWeeks é assíncrono podemos calcular aqui também:
+      const { data: weeksData } = await supabase
+        .from("pos_operatorio")
+        .select("semana")
+        .eq("paciente_pos_id", postOp.id);
+
+      const maxWeek = (weeksData || [])
+        .map((w) => Number(w.semana || "0"))
+        .reduce((acc, n) => Math.max(acc, n), 0);
+
+      const nextWeekNum = maxWeek + 1;
+      // criamos um objeto temporário para representar a próxima semana (não salva ainda)
+      setSelectedWeek({ semana: String(nextWeekNum) });
+    } else {
+      // novo pós: abre formulário
+      setSelectedPostOp(null);
+      setSelectedWeek(null);
     }
   };
 
-  // Função para atualizar formData simples
-  const handleChange = (field, value) =>
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  // Quando salva o SurgeryInfoForm (novo pós criado)
+  // Recebe postOpRecord (registro completo recém criado)
+  const handleSurgerySaved = async (postOpRecord) => {
+    console.log("Surgery info saved:", postOpRecord);
+    // Definir selectedPostOp
+    setSelectedPostOp(postOpRecord);
+    // criar automaticamente a semana 1 (com campos vazios) e abrir ela
+    const payload = {
+      paciente_pos_id: postOpRecord.id,
+      paciente_id: postOpRecord.paciente_id,
+      semana: "1",
+      criado_em: new Date().toISOString(),
+    };
+    const { data: weekData, error: wkErr } = await supabase
+      .from("pos_operatorio")
+      .insert([payload])
+      .select()
+      .maybeSingle();
 
-  // Semana atual para renderizar
-  const retornoAtual = retornos.find((r) => r.semana === semanaAtual) || null;
+    if (wkErr) {
+      console.error("Erro ao criar semana 1 automaticamente:", wkErr.message);
+    } else {
+      // recarregar semanas e selecionar semana 1
+      const { data } = await supabase
+        .from("pos_operatorio")
+        .select("*")
+        .eq("paciente_pos_id", postOpRecord.id)
+        .order("semana", { ascending: true });
+      setWeeks(data || []);
+      setSelectedWeek(weekData || { semana: "1" });
+    }
 
-  // Checklist fixo
-  const checklistFields = [
-    { key: "edema", label: "Edema" },
-    { key: "fibrose", label: "Fibrose" },
-    { key: "seroma", label: "Seroma" },
-    { key: "cicatrizacao", label: "Cicatrização" },
-    { key: "drenagem", label: "Drenagem" },
-    { key: "fita_silicone", label: "Fita de silicone" },
-    { key: "oleo_rosa_mosqueta", label: "Óleo de rosa mosqueta" },
-  ];
+    // atualizar lista principal (aparecerá nos ativos)
+    await fetchPostsList();
+  };
 
-    return (
-    <div className="postManagerOverlay">
-      <div className="postManagerContainer">
-        <div className="postManagerHeader">
-          <h2>{formData.nome}</h2>
-          <button onClick={onVoltar}>Voltar</button>
-        </div>
+  // Criar nova semana explicitamente (clicando em "Nova Semana")
+  const handleCreateNextWeek = async () => {
+    if (!selectedPostOp?.id) return;
+    // calcula próxima semana a partir das semanas atuais
+    const maxWeek = (weeks || [])
+      .map((w) => Number(w.semana || "0"))
+      .reduce((acc, n) => Math.max(acc, n), 0);
+    const next = Math.max(1, maxWeek + 1);
+    const payload = {
+      paciente_pos_id: selectedPostOp.id,
+      paciente_id: selectedPostOp.paciente_id,
+      semana: String(next),
+      criado_em: new Date().toISOString(),
+    };
+    const { data, error } = await supabase
+      .from("pos_operatorio")
+      .insert([payload])
+      .select()
+      .maybeSingle();
+    if (error) {
+      console.error("Erro ao criar nova semana:", error.message);
+      return;
+    }
+    // atualizar semanas e selecionar a criada
+    const { data: updated } = await supabase
+      .from("pos_operatorio")
+      .select("*")
+      .eq("paciente_pos_id", selectedPostOp.id)
+      .order("semana", { ascending: true });
+    setWeeks(updated || []);
+    setSelectedWeek(data || { semana: String(next) });
+  };
 
-        <div className="tabs">
-          <button
-            className={activeTab === "info" ? "active" : ""}
-            onClick={() => setActiveTab("info")}
-          >
-            Informações iniciais
+  // Ao marcar alta no WeeklyControlForm (ou no Sidebar), atualizamos pacientes_pos.alta = true
+  const handleSetAlta = async (value) => {
+    if (!selectedPostOp?.id) return;
+    const { error } = await supabase
+      .from("pacientes_pos")
+      .update({ alta: value })
+      .eq("id", selectedPostOp.id);
+    if (error) {
+      console.error("Erro ao atualizar alta:", error.message);
+      return;
+    }
+    // atualizar lista e fechar o pós (sumir da lista principal)
+    await fetchPostsList();
+    setSelectedPostOp(null);
+    setSelectedPatient(null);
+    setSelectedWeek(null);
+  };
+
+  // Ao salvar/atualizar semana pelo WeeklyControlForm, recarrega weeks
+  const handleWeekSaved = async () => {
+    if (!selectedPostOp?.id) return;
+    const { data } = await supabase
+      .from("pos_operatorio")
+      .select("*")
+      .eq("paciente_pos_id", selectedPostOp.id)
+      .order("semana", { ascending: true });
+    setWeeks(data || []);
+  };
+
+  // Seleciona um post da lista lateral (abrir gerenciamento para ele)
+  const handleOpenPostFromList = async (postOp) => {
+    setSelectedPostOp(postOp);
+    setSelectedPatient({ id: postOp.paciente_id, nome: postOp.nome || "" });
+    // carregar semanas e selecionar próxima semana automaticamente
+    const { data: weeksData } = await supabase
+      .from("pos_operatorio")
+      .select("*")
+      .eq("paciente_pos_id", postOp.id);
+    const sorted = (weeksData || []).sort(
+      (a, b) => Number(a.semana || "0") - Number(b.semana || "0")
+    );
+    setWeeks(sorted);
+    const maxWeek = (sorted || []).map((w) => Number(w.semana || "0")).reduce((a,b) => Math.max(a,b), 0);
+    const next = maxWeek + 1;
+    setSelectedWeek({ semana: String(next) });
+  };
+
+  // Render
+  return (
+    <div className="managerRoot">
+      <div className="managerHeader">
+        <h3>Pós-Operatório</h3>
+        <div>
+          <button className="btnPrimary" onClick={handleOpenSelector}>
+            Novo Pós-Operatório
           </button>
-          <button
-            className={activeTab === "retornos" ? "active" : ""}
-            onClick={() => setActiveTab("retornos")}
-            disabled={!formData.pos_id}
-          >
-            Retornos semanais
+          <button className="btnGhost" onClick={() => { if(onVoltar) onVoltar(); }}>
+            Fechar
           </button>
         </div>
+      </div>
 
-        <div className="tabContent">
-          {activeTab === "info" && (
-            <div className="infoTab">
-              <label>Nome</label>
-              <input type="text" value={formData.nome} disabled />
+      <div className="managerBody">
+        {/* coluna esquerda: lista de pós (ativos) */}
+        <aside className="postsList">
+          <div className="postsListHeader">
+            <h4>Em andamento</h4>
+            <button className="btnSmall" onClick={fetchPostsList}>
+              Atualizar
+            </button>
+          </div>
 
-              <label>Cirurgia realizada</label>
-              <input
-                type="text"
-                value={formData.cirurgia}
-                onChange={(e) => handleChange("cirurgia", e.target.value)}
-              />
+          <div className="postsListContent">
+            {loadingPosts ? (
+              <p>Carregando...</p>
+            ) : postsList.length === 0 ? (
+              <p className="muted">Nenhum pós em andamento</p>
+            ) : (
+              postsList.map((p) => (
+                <div
+                  key={p.id}
+                  className={`postItem ${selectedPostOp?.id === p.id ? "active" : ""}`}
+                  onClick={() => handleOpenPostFromList(p)}
+                >
+                  <div className="postTitle">{p.nome || "—"}</div>
+                  <div className="postSub">{p.cirurgia || "—"}</div>
+                </div>
+              ))
+            )}
+          </div>
+        </aside>
 
-              <label>Cirurgião</label>
-              <input
-                type="text"
-                value={formData.cirurgiao}
-                onChange={(e) => handleChange("cirurgiao", e.target.value)}
-              />
-
-              <label>Auxiliar</label>
-              <input
-                type="text"
-                value={formData.auxiliar}
-                onChange={(e) => handleChange("auxiliar", e.target.value)}
-              />
-
-              <label>Instrumentadoras</label>
-              {formData.instrumentadoras.map((inst, idx) => (
-                <input
-                  key={idx}
-                  type="text"
-                  value={inst}
-                  onChange={(e) =>
-                    setFormData((prev) => {
-                      const updated = [...prev.instrumentadoras];
-                      updated[idx] = e.target.value;
-                      return { ...prev, instrumentadoras: updated };
-                    })
-                  }
-                />
-              ))}
-              <button
-                onClick={() =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    instrumentadoras: [...prev.instrumentadoras, ""],
-                  }))
-                }
-              >
-                + Adicionar
-              </button>
-
-              <label>Tecnologia utilizada</label>
-              <select
-                value={formData.tecnologia}
-                onChange={(e) => handleChange("tecnologia", e.target.value)}
-              >
-                <option value="">Selecione.</option>
-                <option value="Tecnologia A">Tecnologia A</option>
-                <option value="Tecnologia B">Tecnologia B</option>
-                <option value="Tecnologia C">Tecnologia C</option>
-              </select>
-
-              <label>Data da cirurgia</label>
-              <input
-                type="date"
-                value={formData.data_cirurgia}
-                onChange={(e) => handleChange("data_cirurgia", e.target.value)}
-              />
-
-              <label>Data do Pós-Operatório</label>
-              <input
-                type="date"
-                value={formData.data_pos}
-                onChange={(e) => handleChange("data_pos", e.target.value)}
-              />
-
-              <label>Dias de atestado</label>
-              <input
-                type="number"
-                value={formData.dias_atestado}
-                onChange={(e) => handleChange("dias_atestado", e.target.value)}
-              />
-
-              <label>Anestesia</label>
-              <select
-                value={formData.anestesia}
-                onChange={(e) => handleChange("anestesia", e.target.value)}
-              >
-                <option value="">Selecione.</option>
-                <option value="Peridural">Peridural</option>
-                <option value="Geral">Geral</option>
-                <option value="Geral com intubação">Geral com intubação</option>
-                <option value="Sedação">Sedação</option>
-                <option value="Bloqueio">Bloqueio</option>
-                <option value="Local">Local</option>
-              </select>
-
-              <button
-                className="primary"
-                onClick={salvarPaciente}
-                disabled={loading}
-              >
-                {loading ? "Salvando..." : "Salvar informações"}
-              </button>
-            </div>
+        {/* painel principal */}
+        <main className="managerMain">
+          {/* Se o selector estiver aberto, renderiza overlay */}
+          {showSelector && (
+            <PostOperativePatientSelector
+              onPatientSelected={handlePatientSelected}
+              onClose={() => setShowSelector(false)}
+            />
           )}
 
-          {activeTab === "retornos" && (
-            <div className="retornosTab">
-              <h3>Retornos semanais</h3>
+          {/* Se existe selectedPatient mas não tem selectedPostOp -> novo pós (preencher info) */}
+          {selectedPatient && !selectedPostOp && !showSelector && (
+            <SurgeryInfoForm
+              patient={selectedPatient}
+              onSaved={handleSurgerySaved}
+              onCancel={() => { setSelectedPatient(null); setShowSelector(true); }}
+            />
+          )}
 
-              {loadingRetornos ? (
-                <p>Carregando dados...</p>
-              ) : retornos.length === 0 ? (
-                <div className="retornoEmpty">
-                  <p>Nenhum retorno criado ainda.</p>
-                  <button className="primary" onClick={criarProximaSemana}>
-                    🚀 Iniciar Pós-operatório
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="semanaNav">
-                    <button
-                      onClick={() => setSemanaAtual((prev) => Math.max(prev - 1, 1))}
-                      disabled={semanaAtual <= 1}
-                    >
-                      ◀ Semana {semanaAtual - 1}
-                    </button>
+          {/* Se existe selectedPostOp -> gerenciar (sidebar + weekly form) */}
+          {selectedPostOp && !showSelector && (
+            <div className="manageArea">
+              <PostOpSidebar
+                postOp={selectedPostOp}
+                weeks={weeks}
+                onSelectWeek={(w) => setSelectedWeek(w)}
+                onNewWeek={handleCreateNextWeek}
+                onAlta={handleSetAlta}
+              />
 
-                    <span className="semanaAtualLabel">Semana {semanaAtual}</span>
-
-                    <button
-                      onClick={() =>
-                        setSemanaAtual((prev) =>
-                          retornos.find((r) => r.semana === prev + 1) ? prev + 1 : prev
-                        )
-                      }
-                      disabled={!retornos.find((r) => r.semana === semanaAtual + 1)}
-                    >
-                      Semana {semanaAtual + 1} ▶
+              <div className="manageContent">
+                {weeks.length === 0 ? (
+                  <div className="placeholderBox">
+                    <p>🕓 Aguardando início do pós-operatório.</p>
+                    <button className="btnPrimary" onClick={handleCreateNextWeek}>
+                      Iniciar Semana 1
                     </button>
                   </div>
-
-                  {retornoAtual ? (
-                    <div className="retornoCard">
-                      <h4>Semana {semanaAtual}</h4>
-
-                      <label>Data do retorno</label>
-                      <input
-                        type="date"
-                        value={retornoAtual.data_retorno || ""}
-                        onChange={(e) =>
-                          salvarCampoSemana("data_retorno", e.target.value)
-                        }
-                      />
-
-                      <div className="checklistContainer">
-                        <h5>Checklist</h5>
-                        {checklistFields.map(({ key, label }) => (
-                          <label key={key}>
-                            <input
-                              type="checkbox"
-                              checked={!!retornoAtual[key]}
-                              onChange={(e) =>
-                                salvarCampoSemana(key, e.target.checked)
-                              }
-                            />
-                            {label}
-                          </label>
-                        ))}
-                      </div>
-
-                                            <label>Curativos informados</label>
-                      <textarea
-                        value={retornoAtual.curativos || ""}
-                        onChange={(e) =>
-                          salvarCampoSemana("curativos", e.target.value)
-                        }
-                      />
-
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={!!retornoAtual.atestado}
-                          onChange={(e) =>
-                            salvarCampoSemana("atestado", e.target.checked)
-                          }
-                        />
-                        Atestado
-                      </label>
-
-                      <label>Liberada para dirigir</label>
-                      <input
-                        type="text"
-                        value={retornoAtual.liberada_dirigir || ""}
-                        onChange={(e) =>
-                          salvarCampoSemana("liberada_dirigir", e.target.value)
-                        }
-                      />
-
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={!!retornoAtual.foto_tirada}
-                          onChange={(e) =>
-                            salvarCampoSemana("foto_tirada", e.target.checked)
-                          }
-                        />
-                        Fotos tiradas?
-                      </label>
-
-                      <label>Outras observações</label>
-                      <textarea
-                        value={retornoAtual.outras_observacoes || ""}
-                        onChange={(e) =>
-                          salvarCampoSemana("outras_observacoes", e.target.value)
-                        }
-                      />
-
-                      <button className="primary" onClick={salvarSemana}>
-                        💾 Salvar Semana {semanaAtual}
-                      </button>
-
-                      {semanaAtual === retornos.length && (
-                        <button
-                          className="primary"
-                          onClick={criarProximaSemana}
-                          style={{ marginTop: "1rem" }}
-                        >
-                          ➕ Iniciar próxima semana
-                        </button>
-                      )}
-
-                      {retornos.length >= 6 && (
-                        <button
-                          className="danger"
-                          onClick={darAlta}
-                          style={{ marginTop: "1rem" }}
-                        >
-                          ✅ Dar alta
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <p>Semana não encontrada.</p>
-                  )}
-                </>
-              )}
+                ) : selectedWeek?.semana ? (
+                  <WeeklyControlForm
+                    postOp={selectedPostOp}
+                    semanaAtual={String(selectedWeek.semana)}
+                    onSaved={handleWeekSaved}
+                  />
+                ) : (
+                  <div className="placeholderBox">
+                    <p>Selecione uma semana à esquerda</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
-        </div>
+
+          {/* se nada selecionado */}
+          {!selectedPatient && !selectedPostOp && !showSelector && (
+            <div className="placeholderBox">
+              <p>Use "Novo Pós-Operatório" para iniciar ou clique em um da lista à esquerda.</p>
+            </div>
+          )}
+        </main>
       </div>
     </div>
   );
-}
+};
 
-export default PostOperativeManager;
+export default PostOperatoryManager;

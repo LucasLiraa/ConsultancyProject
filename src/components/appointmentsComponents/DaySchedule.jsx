@@ -282,10 +282,7 @@ const DaySchedule = ({
               <option value="">Selecione um horário</option>
               {generateTimeSlots('06:00', '20:00', 30).map((time) => <option key={time} value={time}>{time}</option>)}
             </select>
-
-            <label>Descrição:</label>
-            <input value={formData.description || ''} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
-
+      
             {(formData.type === 'Cirurgia' || formData.type === 'Cirúrgia') && (
               <>
                 <label>Procedimento:</label>
@@ -315,6 +312,9 @@ const DaySchedule = ({
                 <input value={formData.protese || ''} onChange={(e) => setFormData({ ...formData, protese: e.target.value })} />
               </>
             )}
+
+            <label>Descrição:</label>
+            <input value={formData.description || ''} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
 
             <div className="formActions">
               <button onClick={handleSubmit}>{isEditing ? 'Salvar' : 'Adicionar'}</button>

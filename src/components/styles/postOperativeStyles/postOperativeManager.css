@@ -1,217 +1,98 @@
-/* Overlay escuro no fundo */
-.postManagerOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-/* Container branco do formulário */
-.postManagerContainer {
-  background: #fff;
-  width: 90%;
-  max-width: 900px;
-  max-height: 90%;
-  overflow-y: auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  padding: 24px;
+.managerRoot {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  position: relative;
+  gap: 12px;
+  padding: 12px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-/* Header com nome e botão voltar */
-.postManagerHeader {
+.managerHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.postManagerHeader h2 {
-  margin: 0;
-  font-size: 1.5rem;
-}
 
-.postManagerHeader button {
-  background: #eee;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.postManagerHeader button:hover {
-  background: #ddd;
-}
-
-/* Tabs */
-.tabs {
-  display: flex;
-  gap: 8px;
-  border-bottom: 2px solid #eee;
-}
-
-.tabs button {
-  background: none;
-  border: none;
-  padding: 10px 16px;
-  cursor: pointer;
-  font-weight: 500;
-  border-bottom: 2px solid transparent;
-  transition: border-color 0.2s ease;
-}
-
-.tabs button.active {
-  border-bottom: 2px solid #007bff;
-  color: #fff;
-}
-
-/* Conteúdo da aba */
-.tabContent {
-  padding: 16px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.tabContent label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.tabContent input,
-.tabContent select,
-.tabContent textarea {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 0.95rem;
-}
-
-.tabContent textarea {
-  min-height: 80px;
-  resize: vertical;
-}
-
-.tabContent button {
-  margin-top: 10px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.tabs button.primary {
-  background: #007bff;
+.btnPrimary {
+  background: #4f46e5;
   color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 8px;
 }
 
-.tabs button.primary:hover {
-  background: #0056b3;
+.btnGhost {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.tabs button.danger {
-  background: #dc3545;
-  color: white;
+.managerBody {
+  display: flex;
+  gap: 12px;
+  height: calc(100% - 64px);
 }
 
-.tabs button.danger:hover {
-  background: #a71d2a;
-}
-
-/* Cards de retorno */
-.retornoCard {
-  border: 1px solid #eee;
+.postsList {
+  width: 260px;
+  background: #fff;
   border-radius: 8px;
   padding: 12px;
-  background: #fafafa;
-  margin-bottom: 10px;
+  border: 1px solid #e6e6f0;
+  overflow-y: auto;
 }
 
-.retornoCard h4 {
-  margin: 0 0 8px 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-/* 🔁 Navegação entre semanas */
-.semanaNav {
+.postsListHeader {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 8px;
 }
 
-.semanaNav button {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  background-color: #f6f6f6;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.semanaNav button:hover:not(:disabled) {
-  background-color: #e8e8e8;
-  transform: translateY(-1px);
-}
-
-.semanaNav button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.semanaAtualLabel {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #333;
-}
-
-/* 🧭 Retorno Card (semana ativa) */
-.retornoCard {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.retornoCard h4 {
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-
-.retornoCard textarea {
-  width: 100%;
-  min-height: 160px;
+.postItem {
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  resize: vertical;
-  font-size: 0.95rem;
-  line-height: 1.4;
+  border: 1px solid transparent;
+  cursor: pointer;
+  margin-bottom: 8px;
 }
 
-/* ➕ Botão de criar próxima semana */
-button.primary {
-  display: inline-block;
-  margin-top: 10px;
+.postItem:hover { background: #f8fafc; }
+.postItem.active { border-color: #c7d2fe; background: #eef2ff; }
+
+.postTitle { font-weight: 600; }
+.postSub { font-size: 0.85rem; color: #6b7280; }
+
+.managerMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 🔴 Botão de alta */
-button.danger {
-  display: inline-block;
-  margin-top: 15px;
+.manageArea {
+  display: flex;
+  gap: 12px;
+  height: 100%;
 }
 
+.manageContent {
+  flex: 1;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px;
+  overflow-y: auto;
+}
 
+.placeholderBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7280;
+}
