@@ -65,7 +65,7 @@ const HomePage = ({ isSidebarOpen }) => {
               <div className="contentHomeDownPos iniciar">
                 <FaHeartbeat className="iconHomeDown" />
                 <h4>Iniciando</h4>
-                <h1>01</h1>
+                <h1>0</h1>
               </div>
 
               <div className="contentHomeDivisorR"></div>
@@ -73,7 +73,7 @@ const HomePage = ({ isSidebarOpen }) => {
               <div className="contentHomeDownPos andamento">
                 <FaClock className="iconHomeDown" />
                 <h4>Em andamento</h4>
-                <h1>02</h1>
+                <h1>0</h1>
               </div>
 
               <div className="contentHomeDivisorR"></div>
@@ -81,7 +81,7 @@ const HomePage = ({ isSidebarOpen }) => {
               <div className="contentHomeDownPos concluindo">
                 <FaCheckCircle className="iconHomeDown" />
                 <h4>Concluindo</h4>
-                <h1>06</h1>
+                <h1>0</h1>
               </div>
             </div>
           </div>
@@ -122,4 +122,5 @@ root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
+
 );
