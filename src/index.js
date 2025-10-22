@@ -18,7 +18,6 @@ import Appointments from './pages/appointments';
 import Budgets from './pages/budgets';
 import Invoices from './pages/invoices';
 import Inventory from './pages/inventory'
-import loginPage from './pages/loginPage'
 
 const HomePage = ({ isSidebarOpen }) => {
   return (

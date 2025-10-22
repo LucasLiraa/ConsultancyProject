@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import "./styles/inventory.css";
 import Topbar from "../components/topbar";
 
+// 💡 IMPORTAR O COMPONENTE DE MANUTENÇÃO
+import MaintenanceMode from "../components/MaintenanceMode"; // Certifique-se que o caminho está correto
+
 function Inventory() {
+  // ATIVAR/DESATIVAR MANUTENÇÃO AQUI 💡
+  // Defina como 'true' para exibir a página de manutenção.
+  const isMaintenanceMode = true; 
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
 
@@ -17,6 +24,17 @@ function Inventory() {
     document.body.style.overflow = 'auto'; // Restaura o scroll da página
   };
 
+  // ---------------------------------------------
+  // RENDERIZAÇÃO CONDICIONAL LIMPA
+  // ---------------------------------------------
+  if (isMaintenanceMode) {
+    // Se estiver em manutenção, retorna APENAS o componente de manutenção
+    return <MaintenanceMode />;
+  }
+
+  // ---------------------------------------------
+  // CONTEÚDO NORMAL DE INVENTÁRIO (Renderizado apenas se isMaintenanceMode for false)
+  // ---------------------------------------------
   return (
     <section className="sectionContracts">
       <Topbar showSearch={true} />
@@ -28,6 +46,7 @@ function Inventory() {
         </header>
 
         <section className="summary">
+          {/* ... Cartões de Resumo ... */}
           <div className="card blue" onClick={() => openModal("Próteses")}>
             <h2 className="title">Próteses</h2>
             <i className="fa-solid fa-arrow-up-right-from-square"></i>
@@ -39,6 +58,7 @@ function Inventory() {
         </section>
 
         <section className="inventory">
+          {/* ... Tabela de Inventário ... */}
           <div className="inventory-header">
             <input type="text" placeholder="Pesquisar..." className="search" />
             <div className="actions">
@@ -88,7 +108,6 @@ function Inventory() {
             <span className="close-btn" onClick={closeModal}>&times;</span>
             <h2>{modalTitle}</h2>
             <div className="modal-body">
-              {/* Conteúdo do modal pode ser adicionado aqui */}
               <p>Conteúdo em branco para {modalTitle}</p>
             </div>
           </div>
