@@ -1,0 +1,111 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+:root {
+  --body-color: #eeeeee;
+  --text-color: #202020;
+  --text-color-hover: #888888;
+  --btn-icon-color: white; /* Cor do ícone dentro do botão */
+
+  --tran-02: all 0.2s ease;
+  --tran-04: all 0.4s ease;
+  --tran-06: all 0.6s ease;
+  --tran-08: all 0.8s ease;
+}
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+}
+
+/* sidebar */
+.sidebar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  position: fixed;
+
+  height: 100%;
+  width: 220px;
+  
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-06);
+}
+.sidebar.closed{
+  width: 80px;
+}
+
+/* sidebar image*/
+.sidebar img{
+  width: 200px;
+  margin-top: 20px;
+}
+.sidebar.closed img{
+  width: 60px;
+}
+
+/* sidebar button */
+.toggle-btn {
+  position: absolute;
+  top: 80px;
+  right: -20px;
+
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
+
+  color: var(--text-color);
+  background-color: var(--body-color);
+  transition: var(--tran-06);
+  box-shadow: 4px 4px 10px 2px rgba(32, 32, 32, 0.521);
+}
+.toggle-btn:hover{
+  cursor: pointer;
+  color: var(--body-color);
+  background-color: var(--text-color);
+}
+
+/* sidebar options */
+.sidebar ul{
+  margin-top: 56px;
+  list-style: none;
+}
+.sidebar li{
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 8px;
+  color: var(--body-color);
+  transition: var(--tran-04);
+}
+.sidebar a{
+  text-decoration: none;
+}
+.sidebar i{
+  margin-right: 8px;
+  transition: var(--tran-06);
+}
+.sidebar.closed i{
+  font-size: 20px;
+}
+.sidebar li:hover{
+  border-radius: 8px;
+  background-color: var(--text-color-hover);
+}
+.sidebar .active li {
+  color: var(--text-color);
+  background-color: var(--body-color);
+}
+
+/* sidebar settings */
+.navSettings{
+  margin-bottom: 50px;
+}
+.navSettings a{
+  color: var(--body-color);
+}
+.navSettings.closed span{
+  display: none;
+}

@@ -1,0 +1,30 @@
+.selectorOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.35);
+  z-index: 9999;
+}
+
+.selectorContainer {
+  width: 420px;
+  max-height: 80vh;
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+}
+
+.selectorHeader { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.searchRow { display:flex; gap:8px; align-items:center; padding:8px; border-radius:8px; background:#f3f4f6; margin-bottom:8px; }
+.searchRow input { border:none; outline:none; background:transparent; flex:1; padding:6px; }
+
+.patientList { overflow:auto; flex:1; display:flex; flex-direction:column; gap:6px; }
+.patientRow { padding:10px; border-radius:8px; cursor:pointer; }
+.patientRow:hover { background:#eef2ff; color:#3730a3; }
+.emptyList { color:#9ca3af; text-align:center; padding:12px; }
+.btnIcon { background:transparent; border:none; cursor:pointer; }

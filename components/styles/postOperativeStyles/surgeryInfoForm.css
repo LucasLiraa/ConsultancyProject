@@ -1,0 +1,21 @@
+.surgeryFormBox {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e6e6f0;
+}
+
+.surgeryHeader { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.surgeryForm { display:flex; flex-direction:column; gap:10px; }
+
+.row, .rowGroup { display:flex; flex-direction:column; gap:6px; }
+.rowGroup { display:flex; gap:12px; }
+.col { flex:1; }
+
+.inputDisabled { background:#f3f4f6; border:1px solid #e6e6f0; padding:8px; border-radius:6px; color:#6b7280; }
+
+.row input, .rowGroup input, textarea {
+  border:1px solid #e6e6f0; padding:8px; border-radius:6px; outline:none;
+}
+
+.actionsRow { display:flex; justify-content:flex-end; gap:8px; margin-top:6px; }
