@@ -37,34 +37,6 @@ body {
   margin-left: 80px; /* Com sidebar fechado */
 }
 
-.home-container {
-  padding: 20px;
-  margin-left: 250px;
-  transition: margin-left 0.3s ease;
-}
-.sidebar-closed {
-  margin-left: 80px;
-}
-
-.containerHome{
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  flex-direction: column;
-
-  width: 90%;
-  margin-top: 20px;
-}
-
-.containerHomeText{
-  width: 100%;
-  margin-bottom: 20px;
-  border-bottom: 1px solid var(--text-color);
-}
-.containerHomeText span{
-  font-weight: bold;
-}
-
 .contentHomeButtons{
   display: flex;
   align-items: center;
@@ -157,16 +129,13 @@ body {
 }
 
 .containerHomeContentDown {
-  height: 30vh;
-  background: #2a2c3b;
+  height: 22vh;
+  margin-top: 16px;
+  background: #1e1f29;
   border-radius: 20px;
   padding: 24px 28px;
   box-shadow: 0 8px 24px rgba(45, 70, 184, 0.334);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.containerHomeContentDown:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(0, 128, 128, 0.12);
 }
 .containerHomeContentDown h3 {
   font-size: 1.1rem;
@@ -187,7 +156,7 @@ body {
 }
 .contentHomeDownPos {
   flex: 1;
-  background: #4a4e62;
+  background: #2d2e39;
   border-radius: 16px;
   padding: 16px;
   transition: all 0.3s ease;
@@ -195,11 +164,12 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: -24px;
 }
 .contentHomeDownPos:hover {
   transform: scale(1.03);
   background: #343149;
-  box-shadow: 0 4px 12px rgba(0, 128, 128, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 11, 128, 0.1);
 }
 .iconHomeDown {
   font-size: 1.4rem;
@@ -261,9 +231,14 @@ body {
   width: 26%;
   margin-top: 27px;
   border-radius: 4px;
+  gap: 200px;
 }
 .containerHomeContentDir h3{
   padding: 20px 0 0 20px;
+  margin: 12px 0 12px 0;
+  font-size: 1.1rem;
+  color: #eeeeee;
+  font-weight: 600;
 }
 
 .contentHomeDir{

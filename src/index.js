@@ -7,6 +7,7 @@ import './index.css';
 import NavSidebar from './components/sidebar';
 import Topbar from './components/topbar';
 import Banners from './components/banners';
+import Profile from './components/profile';
 
 import PacienteDetalhes from './components/patientsComponents/detailsPatients';
 import WeeklyAppointments from './components/appointmentsComponents/WeeklyAppointments'
@@ -18,46 +19,19 @@ import Appointments from './pages/appointments';
 import Budgets from './pages/budgets';
 import Invoices from './pages/invoices';
 import Inventory from './pages/inventory'
+import DashboardGeral from './components/DashboardGeral';
 
 const HomePage = ({ isSidebarOpen }) => {
   return (
     <section className={`sectionHome ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <Topbar showSearch={true} />
-
-      <div className="containerHome">
-        <div className="containerHomeText">
-          <p>Olá <span>Dr Paulo Vasconcelos</span>, o que precisa hoje?</p>
-        </div>
-        <div className="contentHomeButtons">
-          <Link to="/pacientes" className="HomeButtons">
-            <span>Pacientes</span>
-          </Link>
-          <Link to="/contratos" className="HomeButtons">
-            <span>Contratos</span>
-          </Link>
-          <Link to="/agendamentos" className="HomeButtons">
-            <span>Agendamentos</span>
-          </Link>
-          <Link to="/prontuarios" className="HomeButtons">
-            <span>Prontuários</span>
-          </Link>
-          <Link to="/orcamentos" className="HomeButtons">
-            <span>Orçamentos</span>
-          </Link>
-          <Link to="/orcamentos" className="HomeButtons">
-            <span>Faturamento</span>
-          </Link>
-          <Link to="/insumos" className="HomeButtons">
-            <span>Insumos</span>
-          </Link>
-        </div>
-      </div>
-
-      <div className="containerHomeContent">
+  
+      <div className="containerHomeContent" style={{ display: 'flex' }}>
         <div className="containerHomeContentEsq">
+          <Topbar showSearch={true} />
           <div className="containerHomeContentUp">
             <Banners />
           </div>
+
           <div className="containerHomeContentDown">
             <h3>Pacientes em Pós-Operatórios</h3>
 
@@ -84,11 +58,19 @@ const HomePage = ({ isSidebarOpen }) => {
                 <h1>0</h1>
               </div>
             </div>
+          
           </div>
+
+          <DashboardGeral />
+
+
         </div>
+        
         <div className="containerHomeContentDir">
+          <Profile />
           <WeeklyAppointments />
         </div>
+
       </div>
       
     </section>
@@ -122,5 +104,4 @@ root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-
 );
