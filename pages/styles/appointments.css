@@ -1,0 +1,248 @@
+.sectionAppointments{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  
+  transition: var(--tran-04);
+}
+.sidebar.open ~ .sectionAppointments{
+  margin-left: 220px; /* Com sidebar aberto */
+}
+.sidebar.closed ~ .sectionAppointments{
+  margin-left: 80px; /* Com sidebar fechado */
+}
+
+.sectionContainerAppointments{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 10vh;
+}
+
+.containerAppointments{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  width: 90%;
+  margin-top: 16px;
+}
+.containerAppointmentsEsq{
+  display: flex;
+  flex-direction: column;
+  width: 72%;
+}
+.containerAppointmentsDir{
+  display: flex;
+  flex-direction: column;
+  width: 26%;
+}
+
+.contentAppointmentsDir{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 100%;
+  height: 20vh;
+
+  border-radius: 14px;
+  background-image: url("/public/cirurgymap.png"); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.contentAppointmentsDir button{
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--body-color);
+  border: none;
+  background: transparent;
+}
+.contentAppointmentsDetailsDir{
+  width: 100%;
+  height: 60vh;
+  padding: 12px;
+  margin-top: 12px;
+  background-color: #f9fafb;
+}
+
+.bannerheaderAppointments{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  padding: 20px;
+
+  width: 100%;
+  height: 26vh;
+
+  border-radius: 14px;
+  background-image: url("/public/appointments.png"); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.bannerTitleAppointments{
+  width: 40%;
+  color: var(--body-color);
+}
+.bannerButtonAppointments button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  width: 26%;
+  height: 5vh;
+  font-size: 17px;
+  font-weight: bold;
+
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  color: var(--text-color);
+  background-color: var(--body-color);
+  transition: var(--tran-04);
+}
+.bannerButtonAppointments button:hover{
+  color: var(--body-color);
+  background-color: var(--text-color);
+  border: 1px solid var(--body-color);
+}
+
+
+
+
+.surgeryMapButton{
+  width: 80%;
+  height: 6vh;
+
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.surgeryMapButton:hover{
+  color: var(--text-color);
+  background-color: var(--body-color);
+  border: 1px solid var(--text-color);
+}
+
+
+/* ============================= */
+/* DETALHES DO AGENDAMENTO (PAINEL DIREITO) */
+/* ============================= */
+
+.contentAppointmentsDetailsDir {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-top: 20px;
+  width: 100%;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: all 0.3s ease-in-out;
+}
+
+.contentAppointmentsDetailsDir h1 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 16px;
+}
+
+/* Cartão dos detalhes */
+.eventDetailsCard {
+  width: 100%;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.eventDetailsCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.eventDetailsCard h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.eventDetailsCard p {
+  margin: 2px 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.eventDetailsCard strong {
+  color: #111;
+  font-weight: 500;
+}
+
+/* Detalhes da cirurgia */
+.surgeryDetails {
+  margin-top: 10px;
+  border-top: 1px dashed #ddd;
+  padding-top: 10px;
+}
+
+.surgeryDetails p {
+  color: #444;
+}
+
+/* Quando nenhum evento estiver selecionado */
+.noEventSelected {
+  font-size: 0.95rem;
+  color: #888;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.eventActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.eventActions .btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.eventActions .btn.secondary {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.eventActions .btn.secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.eventActions .btn.danger {
+  background-color: #ff4d4f;
+  color: #fff;
+}
+
+.eventActions .btn.danger:hover {
+  background-color: #e04444;
+}
