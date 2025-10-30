@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../utils/supabaseClient";
 
-import '../styles/patientsStyles/detailsPatients.css';
+import "../styles/patientsStyles/detailsPatients.css";
 
-import PatientNotes from '../patientsComponents/notePatients';
+import PatientNotes from "../patientsComponents/notePatients";
 import TabComponent from "../patientsComponents/situationPatients";
-import FormButton from "../patientsComponents/formsPatients";
+import FormPatientModal from "../patientsComponents/FormPatientModal";
+import DocumentsManager from "../patientsComponents/DocumentsManager";
 
 export default function PacienteDetalhes() {
   const { id } = useParams();
@@ -15,9 +16,38 @@ export default function PacienteDetalhes() {
   const [paciente, setPaciente] = useState(null);
   const [secaoAtiva, setSecaoAtiva] = useState("dados");
   const [selectedButton, setSelectedButton] = useState("inicio");
-  const [pacienteEditando, setPacienteEditando] = useState(null); // 🔹 paciente em edição
-  const [pacientes, setPacientes] = useState([]); // 🔹 lista de pacientes (se quiser atualizar depois)
+  const [pacienteEditando, setPacienteEditando] = useState(null);
+  const [modalAberto, setModalAberto] = useState(false);
+  const [pacientes, setPacientes] = useState([]);
 
+  // 🔹 Atualiza lista e paciente após edição
+  const atualizarPacientes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("pacientes")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) throw error;
+
+      // ✅ Se o paciente tiver foto, gerar URL pública corretamente
+      if (data.foto) {
+        const { data: publicUrlData } = supabase
+          .storage
+          .from("pacientes_fotos") // 🪣 nome exato do seu bucket
+          .getPublicUrl(data.foto);
+
+        data.foto = publicUrlData.publicUrl;
+      }
+
+      setPaciente(data);
+    } catch (error) {
+      console.error("Erro ao atualizar paciente:", error.message);
+    }
+  };
+
+  // 🔹 Busca paciente específico ao abrir a página
   useEffect(() => {
     const fetchPaciente = async () => {
       try {
@@ -31,6 +61,16 @@ export default function PacienteDetalhes() {
           console.error("Erro ao buscar paciente:", error?.message);
           navigate("/pacientes");
         } else {
+          // ✅ Gera URL pública da foto se existir
+          if (data.foto) {
+            const { data: publicUrlData } = supabase
+              .storage
+              .from("pacientes_fotos") // 🪣 nome exato do seu bucket
+              .getPublicUrl(data.foto);
+
+            data.foto = publicUrlData.publicUrl;
+          }
+
           setPaciente(data);
         }
       } catch (error) {
@@ -38,49 +78,31 @@ export default function PacienteDetalhes() {
         navigate("/pacientes");
       }
     };
+
     fetchPaciente();
   }, [id, navigate]);
-
-  const handleButtonClick = (value) => {
-    setSelectedButton(value);
-  };
-
-  const getButtonStyle = (value) => {
-    return value === selectedButton ? "selected" : "";
-  };
-
-  // 🔹 função para atualizar lista e recarregar paciente após edição
-  const atualizarPacientes = (novosPacientes = []) => {
-    setPacientes(novosPacientes);
-    if (novosPacientes.length > 0) {
-      const atualizado = novosPacientes.find((p) => p.id === id);
-      if (atualizado) setPaciente(atualizado);
-    }
-  };
 
   if (!paciente) {
     return <p>Carregando...</p>;
   }
 
   const objetivosMap = {
-    "abdomen_definido": "Abdômen mais definido",
-    "reducao_abdomen": "Redução de abdômen",
-    "reducao_flancos": "Redução de flancos",
-    "aumento_gluteos": "Aumento dos glúteos",
-    "reducao_gluteos": "Redução dos glúteos",
-    "reducao_coxas": "Redução da gordura das coxas",
-    "aumento_coxas": "Aumento das coxas (enxertia)",
-    "contorno_harmonico": "Contorno corporal mais harmônico",
-    "lipo_hd": "Lipo HD",
-    "aumento_mamas": "Aumento e firmeza das mamas",
-    "reducao_mamas": "Redução das mamas",
-    "mastopexia": "Mastopexia",
-    "rejuvenescimento": "Rejuvenescimento facial",
-    "cicatriz": "Correção de cicatriz",
-    "outros": "Outros"
+    abdomen_definido: "Abdômen mais definido",
+    reducao_abdomen: "Redução de abdômen",
+    reducao_flancos: "Redução de flancos",
+    aumento_gluteos: "Aumento dos glúteos",
+    reducao_gluteos: "Redução dos glúteos",
+    reducao_coxas: "Redução da gordura das coxas",
+    aumento_coxas: "Aumento das coxas (enxertia)",
+    contorno_harmonico: "Contorno corporal mais harmônico",
+    lipo_hd: "Lipo HD",
+    aumento_mamas: "Aumento e firmeza das mamas",
+    reducao_mamas: "Redução das mamas",
+    mastopexia: "Mastopexia",
+    rejuvenescimento: "Rejuvenescimento facial",
+    cicatriz: "Correção de cicatriz",
+    outros: "Outros",
   };
-
-
 
   return (
     <div className="sectionPatientDetails">
@@ -90,12 +112,23 @@ export default function PacienteDetalhes() {
           <i className="fa-solid fa-hospital-user"></i>
           <h3>{paciente.nome}</h3>
         </div>
-        
+
         <div className="buttonsPatientHeader">
-          <button className="buttonPatientHeader">
-            <i className="fa fa-pen-to-square"></i>Editar paciente
+          <button
+            className="buttonPatientHeader"
+            type="button"
+            onClick={() => {
+              setPacienteEditando(paciente);
+              setModalAberto(true);
+            }}
+          >
+            <i className="fa fa-pen-to-square"></i> Editar paciente
           </button>
-          <button className="buttonPatientHeader" onClick={() => navigate("/pacientes")}>
+          <button
+            className="buttonPatientHeader"
+            type="button"
+            onClick={() => navigate("/pacientes")}
+          >
             <i className="fa fa-chevron-right"></i>
           </button>
         </div>
@@ -111,50 +144,62 @@ export default function PacienteDetalhes() {
               className="paciente-foto"
             />
             <h4>{paciente.nome}</h4>
-            {/* 🔹 botão para abrir formulário de edição */}
-            <button onClick={() => setPacienteEditando(paciente)}>
+
+            <button
+              type="button"
+              onClick={() => {
+                setPacienteEditando(paciente);
+                setModalAberto(true);
+              }}
+            >
               Editar Informações
             </button>
           </div>
-        
+
           <div className="patientGeneralInfoDir">
             {/* Botões de navegação */}
             <div className="tabs">
-              <button 
-                className={secaoAtiva === "dados" ? "active" : ""} 
+              <button
+                className={secaoAtiva === "dados" ? "active" : ""}
                 onClick={() => setSecaoAtiva("dados")}
               >
                 Dados do paciente
               </button>
-              <button 
-                className={secaoAtiva === "biotipo" ? "active" : ""} 
+              <button
+                className={secaoAtiva === "biotipo" ? "active" : ""}
                 onClick={() => setSecaoAtiva("biotipo")}
               >
                 Biotipo Corporal
               </button>
-              <button 
-                className={secaoAtiva === "queixas" ? "active" : ""} 
+              <button
+                className={secaoAtiva === "queixas" ? "active" : ""}
                 onClick={() => setSecaoAtiva("queixas")}
               >
                 Queixas e Objetivos
               </button>
-              <button 
-                className={secaoAtiva === "historico" ? "active" : ""} 
+              <button
+                className={secaoAtiva === "historico" ? "active" : ""}
                 onClick={() => setSecaoAtiva("historico")}
               >
                 Histórico Clínico
               </button>
-              <button 
-                className={secaoAtiva === "expectativas" ? "active" : ""} 
+              <button
+                className={secaoAtiva === "expectativas" ? "active" : ""}
                 onClick={() => setSecaoAtiva("expectativas")}
               >
                 Expectativas
               </button>
-              <button 
-                className={secaoAtiva === "anotacoes" ? "active" : ""} 
+              <button
+                className={secaoAtiva === "anotacoes" ? "active" : ""}
                 onClick={() => setSecaoAtiva("anotacoes")}
               >
                 Anotações Gerais
+              </button>
+              <button
+                className={secaoAtiva === "indicacao" ? "active" : ""}
+                onClick={() => setSecaoAtiva("indicacao")}
+              >
+                Indicação Cirúrgica
               </button>
             </div>
 
@@ -205,20 +250,15 @@ export default function PacienteDetalhes() {
                   {(() => {
                     let objetivos = paciente.objetivos;
 
-                    // Se for string no formato JSON -> parse
                     if (typeof objetivos === "string") {
                       try {
                         objetivos = JSON.parse(objetivos);
                       } catch {
-                        // Se não for JSON válido, tenta quebrar por vírgula
                         objetivos = objetivos.split(",");
                       }
                     }
 
-                    // Se depois disso ainda não for array, força como []
-                    if (!Array.isArray(objetivos)) {
-                      objetivos = [];
-                    }
+                    if (!Array.isArray(objetivos)) objetivos = [];
 
                     return objetivos.length > 0 ? (
                       objetivos.map((item, index) => (
@@ -286,31 +326,37 @@ export default function PacienteDetalhes() {
                 <p><b>Outras anotações:</b> {paciente.outrasAnotacoes}</p>
               </div>
             )}
+
+            {secaoAtiva === "indicacao" && (
+              <div className="sectionPatientInfo">
+                <h4>Indicação Cirúrgica</h4>
+                <p>{paciente.indicacaoCirurgica || "Nenhuma indicação registrada."}</p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Notas */} 
+        {/* Notas */}
         <PatientNotes pacienteId={paciente.id} />
 
         {/* Situação */}
-        <TabComponent />
+        <TabComponent pacienteId={paciente.id}/>
 
         {/* Documentos */}
         <div className="patientDocumentation">
-          <div className="patientDocumentationTitle">
-            <h4>Arquivos/Documentos</h4>
-            <button>Adicionar</button>
-          </div>
+          <DocumentsManager pacienteId={paciente.id} />
         </div>
+      </div>
 
-        {/* 🔹 Formulário de edição */}
-        <FormButton
+      {/* Modal de edição funcional */}
+      {modalAberto && (
+        <FormPatientModal
+          setModalAberto={setModalAberto}
           pacienteEditando={pacienteEditando}
           setPacienteEditando={setPacienteEditando}
-          pacientes={pacientes}
           atualizarPacientes={atualizarPacientes}
         />
-      </div>
+      )}
     </div>
   );
 }

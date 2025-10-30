@@ -1,0 +1,184 @@
+.dashboardContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 24px;
+  margin-top: 12px;
+}
+
+.dashboardCard {
+  background: #1e1f29;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  padding: 20px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  transition: transform 0.2s ease;
+}
+
+
+
+.dashboardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboardHeader h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f1f1f1;
+}
+
+.dashboardHeader select {
+  padding: 8px 10px;
+  width: 50%;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  color: #f1f1f1;
+  background: #2d2e39;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.dashboardContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.chartContainer {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.chartCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.chartCenter h2 {
+  font-size: 1.8rem;
+  margin: 0;
+  color: #f1f1f1;
+}
+
+.chartCenter p {
+  font-size: 0.85rem;
+  color: #f1f1f1;
+}
+
+.chartLegend {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 20px 40px;
+  border-radius: 6px;
+  gap: 10px;
+  background-color: #2d2e39;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.legendItem p {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #f1f1f1;
+}
+
+.legendItem strong {
+  font-size: 0.9rem;
+  color: #f1f1f1;
+}
+
+@media (max-width: 900px) {
+  .dashboardContent {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .chartLegend {
+    width: 100%;
+  }
+}
+
+
+/* ============================= */
+/* Seção de barras de progresso  */
+/* ============================= */
+
+.dashboardProgressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.progressResumo {
+  text-align: center;
+}
+
+.progressResumo h2 {
+  font-size: 1.8rem;
+  color: #f1f1f1;
+  margin: 0;
+}
+
+.progressResumo p {
+  font-size: 0.9rem;
+  color: #f1f1f1;
+}
+
+.progressList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.progressItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progressTop {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #f1f1f1;
+}
+
+.progressBar {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 10px;
+  width: 100%;
+}
+
+.progressFill {
+  height: 10px;
+  border-radius: 10px;
+  transition: width 0.6s ease;
+}
+
+.progressFill {
+  height: 10px;
+  border-radius: 10px;
+  transition: width 0.6s ease;
+}

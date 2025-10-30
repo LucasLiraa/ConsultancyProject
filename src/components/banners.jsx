@@ -40,7 +40,7 @@ const Banners = ({ usuario }) => {
 
       <div className="bannerCardTexts">
         {saudacao()}, Dr. Paulo!{usuario}
-        <p>Tenha um ótimo dia!</p>
+        <p>Visualize os procedimentos de hoje e organize seu dia com facilidade.</p>
       </div>
     </div>
   );

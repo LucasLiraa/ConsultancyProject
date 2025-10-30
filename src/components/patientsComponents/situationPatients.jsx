@@ -1,313 +1,257 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/patientsStyles/situationPatients.css';
+import React, { useEffect, useMemo, useState } from "react";
+import "../styles/patientsStyles/situationPatients.css";
+import { supabase } from "../../utils/supabaseClient";
+import FinanceFormFull from "./situationForms/FinanceFormFull";
+import FinanceFormResumo from "./situationForms/FinanceFormResumo";
 
-const TabComponent = () => {
-  const [activeTab, setActiveTab] = useState('tab1');
+const fmtBRL = (n) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
+    Number(n || 0)
+  );
+const fmtDateBR = (iso) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("pt-BR");
+};
+
+const SituationPatients = ({ pacienteId }) => {
+  const [activeTab, setActiveTab] = useState("geral");
   const [showForm, setShowForm] = useState(false);
-  const [recordType, setRecordType] = useState('');
-  const [editIndex, setEditIndex] = useState(null);
-  const [showDetailsIndex, setShowDetailsIndex] = useState(null);
+  const [registros, setRegistros] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const [registros, setRegistros] = useState(() => {
-    const saved = localStorage.getItem('registros');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [formKind, setFormKind] = useState(null); // "full" | "resumo"
+  const [formMode, setFormMode] = useState("create"); // "create" | "view" | "edit"
+  const [currentRecord, setCurrentRecord] = useState(null);
+
+  const fetchRegistros = async () => {
+    if (!pacienteId) return;
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("registros_pacientes")
+      .select("*")
+      .eq("paciente_id", pacienteId)
+      .order("created_at", { ascending: true });
+    if (!error) setRegistros(data || []);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    localStorage.setItem('registros', JSON.stringify(registros));
-  }, [registros]);
+    fetchRegistros();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pacienteId]);
 
-  const [formData, setFormData] = useState({
-    titulo: '',
-    data: '',
-    valor: '',
-    formaPagamento: '',
-    tipoPagamento: '',
-    descricao: '',
-  });
+  const financeiros = useMemo(
+    () => registros.filter((r) => r.tipo === "financeiro"),
+    [registros]
+  );
+  const initialFinance = useMemo(
+    () => (financeiros.length > 0 ? financeiros[0] : null),
+    [financeiros]
+  );
+  const hasFinance = financeiros.length > 0;
 
   const handleAddRecordClick = () => {
+    setCurrentRecord(null);
+    setFormMode("create");
+    setFormKind(hasFinance ? "resumo" : "full");
     setShowForm(true);
-    setRecordType('');
-    setEditIndex(null);
-    setFormData({
-      titulo: '',
-      data: '',
-      valor: '',
-      formaPagamento: '',
-      tipoPagamento: '',
-      descricao: '',
-    });
+  };
+
+  const openForRecord = (record, mode) => {
+    setCurrentRecord(record);
+    setFormMode(mode);
+    if (record.tipo === "financeiro") {
+      setFormKind(initialFinance && record.id === initialFinance.id ? "full" : "resumo");
+    } else {
+      setFormKind("resumo");
+    }
+    setShowForm(true);
   };
 
   const handleCloseForm = () => {
     setShowForm(false);
-    setRecordType('');
-    setEditIndex(null);
-    setFormData({
-      titulo: '',
-      data: '',
-      valor: '',
-      formaPagamento: '',
-      tipoPagamento: '',
-      descricao: '',
-    });
+    setFormMode("create");
+    setFormKind(null);
+    setCurrentRecord(null);
   };
 
-  const handleEdit = (index) => {
-    const record = registros[index];
-    setFormData({
-      titulo: record.titulo || '',
-      data: record.data || '',
-      valor: record.valor || '',
-      formaPagamento: record.formaPagamento || '',
-      tipoPagamento: record.tipoPagamento || '',
-      descricao: record.descricao || '',
-    });
-    setRecordType(record.tipo);
-    setEditIndex(index);
-    setShowForm(true);
+  const handleDelete = async (record) => {
+    if (!window.confirm("Deseja realmente excluir este registro?")) return;
+    const { error } = await supabase
+      .from("registros_pacientes")
+      .delete()
+      .eq("id", record.id)
+      .eq("paciente_id", pacienteId);
+    if (!error) setRegistros((prev) => prev.filter((r) => r.id !== record.id));
   };
 
-  const handleDelete = (index) => {
-    const updated = [...registros];
-    updated.splice(index, 1);
-    setRegistros(updated);
-  };
+  const filteredRecords =
+    activeTab === "geral"
+      ? registros
+      : registros.filter((r) => r.tipo === activeTab);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newRecord = {
-      tipo: recordType,
-      ...formData,
-    };
-    if (editIndex !== null) {
-      const updated = [...registros];
-      updated[editIndex] = newRecord;
-      setRegistros(updated);
-    } else {
-      setRegistros([...registros, newRecord]);
-    }
+  const handleSaved = async () => {
+    await fetchRegistros();
     handleCloseForm();
   };
 
-  const renderFormFields = () => (
-    <>
-  <span className='contentSituationFormSpan'>
-    <label className='contentSituationFormLabel'>Título</label>
-    <input
-      type="text"
-      value={formData.titulo}
-      onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
-      required
-    />
-  </span>
-  <span className='contentSituationFormSpan'>
-    <label className='contentSituationFormLabel'>Data</label>
-    <input
-      type="date"
-      value={formData.data}
-      onChange={(e) => setFormData({ ...formData, data: e.target.value })}
-      required
-    />
-  </span>
-
-  {recordType === 'financeiro' && (
-    <>
-      <span className='contentSituationFormSpan'>
-        <label className='contentSituationFormLabel'>Valor do pagamento</label>
-        <input
-          type="number"
-          value={formData.valor}
-          onChange={(e) => setFormData({ ...formData, valor: e.target.value })}
-          required
-        />
-      </span>
-      <span className='contentSituationFormSpan'>
-        <label className='contentSituationFormLabel'>Forma de pagamento</label>
-        <select
-          value={formData.formaPagamento}
-          onChange={(e) => setFormData({ ...formData, formaPagamento: e.target.value })}
-          required
-        >
-          <option value="">Selecione</option>
-          <option value="dinheiro">Dinheiro</option>
-          <option value="boleto">Boleto</option>
-          <option value="pix">Pix</option>
-          <option value="debito">Cartão de Débito</option>
-          <option value="credito">Cartão de Crédito</option>
-        </select>
-      </span>
-      <span className='contentSituationFormSpan'>
-        <label className='contentSituationFormLabel'>Tipo do pagamento</label>
-        <select
-          value={formData.tipoPagamento}
-          onChange={(e) => setFormData({ ...formData, tipoPagamento: e.target.value })}
-          required
-        >
-          <option value="">Selecione</option>
-          <option value="hospital">Hospital</option>
-          <option value="honorario">Honorário</option>
-          <option value="protese">Prótese</option>
-          <option value="outros">Outros</option>
-        </select>
-      </span>
-    </>
-    )}
-    <span className='contentSituationFormSpan'>
-      <label className='contentSituationFormLabel'>Descrição</label>
-      <textarea
-        value={formData.descricao}
-        onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-      />
-    </span>
-    <span className='contentSituationFormSpan'>
-      <label className='contentSituationFormLabel'>Nota Fiscal?</label>
-      <select
-        value={formData.temNotaFiscal}
-        onChange={(e) => setFormData({ ...formData, temNotaFiscal: e.target.value })}
-        required
-      >
-        <option value="">Selecione</option>
-        <option value="sim">Sim</option>
-        <option value="nao">Não</option>
-      </select>
-    </span>
-    {formData.temNotaFiscal === 'sim' && (
-      <span className='contentSituationFormSpan'>
-        <label className='contentSituationFormLabel'>Nota Fiscal</label>
-        <input
-          type="file"
-          accept=".pdf,.jpg,.jpeg,.png"
-          onChange={(e) => setFormData({ ...formData, comprovantePagamento: e.target.files[0] })}
-        />
-      </span>
-    )}
-    <span className='contentSituationFormSpan'>
-      <label className='contentSituationFormLabel'>Comprovante de Pagamento</label>
-      <input
-        type="file"
-        accept=".pdf,.jpg,.jpeg,.png"
-        onChange={(e) => setFormData({ ...formData, comprovantePagamento: e.target.files[0] })}
-      />
-    </span>
-  </>
-
-  );
-
-  const renderContent = () => {
-    const filteredRecords = activeTab === 'tab1'
-      ? registros
-      : registros.filter(r => r.tipo === (activeTab === 'tab2' ? 'financeiro' : 'cirurgico'));
-
-    return (
-      <div className='contentSituation'>
-        <div className='contentSituationRegisters listWrapper'>
-          {filteredRecords.map((r, i) => (
-            <div key={i} className='recordItem'>
-              <div className='recordMain'>
-                <div className='recordHeader'>
-                  <div className='recordHeaderLeft'>
-                    <h3>{r.titulo}</h3>
-                    <p>
-                      {new Date(r.data).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric'
-                      })}
-                    </p>
-                    {r.tipo === 'financeiro' && <span>R$ {r.valor}</span>}
-                  </div>
-                  <div>
-                    <button onClick={() => setShowDetailsIndex(i)}>Ver mais</button>
-                  </div>
-                </div>
-                {showDetailsIndex === i && (
-                  <div className='recordDetails'>
-                    <div className="recordDetailsTop">
-                      <p><strong>Descrição:</strong> {r.descricao}</p>
-                      {r.tipo === 'financeiro' && (
-                        <>
-                          <p><strong>Forma:</strong> {r.formaPagamento}</p>
-                          <p><strong>Tipo:</strong> {r.tipoPagamento}</p>
-                        </>
-                      )}
-                    </div>
-                    <div>
-                      <button onClick={() => handleEdit(i)}>Editar</button>
-                      <button onClick={() => handleDelete(i)}>Excluir</button>
-                      <button onClick={() => setShowDetailsIndex(null)}>Fechar</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <button className='contentSituationButton' onClick={handleAddRecordClick}>
-          Adicionar registro
-        </button>
-
-        {showForm && (
-          <div className="containerSituationForm">
-            <div className="contentSituationFormButtons">
-              <div className="contentSituationFormType">
-                <button
-                  className={recordType === 'financeiro' ? 'active' : ''}
-                  onClick={() => setRecordType('financeiro')}
-                  type="button"
-                >
-                  Registro Financeiro
-                </button>
-                <div>|</div>
-                <button
-                  className={recordType === 'cirurgico' ? 'active' : ''}
-                  onClick={() => setRecordType('cirurgico')}
-                  type="button"
-                >
-                  Registro Cirúrgico
-                </button>
-              </div>
-
-              {recordType && (
-                <form className="recordForm" onSubmit={handleSubmit}>
-                  <div className="contentSituationForm">
-                    {renderFormFields()}
-                  </div>
-
-                  <div className="formActions">
-                    <button type="submit">Salvar</button>
-                    <button type="button" onClick={handleCloseForm}>Cancelar</button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
-    <div className='patientSituation'>
-      <div className='containerSituationOptions'>
-        <button className={activeTab === 'tab1' ? 'selected' : ''} onClick={() => setActiveTab('tab1')}>
+    <div className="patientSituation">
+      <div className="containerSituationOptions">
+        <button
+          className={activeTab === "geral" ? "selected" : ""}
+          onClick={() => setActiveTab("geral")}
+        >
           Geral
         </button>
-        <button className={activeTab === 'tab2' ? 'selected' : ''} onClick={() => setActiveTab('tab2')}>
+        <button
+          className={activeTab === "financeiro" ? "selected" : ""}
+          onClick={() => setActiveTab("financeiro")}
+        >
           Financeiro
         </button>
-        <button className={activeTab === 'tab3' ? 'selected' : ''} onClick={() => setActiveTab('tab3')}>
+        <button
+          className={activeTab === "cirurgico" ? "selected" : ""}
+          onClick={() => setActiveTab("cirurgico")}
+        >
           Cirúrgico
         </button>
       </div>
 
-      <div className='containerSituation'>
-        {renderContent()}
+      <div className="containerSituation">
+        <div className="contentSituation">
+          <div className="contentSituationRegisters listWrapper">
+            {loading ? (
+              <p>Carregando registros...</p>
+            ) : filteredRecords.length === 0 ? (
+              <p>Nenhum registro encontrado.</p>
+            ) : (
+              filteredRecords.map((r) => (
+                <div key={r.id} className="recordItem">
+                  <div className="recordHeader">
+                    <div className="recordHeaderLeft">
+                      <h3>{r.tipo?.toUpperCase()}</h3>
+                      <p>{r.descricao_pagamento || r.observacoes || "—"}</p>
+
+                      <div style={{ fontSize: 12, opacity: 0.85, lineHeight: 1.5 }}>
+                        {typeof r.valor_contrato === "number" && (
+                          <div>Contrato: {fmtBRL(r.valor_contrato)}</div>
+                        )}
+                        {typeof r.valor_honorario === "number" && (
+                          <div>Honorário: {fmtBRL(r.valor_honorario)}</div>
+                        )}
+                        {typeof r.valor_hospital === "number" && (
+                          <div>
+                            Hospital: {fmtBRL(r.valor_hospital)}{" "}
+                            {r.responsavel_pagamento_hospital && (
+                              <em>• {r.responsavel_pagamento_hospital}</em>
+                            )}
+                          </div>
+                        )}
+                        {typeof r.valor_anestesista === "number" && (
+                          <div>
+                            Anestesista: {fmtBRL(r.valor_anestesista)}{" "}
+                            {r.responsavel_pagamento_anestesista && (
+                              <em>• {r.responsavel_pagamento_anestesista}</em>
+                            )}
+                          </div>
+                        )}
+                        {r.outros_pagamentos_json && Array.isArray(r.outros_pagamentos_json) && r.outros_pagamentos_json.length > 0 && (
+                          <div style={{ marginTop: 4 }}>
+                            Outros:
+                            <ul style={{ margin: "4px 0 0 16px" }}>
+                              {r.outros_pagamentos_json.map((o, idx) => (
+                                <li key={idx}>
+                                  {o.titulo || "Outro"}: {fmtBRL(o.valor)}{" "}
+                                  {o.responsavel && <em>• {o.responsavel}</em>}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {typeof r.valor_pago_agora === "number" && r.valor_pago_agora > 0 && (
+                          <div>Pago neste registro: {fmtBRL(r.valor_pago_agora)}</div>
+                        )}
+                        {typeof r.valor_recebido === "number" && (
+                          <div>Recebido acumulado: {fmtBRL(r.valor_recebido)}</div>
+                        )}
+                        {typeof r.valor_a_receber === "number" && (
+                          <div>A receber: {fmtBRL(r.valor_a_receber)}</div>
+                        )}
+                        {r.data_pagamento && <div>Data pagamento: {fmtDateBR(r.data_pagamento)}</div>}
+                      </div>
+                    </div>
+
+                    <div>
+                      <button onClick={() => openForRecord(r, "view")}>Visualizar</button>
+                      <button onClick={() => openForRecord(r, "edit")} style={{ marginLeft: 8 }}>
+                        Editar
+                      </button>
+                      <button onClick={() => handleDelete(r)} style={{ marginLeft: 8 }}>
+                        Excluir
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="recordDetails">
+                    <div>
+                      {r.nota_fiscal_url && (
+                        <>
+                          <a href={r.nota_fiscal_url} target="_blank" rel="noreferrer">
+                            Nota fiscal
+                          </a>
+                          <br />
+                        </>
+                      )}
+                      {r.comprovante_url && (
+                        <a href={r.comprovante_url} target="_blank" rel="noreferrer">
+                          Comprovante
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          <button className="contentSituationButton" onClick={handleAddRecordClick}>
+            Adicionar registro
+          </button>
+
+          {showForm && (
+            <div className="containerSituationForm">
+              <div className="contentSituationFormButtons" role="dialog" aria-modal="true">
+                <div className="contentSituationForm">
+                  {formKind === "full" ? (
+                    <FinanceFormFull
+                      pacienteId={pacienteId}
+                      mode={formMode}
+                      record={currentRecord}
+                      onCancel={handleCloseForm}
+                      onSaved={handleSaved}
+                    />
+                  ) : (
+                    <FinanceFormResumo
+                      pacienteId={pacienteId}
+                      mode={formMode}
+                      record={currentRecord}
+                      initialFinance={initialFinance}
+                      registros={registros}
+                      onCancel={handleCloseForm}
+                      onSaved={handleSaved}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default TabComponent;
+export default SituationPatients;

@@ -319,3 +319,44 @@
   font-size: 16px;
   cursor: pointer;
 }
+
+/* Container da imagem */
+.paciente-foto {
+  width: 140px;              /* tamanho fixo para manter proporção */
+  height: 140px;
+  border-radius: 50%;        /* deixa a foto redonda */
+  object-fit: cover;         /* corta a imagem proporcionalmente sem distorcer */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border: 3px solid #fff;
+  background-color: #f0f0f0;
+  margin-bottom: 10px;
+}
+
+/* Campo de upload da foto no modal */
+input[type="file"]#foto {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 8px;
+  background-color: #fafafa;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+input[type="file"]#foto:hover {
+  background-color: #f3f3f3;
+}
+
+/* Pré-visualização da imagem no modal */
+.preview-foto {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin-top: 10px;
+  border: 2px solid #ddd;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+}
