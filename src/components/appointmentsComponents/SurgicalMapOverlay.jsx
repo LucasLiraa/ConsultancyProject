@@ -169,7 +169,7 @@ const SurgicalMapOverlay = ({ onClose }) => {
               <div key={date} className="surgeryDayGroup">
                 {!selectedDay && (
                   <h4>
-                    {new Date(date).toLocaleDateString("pt-BR", {
+                    {new Date(date + "T12:00:00").toLocaleDateString("pt-BR", {
                       weekday: "long",
                       day: "2-digit",
                       month: "long",
@@ -280,5 +280,6 @@ const SurgicalMapOverlay = ({ onClose }) => {
     </div>
   );
 };
+
 
 export default SurgicalMapOverlay;
