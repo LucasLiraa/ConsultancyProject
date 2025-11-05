@@ -17,10 +17,9 @@ import Contracts from './pages/contracts';
 import PostOperative from './pages/postOperative';
 import Appointments from './pages/appointments';
 import Budgets from './pages/budgets';
-import Invoices from './pages/invoices';
+import Financial from './pages/financial';
 import Inventory from './pages/inventory'
 import DashboardGeral from './components/DashboardGeral';
-
 const HomePage = ({ isSidebarOpen }) => {
   return (
     <section className={`sectionHome ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
@@ -91,7 +90,7 @@ const App = () => {
         <Route path="/prontuarios" element={<PostOperative />} />
         <Route path="/agendamentos" element={<Appointments />} />
         <Route path="/orcamentos" element={<Budgets />} />
-        <Route path="/faturamentos" element={<Invoices />} />
+        <Route path="/faturamentos" element={<Financial />} />
         <Route path="/insumos" element={<Inventory />} />
         <Route path="/login" element={<loginPage />} />
       </Routes>
