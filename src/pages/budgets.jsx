@@ -35,7 +35,6 @@ const OrcamentoBuilder = () => {
 
   return (
     <section className="sectionPatients">
-      <Topbar showSearch={true} />
 
       <div className="orcamentoBuilderContainer">
         <div className="orcamentoSidebar">

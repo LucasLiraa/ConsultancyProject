@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./styles/patients.css";
 
-import Topbar from "../components/topbar";
-import FormButton from "../components/patientsComponents/formsPatients";
 import ListaPacientes from "../components/patientsComponents/listPatients";
 
 import { supabase } from "../utils/supabaseClient";
@@ -68,21 +66,12 @@ function Patients() {
 
   return (
     <section className="sectionPatients">
-      <Topbar showSearch={true} />
 
       <div className="containerPatients">
         <ListaPacientes
           pacientes={pacientes}
           setPacientes={setPacientes}
           setPacienteEditando={setPacienteEditando}
-        />
-
-        <FormButton
-          pacienteEditando={pacienteEditando}
-          setPacienteEditando={setPacienteEditando}
-          pacientes={pacientes}
-          atualizarPacientes={atualizarPacientes}
-          adicionarPaciente={adicionarPaciente}
         />
       </div>
     </section>
