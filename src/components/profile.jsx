@@ -30,8 +30,8 @@ function ProfileUser() {
         <div className="profileSubCardMain">
             <div className="profileSubCard">
                 <h5>Próxima Cirurgia</h5>
-                <p>Julia Santos</p>
-                <p>14:30 - Rinoplastia</p>
+                <p>Wermercone Pereira (Meo)</p>
+                <p>05/11  - Mastopexia com prótese</p>
             </div>
 
             {/* Card status */}

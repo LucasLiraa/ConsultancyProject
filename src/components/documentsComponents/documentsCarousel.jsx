@@ -50,8 +50,21 @@ function DocumentsCarousel({ items }) {
             <div className="overlay" />
             <p className="documentsCarouselTitle">{item.title}</p>
             <div className="buttonGroup">
-                <button className="fillButton">Preencher</button>
-                <button className="viewButton">Visualizar</button>
+              
+                <button
+                  className="viewButton"
+                  onClick={() => window.open("https://forms.gle/Hv1uYRgwJUtV2n8L9", "_blank")}
+                >
+                  Preencher
+                </button>
+                <a
+                  href="https://drive.google.com/file/d/1D_bUpEdelNriRVATq_E-cIm9E2VMnD4Q/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <button className="fillButton">Visualizar</button>
+                </a>
+
             </div>
           </div>
         ))}

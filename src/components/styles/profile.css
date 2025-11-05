@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 12px;
-  height: 28vh;
+  height: 32vh;
   align-self: flex-start; 
   
   margin-bottom: 26px;
@@ -69,6 +69,7 @@
   justify-content: space-between;
   flex-direction: row;
   width: 100%;
+
   
   padding: 8px;
   border-radius: 12px;

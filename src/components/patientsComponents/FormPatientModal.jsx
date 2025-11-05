@@ -31,7 +31,7 @@ export default function FormPatientModal({
     quadril: "",
     coxa: "",
     panturrilha: "",
-    objetivos: [], // <-- array
+    objetivos: "", 
     outrosTexto: "",
     realizouCirurgia: "",
     descricaoCirurgia: "",
@@ -544,8 +544,6 @@ export default function FormPatientModal({
             <textarea name="qualidadeCicatriz" value={formData.qualidadeCicatriz} onChange={handleChange} />
             <label>Convênio:</label>
             <textarea name="convenio" value={formData.convenio} onChange={handleChange} />
-            <label>Indicação Cirúrgica:</label>
-            <textarea name="indicacaoCirurgica" value={formData.indicacaoCirurgica} onChange={handleChange} />
             <label>Outras anotações</label>
             <textarea name="outrasAnotacoes" value={formData.outrasAnotacoes} onChange={handleChange} />
           </div>

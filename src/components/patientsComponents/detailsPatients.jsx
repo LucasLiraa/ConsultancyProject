@@ -13,7 +13,7 @@ export default function PacienteDetalhes() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [paciente, setPaciente] = useState(null);
+  const [paciente, setPaciente] = useState({}); // estado inicial seguro
   const [secaoAtiva, setSecaoAtiva] = useState("dados");
   const [selectedButton, setSelectedButton] = useState("inicio");
   const [pacienteEditando, setPacienteEditando] = useState(null);
@@ -31,14 +31,18 @@ export default function PacienteDetalhes() {
 
       if (error) throw error;
 
-      // ✅ Se o paciente tiver foto, gerar URL pública corretamente
+      // ✅ Se o paciente tiver foto, garantir URL pública e evitar cache
       if (data.foto) {
-        const { data: publicUrlData } = supabase
-          .storage
-          .from("pacientes_fotos") // 🪣 nome exato do seu bucket
-          .getPublicUrl(data.foto);
-
-        data.foto = publicUrlData.publicUrl;
+        if (!/^https?:\/\//.test(data.foto)) {
+          const { data: publicUrlData } = supabase
+            .storage
+            .from("pacientes_fotos") // 🪣 nome exato do seu bucket
+            .getPublicUrl(data.foto);
+          data.foto = `${publicUrlData.publicUrl}?t=${Date.now()}`;
+        } else {
+          // força refresh do cache quando o registro é editado
+          data.foto = `${data.foto}?t=${Date.now()}`;
+        }
       }
 
       setPaciente(data);
@@ -61,14 +65,17 @@ export default function PacienteDetalhes() {
           console.error("Erro ao buscar paciente:", error?.message);
           navigate("/pacientes");
         } else {
-          // ✅ Gera URL pública da foto se existir
+          // ✅ Gera URL pública da foto se existir (com cache-busting)
           if (data.foto) {
-            const { data: publicUrlData } = supabase
-              .storage
-              .from("pacientes_fotos") // 🪣 nome exato do seu bucket
-              .getPublicUrl(data.foto);
-
-            data.foto = publicUrlData.publicUrl;
+            if (!/^https?:\/\//.test(data.foto)) {
+              const { data: publicUrlData } = supabase
+                .storage
+                .from("pacientes_fotos")
+                .getPublicUrl(data.foto);
+              data.foto = `${publicUrlData.publicUrl}?t=${Date.now()}`;
+            } else {
+              data.foto = `${data.foto}?t=${Date.now()}`;
+            }
           }
 
           setPaciente(data);
@@ -81,11 +88,33 @@ export default function PacienteDetalhes() {
 
     fetchPaciente();
   }, [id, navigate]);
+  // 🔹 Normaliza o campo de indicação cirúrgica assim que o paciente é carregado
+  useEffect(() => {
+    if (paciente?.indicacaocirurgica) {
+      try {
+        const parsed =
+          typeof paciente.indicacaocirurgica === "string"
+            ? JSON.parse(paciente.indicacaocirurgica)
+            : paciente.indicacaocirurgica;
 
+        // ✅ Atualiza o estado do paciente com a chave correta
+        setPaciente((prev) => ({
+          ...prev,
+          indicacaoCirurgica: parsed || {},
+        }));
+      } catch {
+        setPaciente((prev) => ({
+          ...prev,
+          indicacaoCirurgica: {},
+        }));
+      }
+    }
+  }, [paciente?.indicacaocirurgica]);
+  // 🔹 Enquanto carrega o paciente
   if (!paciente) {
     return <p>Carregando...</p>;
   }
-
+  // 🔹 Mapa de objetivos cirúrgicos
   const objetivosMap = {
     abdomen_definido: "Abdômen mais definido",
     reducao_abdomen: "Redução de abdômen",
@@ -139,11 +168,11 @@ export default function PacienteDetalhes() {
         <div className="patientGeneralInfo">
           <div className="patientGeneralInfoEsq">
             <img
-              src={paciente.foto || "/profile-icon.jpg"}
-              alt={paciente.nome}
+              src={paciente?.foto || "/profile-icon.jpg"}
+              alt={paciente?.nome || "Paciente"}
               className="paciente-foto"
             />
-            <h4>{paciente.nome}</h4>
+            <h4>{paciente?.nome || "Carregando..."}</h4>
 
             <button
               type="button"
@@ -224,14 +253,13 @@ export default function PacienteDetalhes() {
                 <p><b>Telefone:</b> {paciente.telefone}</p>
                 <p><b>Email:</b> {paciente.email}</p>
                 <p><b>Profissão:</b> {paciente.profissao}</p>
-                <p><b>Estado Civil:</b> {paciente.estadoCivil}</p>
               </div>
             )}
 
             {secaoAtiva === "biotipo" && (
               <div className="sectionPatientInfo">
                 <h4>Biotipo Corporal e Medidas</h4>
-                <p><b>Está acima do peso:</b> {paciente.acimaPes}</p>
+                <p><b>Está acima do peso:</b> {paciente.acimaPeso}</p>
                 <p><b>Gordura visceral:</b> {paciente.gorduraVisceral}</p>
                 <p><b>Formato corporal percebido:</b> {paciente.formatoCorporal}</p>
                 <h4>Medidas</h4>
@@ -247,28 +275,34 @@ export default function PacienteDetalhes() {
               <div className="sectionPatientInfo">
                 <h4>Queixas e Objetivos Cirúrgicos</h4>
                 <ul>
-                  {(() => {
-                    let objetivos = paciente.objetivos;
+                {(() => {
+                  let objetivos = paciente.objetivos;
 
-                    if (typeof objetivos === "string") {
-                      try {
-                        objetivos = JSON.parse(objetivos);
-                      } catch {
-                        objetivos = objetivos.split(",");
-                      }
-                    }
+                  if (!objetivos) return <li>Nenhum objetivo informado</li>;
 
-                    if (!Array.isArray(objetivos)) objetivos = [];
+                  // 🔹 Corrige JSON duplamente serializado
+                  try {
+                    while (typeof objetivos === "string" && objetivos.includes("["))
+                      objetivos = JSON.parse(objetivos);
+                  } catch {
+                    objetivos = objetivos.split(",").map((o) => o.trim());
+                  }
 
-                    return objetivos.length > 0 ? (
-                      objetivos.map((item, index) => (
-                        <li key={index}>{objetivosMap[item.trim()] || item.trim()}</li>
-                      ))
-                    ) : (
-                      <li>Nenhum objetivo informado</li>
-                    );
-                  })()}
-                </ul>
+                  // 🔹 Remove falsos valores e arrays vazios
+                  if (!Array.isArray(objetivos) || objetivos.length === 0)
+                    return <li>Nenhum objetivo informado</li>;
+
+                  const validos = objetivos.filter(
+                    (o) => o && o !== "null" && o !== "undefined" && o.trim() !== ""
+                  );
+
+                  if (validos.length === 0) return <li>Nenhum objetivo informado</li>;
+
+                  return validos.map((item, index) => (
+                    <li key={index}>{objetivosMap[item.trim()] || item.trim()}</li>
+                  ));
+                })()}
+              </ul>
 
                 {paciente.outrosTexto && (
                   <>
@@ -284,26 +318,55 @@ export default function PacienteDetalhes() {
             {secaoAtiva === "historico" && (
               <div className="sectionPatientInfo">
                 <h4>Histórico Clínico e Cirúrgico</h4>
+
                 <p><b>Já realizou alguma cirurgia?</b> {paciente.realizouCirurgia}</p>
-                <p><b>Qual cirurgia?</b> {paciente.descricaoCirurgia}</p>
-                <p><b>Houve complicações?</b> {paciente.complicacoes}</p>
+                {paciente.realizouCirurgia === "Sim" && (
+                  <>
+                    <p><b>Qual cirurgia?</b> {paciente.descricaoCirurgia}</p>
+                    <p><b>Houve complicações?</b> {paciente.complicacoes}</p>
+                  </>
+                )}
+
                 <p><b>Cicatrização anterior foi boa?</b> {paciente.cicatrizacao}</p>
                 <p><b>Queloide?</b> {paciente.queloide}</p>
+
                 <p><b>Possui alergias?</b> {paciente.alergias}</p>
-                <p><b>Quais Alergias?</b> {paciente.descricaoAlergia}</p>
-                <p><b>Quais medicamentos?</b> {paciente.medicamentos}</p>
-                <p><b>Usa medicamento controlado?</b> {paciente.descricaoMedicamentos}</p>
-                <p><b>Quais medicamentos?</b> {paciente.medicamentosControlados}</p>
+                {paciente.alergias === "Sim" && (
+                  <p><b>Quais alergias?</b> {paciente.descricaoAlergia}</p>
+                )}
+
+                <p><b>Usa medicamentos?</b> {paciente.medicamentos}</p>
+                {paciente.medicamentos === "Sim" && (
+                  <p><b>Quais medicamentos?</b> {paciente.descricaoMedicamentos}</p>
+                )}
+
+                <p><b>Usa medicamento controlado?</b> {paciente.medicamentosControlados}</p>
+                {paciente.medicamentosControlados === "Sim" && (
+                  <p><b>Quais medicamentos controlados?</b> {paciente.descricaoMedicamentosControlados}</p>
+                )}
+
                 <p><b>Condições médicas atuais:</b> {paciente.condicoesMedicas}</p>
+
                 <p><b>Fuma?</b> {paciente.fumante}</p>
-                <p><b>Quantos por dia?</b> {paciente.fumanteQuantidade}</p>
+                {paciente.fumante === "Sim" && (
+                  <p><b>Quantos por dia?</b> {paciente.fumanteQuantidade}</p>
+                )}
+
                 <p><b>Já fumou?</b> {paciente.jaFumou}</p>
+
                 <p><b>Usa substâncias recreativas?</b> {paciente.substanciasRecreativas}</p>
-                <p><b>Quais substâncias?</b> {paciente.descricaoSubstancias}</p>
+                {paciente.substanciasRecreativas === "Sim" && (
+                  <p><b>Quais substâncias?</b> {paciente.descricaoSubstancias}</p>
+                )}
+
                 <p><b>Possui assimetria mamária?</b> {paciente.assimetriaMamaria}</p>
                 <p><b>Alterações posturais?</b> {paciente.alteracoesPosturais}</p>
+                {paciente.alteracoesPosturais === "Sim" && (
+                  <p><b>Descrição:</b> {paciente.descricaoPosturais}</p>
+                )}
               </div>
             )}
+
 
             {secaoAtiva === "expectativas" && (
               <div className="sectionPatientInfo">
@@ -322,15 +385,91 @@ export default function PacienteDetalhes() {
                 <p><b>Histórico ginecológico:</b> {paciente.historicoGinecologico}</p>
                 <p><b>Qualidade da cicatriz:</b> {paciente.qualidadeCicatriz}</p>
                 <p><b>Convênio:</b> {paciente.convenio}</p>
-                <p><b>Indicação Cirúrgica:</b> {paciente.indicacaoCirurgica}</p>
                 <p><b>Outras anotações:</b> {paciente.outrasAnotacoes}</p>
               </div>
             )}
 
             {secaoAtiva === "indicacao" && (
               <div className="sectionPatientInfo">
-                <h4>Indicação Cirúrgica</h4>
-                <p>{paciente.indicacaoCirurgica || "Nenhuma indicação registrada."}</p>
+                <h3><i className="fa-solid fa-user-doctor"></i> Indicação Cirúrgica</h3>
+
+                {paciente.indicacaoCirurgica ? (
+                  <>
+                    {/* BLOCO DE CATEGORIAS */}
+                    <div className="indicacao-grid">
+                      {[
+                        ["Mamas", paciente.indicacaoCirurgica?.mamas],
+                        ["Abdômen", paciente.indicacaoCirurgica?.abdomen],
+                        ["Lipoaspiração / Lipoescultura", paciente.indicacaoCirurgica?.lipo],
+                        ["Pernas e Glúteos", paciente.indicacaoCirurgica?.pernas_gluteos],
+                        ["Braços", paciente.indicacaoCirurgica?.bracos],
+                        ["Área Íntima", paciente.indicacaoCirurgica?.intima],
+                      ].map(
+                        ([titulo, lista], i) =>
+                          lista && (
+                            <div key={i} className="indicacao-card">
+                              <h4>{titulo}</h4>
+                              <ul>
+                                {lista.map((item, idx) => (
+                                  <li key={idx}>{item}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )
+                      )}
+
+                      {/* ÁREAS E TECNOLOGIAS DE LIPO */}
+                      {paciente.indicacaoCirurgica?.lipo_areas && (
+                        <div className="indicacao-card sub-card">
+                          <h4>Áreas da Lipoescultura</h4>
+                          <ul>
+                            {paciente.indicacaoCirurgica?.lipo_areas.map((a, i) => (
+                              <li key={i}>{a}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {paciente.indicacaoCirurgica?.lipo_hd && (
+                        <div className="indicacao-card sub-card">
+                          <h4>Tecnologia Lipo HD</h4>
+                          <ul>
+                            {paciente.indicacaoCirurgica?.lipo_hd.map((a, i) => (
+                              <li key={i}>{a}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* BLOCO DE DETALHES */}
+                    <div className="indicacao-details">
+                      <h4><i className="fa-solid fa-notes-medical"></i> Detalhes da Cirurgia</h4>
+                      <div className="indicacao-columns">
+                        <p><strong>Número de Cirurgias:</strong> {paciente.indicacaoCirurgica?.num_cirurgias || "—"}</p>
+                        <p><strong>Tempo Estimado:</strong> {paciente.indicacaoCirurgica?.tempo_cirurgia || "—"} horas</p>
+                        <p><strong>Anestesia:</strong> {paciente.indicacaoCirurgica?.anestesia || "—"}</p>
+                        <p><strong>Prótese:</strong> {paciente.indicacaoCirurgica?.protese_marca || "—"} - {paciente.indicacaoCirurgica?.protese_volume || "—"}ml</p>
+                        <p><strong>Revestimento:</strong> {paciente.indicacaoCirurgica?.protese_revestimento || "—"}</p>
+                        <p><strong>Perfil:</strong> {paciente.indicacaoCirurgica?.protese_perfil || "—"}</p>
+                      </div>
+                    </div>
+
+                    {/* BLOCO DE EQUIPE */}
+                    <div className="indicacao-details">
+                      <h4><i className="fa-solid fa-user-nurse"></i> Equipe Cirúrgica</h4>
+                      <p><strong>Auxiliar:</strong> {paciente.indicacaoCirurgica?.tem_auxiliar === "Sim" ? paciente.indicacaoCirurgica?.auxiliar_nome : "Não"}</p>
+                      <p><strong>Instrumentadoras:</strong> {paciente.indicacaoCirurgica?.instrumentadoras || "—"}</p>
+                    </div>
+
+                    {/* BLOCO DE OBSERVAÇÕES */}
+                    <div className="indicacao-observacoes">
+                      <h4><i className="fa-solid fa-clipboard-list"></i> Observações Importantes</h4>
+                      <p>{paciente.indicacaoCirurgica?.observacoes || "Nenhuma observação registrada."}</p>
+                    </div>
+                  </>
+                ) : (
+                  <p>Nenhuma indicação registrada.</p>
+                )}
               </div>
             )}
           </div>

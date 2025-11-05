@@ -281,5 +281,4 @@ const SurgicalMapOverlay = ({ onClose }) => {
   );
 };
 
-
 export default SurgicalMapOverlay;

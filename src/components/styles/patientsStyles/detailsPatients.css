@@ -110,82 +110,82 @@
   background-color: var(--body-color);
 }
 
-.patientGeneralInfoDir{
+/* ============================
+   Conteúdo da área direita (abas)
+============================ */
+.patientGeneralInfoDir {
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  position: relative;
-  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 68%;
   height: 100%;
-}
-.containerPatientInfo{
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  width: 90%;
-
-  margin: 10px;
-}
-.contentPatientInfo{
-  width: 30%;
-}
-.contentPatientInfo p{
-  margin-top: -6px;
-}
-.contentPatientInfo span{
-  font-weight: bold;
+  padding: 1.2rem;
+  background-color: #fff;
+  border-radius: 0 8px 8px 0;
+  overflow-y: auto;
 }
 
-/* Container das tabs */
+/* ============================
+   Tabs de navegação internas
+============================ */
 .tabs {
   display: flex;
-  justify-content: space-between;
-  position: sticky;  
-  top: 0;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
   gap: 8px;
-
-  width: 100%;
-  height: 60px;
-
-  border-bottom: 4px solid var(--body-color);
-  z-index: 10;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  border-bottom: 3px solid var(--body-color);
 }
 
-/* Botões das tabs */
 .tabs button {
   border: none;
   border-radius: 6px;
-  padding: 6px;
+  padding: 8px 12px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  
-  background: transparent;
+
+  background: #f5f5f5;
   color: var(--text-color);
-  transition: var(--tran-04);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tabs button i {
+  font-size: 14px;
+  opacity: 0.8;
 }
 
 .tabs button:hover {
-  background: #eee;
+  background: #e2ecff;
 }
 
-/* Aba ativa */
 .tabs button.active,
 .tabs button:focus {
-  background: #007bff;   /* cor de destaque */
+  background: #007bff;
   color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
 }
 
-/* Seção de conteúdo */
+/* ============================
+   Seções internas (conteúdo das abas)
+============================ */
 .sectionPatientInfo {
-  width: 80%;
-  height: 80%;
-  overflow: auto;
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 8px;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  overflow-y: auto;
   background: #fafafa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 10px;
   animation: fadeIn 0.3s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .sectionPatientInfo h3,
@@ -194,9 +194,9 @@
   color: #333;
   border-left: 4px solid #007bff;
   padding-left: 8px;
+  font-weight: 600;
 }
 
-/* Listas internas */
 .sectionPatientInfo ul {
   margin: 10px 0;
   padding-left: 20px;
@@ -207,59 +207,63 @@
   margin-bottom: 6px;
 }
 
-/* Animação suave */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ============================
+   Layout da aba "Indicação Cirúrgica"
+============================ */
+.indicacao-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-
-
-/* Sitação pacientes 
-.patientSituation{
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  width: 30%;
-  height: 40vh;
+.indicacao-card {
+  background: #f9fafc;
+  border: 1px solid #e1e3e8;
   border-radius: 8px;
-  margin-right: 2%;
-  margin-top: 1%;
-  background-color: red;
+  padding: 1rem;
+  transition: all 0.2s ease;
 }
-.containerSituationOptions{
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
-  gap: 2%;
-  width: 90%;
-  border: 4px;
-  background-color: var(--body-color);
+.indicacao-card:hover {
+  background: #edf3ff;
 }
-.containerSituationOptions button{
-  width: 32%;
-  height: 36px;
 
-  border: none;
+.indicacao-card h4 {
+  margin-bottom: 0.4rem;
+  color: #007bff;
+}
+
+.indicacao-card li {
+  background: #fff;
   border-radius: 4px;
-  color: var(--text-color);
-  transition: var(--tran-04);
+  padding: 0.3rem 0.5rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  border: 1px solid #e5e5e5;
 }
 
-.containerSituationOptions .selected {
-  color: var(--body-color);
-  background-color: var(--text-color);
+.indicacao-details,
+.indicacao-observacoes {
+  background: #f9fafc;
+  border: 1px solid #e1e3e8;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
 }
-.containerSituation{
-  width: 90%;
-  height: 80%;
 
-  margin-top: 12px;
-  background-color: var(--body-color);
-}*/
+.indicacao-details h4,
+.indicacao-observacoes h4 {
+  color: #007bff;
+  margin-bottom: 0.6rem;
+}
+
+.indicacao-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.5rem;
+}
+
 
 /* Documentação pacientes */
 .patientDocumentation{
