@@ -40,6 +40,7 @@
   justify-content: space-between;
   flex-direction: column;
   width: 50%;
+  margin-top: 60px;
 }
 /* Wrapper do input com ícone */
 .input-wrapper {

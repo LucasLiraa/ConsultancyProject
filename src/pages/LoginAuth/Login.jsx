@@ -13,7 +13,7 @@ const Login = () => {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // 👈 NOVO
+  const [showPassword, setShowPassword] = useState(false);
 
   const from = location.state?.from?.pathname || "/";
 
@@ -45,6 +45,7 @@ const Login = () => {
             {erro && <div className="login-error">{erro}</div>}
           </div>
 
+          {/* 🔹 TUDO dentro do form agora */}
           <form onSubmit={handleSubmit}>
             {/* Campo de E-mail */}
             <div className="input-wrapper">
@@ -63,7 +64,7 @@ const Login = () => {
             {/* Campo de Senha */}
             <div className="input-wrapper">
               <input
-                type={showPassword ? "text" : "password"} // 👈 alterna tipo
+                type={showPassword ? "text" : "password"}
                 placeholder="Senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
@@ -71,7 +72,7 @@ const Login = () => {
               />
               <span
                 className="input-icon password-eye"
-                onClick={() => setShowPassword((prev) => !prev)} // 👈 toggle
+                onClick={() => setShowPassword((prev) => !prev)}
               >
                 <i
                   className={
@@ -82,23 +83,20 @@ const Login = () => {
                 ></i>
               </span>
             </div>
-          </form>
 
             <div className="loginFooter">
-              {/* Linha Remember + Forgot */}
               <div className="login-options">
-                <div /> {/* espaço pra um "remember" no futuro */}
+                <div /> {/* espaço pro "Remember for 30 days" se quiser depois */}
                 <Link to="/nova-senha" className="forgot-link">
                   Esqueceu sua senha?
                 </Link>
               </div>
 
-              {/* Botão */}
               <button type="submit" disabled={loading} className="login-btn">
                 {loading ? "Entrando..." : "Login"}
               </button>
             </div>
-
+          </form>
         </div>
 
         {/* COLUNA DIREITA */}
