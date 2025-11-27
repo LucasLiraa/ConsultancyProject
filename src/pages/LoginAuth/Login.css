@@ -71,6 +71,11 @@
   color: #9ca3af;
   pointer-events: none;
 }
+/* Ícone do olho precisa ser clicável */
+.password-eye {
+  pointer-events: auto;
+  cursor: pointer;
+}
 
 /* Linha: remember + forgot */
 .login-options {

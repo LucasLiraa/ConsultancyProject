@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import "./Login.css"; // garante que está importando o CSS
+import "./Login.css";
 
 const Login = () => {
   const { signIn } = useAuth();
@@ -13,6 +13,7 @@ const Login = () => {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // 👈 NOVO
 
   const from = location.state?.from?.pathname || "/";
 
@@ -45,7 +46,6 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleSubmit}>
-
             {/* Campo de E-mail */}
             <div className="input-wrapper">
               <input
@@ -63,33 +63,42 @@ const Login = () => {
             {/* Campo de Senha */}
             <div className="input-wrapper">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"} // 👈 alterna tipo
                 placeholder="Password"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 required
               />
-              <span className="input-icon password-eye">
-                <i className="fa-regular fa-eye"></i>
+              <span
+                className="input-icon password-eye"
+                onClick={() => setShowPassword((prev) => !prev)} // 👈 toggle
+              >
+                <i
+                  className={
+                    showPassword
+                      ? "fa-regular fa-eye-slash"
+                      : "fa-regular fa-eye"
+                  }
+                ></i>
               </span>
             </div>
-          </form>
 
-          <div className="loginFooter">
-            {/* Linha Remember + Forgot */}
-            <div className="login-options">
-              <Link to="/nova-senha" className="forgot-link">
-                Esqueceu sua senha?
-              </Link>
+            <div className="loginFooter">
+              {/* Linha Remember + Forgot */}
+              <div className="login-options">
+                <div /> {/* espaço pra um "remember" no futuro */}
+                <Link to="/nova-senha" className="forgot-link">
+                  Esqueceu sua senha?
+                </Link>
+              </div>
+
+              {/* Botão */}
+              <button type="submit" disabled={loading} className="login-btn">
+                {loading ? "Entrando..." : "Login"}
+              </button>
             </div>
-
-            {/* Botão */}
-            <button type="submit" disabled={loading} className="login-btn">
-              {loading ? "Entrando..." : "Login"}
-            </button>
-          </div>
+          </form>
         </div>
-
 
         {/* COLUNA DIREITA */}
         <div className="login-right">
