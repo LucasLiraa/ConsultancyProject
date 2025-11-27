@@ -180,7 +180,7 @@
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
-  max-width: 380px;
+  max-width: 680px;
   text-align: center;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
@@ -193,7 +193,7 @@
 .botoes {
   display: flex;
   justify-content: space-between;
-  margin-top: 1rem;
+  margin-top: 32px;
 }
 .botoes button {
   flex: 1;
@@ -283,3 +283,57 @@
   background-color: #f0f0f0;
   border: 1px solid #3b52d3;
 }
+
+.procedimentoRow {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: .5rem;
+}
+.procedimentoRow select{
+  padding: 10px;
+}
+
+.addProcBtn {
+  border-radius: 4px;
+  border: none;
+  padding: 10px;
+  background: var(--primary, #2563eb);
+  color: #fff;
+  cursor: pointer;
+  transition: transform .04s ease, opacity .2s ease;
+}
+.addProcBtn:disabled { opacity: .6; cursor: not-allowed; }
+.addProcBtn:active { transform: translateY(1px); }
+
+.chipsWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+
+.procedimentoChip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .35rem .6rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, .1);
+  color: var(--text-strong, #1f2937);
+  border: 1px solid rgba(37, 99, 235, .25);
+  font-size: .9rem;
+}
+
+.removeChipBtn {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #6b7280;
+}
+.removeChipBtn:hover { color: #ef4444; }
+
+.muted { color: #6b7280; }

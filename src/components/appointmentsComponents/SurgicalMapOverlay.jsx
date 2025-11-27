@@ -237,7 +237,7 @@ const SurgicalMapOverlay = ({ onClose }) => {
               <p>Próxima cirurgia</p>
               <h4>{nextSurgery.title}</h4>
               <span>
-                {new Date(nextSurgery.date).toLocaleDateString("pt-BR")} às{" "}
+                {new Date(nextSurgery.date + "T00:00:00").toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })} às{" "}
                 {nextSurgery.time}
               </span>
             </div>
@@ -250,7 +250,12 @@ const SurgicalMapOverlay = ({ onClose }) => {
                 <h3>Detalhes da Cirurgia</h3>
                 <button onClick={() => setSelectedSurgery(null)}>✕</button>
               </div>
-              <p><strong>Data:</strong> {new Date(selectedSurgery.date).toLocaleDateString("pt-BR")}</p>
+             <p>
+                <strong>Data:</strong>{" "}
+                {new Date(selectedSurgery.date + "T00:00:00").toLocaleDateString("pt-BR", {
+                  timeZone: "America/Sao_Paulo",
+                })}
+              </p>
               <p><strong>Horário:</strong> {selectedSurgery.time}</p>
               <p><strong>Procedimento:</strong> {selectedSurgery.procedure || "—"}</p>
               <p><strong>Hospital:</strong> {selectedSurgery.hospital || "—"}</p>

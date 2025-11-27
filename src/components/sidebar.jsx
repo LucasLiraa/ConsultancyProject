@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from "../contexts/AuthContext";
 
 import './styles/sidebar.css';
 
 const NavSidebar = () => {
     const [isOpen, setIsOpen] = useState(true); // Controla se o sidebar está aberto ou fechado
     const location = useLocation();  // Obtém a rota atual
+    const { signOut } = useAuth();
 
     const getLinkClass = (path) => {
         return location.pathname === path ? 'active' : '';  // Retorna 'active' se a rota corresponder
@@ -54,6 +56,7 @@ const NavSidebar = () => {
             {/* Configurações */}
             <div className='navSettings'>
                 <Link to="/login"><i className="fa-solid fa-gear"></i>{isOpen && <span>Configurações</span>}</Link>
+                <button onClick={signOut}>Sair</button>
             </div>
         </nav>
     );

@@ -13,7 +13,7 @@ export default function ListaPacientes() {
   const [confirmarRemocao, setConfirmarRemocao] = useState(null);
   const [editarPaciente, setEditarPaciente] = useState(null);
   const [novoStatus, setNovoStatus] = useState("");
-  const [novoProcedimento, setNovoProcedimento] = useState("");
+  const [novoProcedimento, setNovoProcedimento] = useState([]);
   const navigate = useNavigate();
 
   // 🔹 Busca inicial dos pacientes
@@ -77,24 +77,22 @@ export default function ListaPacientes() {
   // 🔹 Editar paciente (status e procedimento)
   const salvarEdicao = async () => {
     try {
+      const payload = {
+        situacao: novoStatus,
+        cirurgia_nome: procedimentosSelecionados, // 👈 agora é um array
+      };
+
       const { error } = await supabase
         .from("pacientes")
-        .update({
-          situacao: novoStatus,
-          cirurgia_nome: novoProcedimento,
-        })
+        .update(payload)
         .eq("id", editarPaciente.id);
 
       if (error) throw error;
 
-      setPacientes((prev) =>
-        prev.map((p) =>
+      setPacientes(prev =>
+        prev.map(p =>
           p.id === editarPaciente.id
-            ? {
-                ...p,
-                situacao: novoStatus,
-                cirurgia_nome: novoProcedimento,
-              }
+            ? { ...p, ...payload }
             : p
         )
       );
@@ -103,6 +101,38 @@ export default function ListaPacientes() {
     } catch (err) {
       console.error("Erro ao editar paciente:", err.message);
     }
+  };
+
+
+  // 🆕 Estados para a nova UX
+  const [procedimentoTemp, setProcedimentoTemp] = useState("");
+  const [procedimentosSelecionados, setProcedimentosSelecionados] = useState([]);
+
+  // Quando abrir o modal de edição, preenche os campos com dados atuais
+  useEffect(() => {
+    if (editarPaciente) {
+      setNovoStatus(editarPaciente.situacao || "");
+      setProcedimentosSelecionados(
+        Array.isArray(editarPaciente.cirurgia_nome)
+          ? editarPaciente.cirurgia_nome
+          : (editarPaciente.cirurgia_nome ? [editarPaciente.cirurgia_nome] : [])
+      );
+      setProcedimentoTemp(""); // limpa o select temporário
+    }
+  }, [editarPaciente]);
+
+  const handleAddProcedimento = () => {
+    if (!procedimentoTemp) return;
+
+    // evita duplicados (case sensitive simples; ajuste se quiser normalizar)
+    if (procedimentosSelecionados.includes(procedimentoTemp)) return;
+
+    setProcedimentosSelecionados(prev => [...prev, procedimentoTemp]);
+    setProcedimentoTemp(""); // limpa o select após adicionar
+  };
+
+  const handleRemoveProcedimento = (proc) => {
+    setProcedimentosSelecionados(prev => prev.filter(p => p !== proc));
   };
 
   return (
@@ -163,8 +193,6 @@ export default function ListaPacientes() {
           </button>  
         </div>  
 
-  
-
         {/* 🔹 Botão de adicionar paciente (lado direito do cabeçalho) */}
         
       </div>
@@ -189,7 +217,11 @@ export default function ListaPacientes() {
               <div className="pacienteInfo">
                 <h3>{p.nome}</h3>
                 <p>{p.situacao || "Sem situação"}</p>
-                <small>{p.cirurgia_nome || "Sem procedimento"}</small>
+                <small>
+                  {Array.isArray(p.cirurgia_nome)
+                    ? p.cirurgia_nome.join(", ")
+                    : p.cirurgia_nome || "Sem procedimento"}
+                </small>
               </div>
 
               <div
@@ -228,6 +260,8 @@ export default function ListaPacientes() {
         <div className="modalRemover">
           <div className="modalConteudo">
             <h3>Editar informações</h3>
+
+            {/* Situação */}
             <label>Situação</label>
             <select
               value={novoStatus}
@@ -242,29 +276,67 @@ export default function ListaPacientes() {
               <option value="Em pós-operatório">Em pós-operatório</option>
             </select>
 
+            {/* Procedimentos */}
             <label>Procedimento</label>
-            <select
-              value={novoProcedimento}
-              onChange={(e) => setNovoProcedimento(e.target.value)}
-            >
-              <option value="">Selecione...</option>
-              <option value="Prótese de Mama">Prótese de Mama</option>
-              <option value="Lipoescultura">Lipoescultura</option>
-              <option value="Abdominoplastia">Abdominoplastia</option>
-              <option value="Mamoplastia">Mamoplastia</option>
-              <option value="Lipo HD">Lipo HD</option>
-              <option value="Blefaroplastia">Blefaroplastia</option>
-            </select>
+            <div className="procedimentoRow">
+              <select
+                value={procedimentoTemp}
+                onChange={(e) => setProcedimentoTemp(e.target.value)}
+              >
+                <option value="">Selecione...</option>
+                <option value="Prótese de Mama">Prótese de Mama</option>
+                <option value="Lipoescultura">Lipoescultura</option>
+                <option value="Abdominoplastia">Abdominoplastia</option>
+                <option value="Mamoplastia">Mamoplastia</option>
+                <option value="Lipo HD">Lipo HD</option>
+                <option value="Blefaroplastia">Blefaroplastia</option>
+              </select>
+
+              <button
+                className="addProcBtn"
+                onClick={handleAddProcedimento}
+                disabled={!procedimentoTemp}
+                title={procedimentoTemp ? "Adicionar procedimento" : "Selecione um procedimento"}
+              >
+                + Adicionar
+              </button>
+            </div>
+
+            {/* Chips de selecionados */}
+            <div className="chipsWrap">
+              {procedimentosSelecionados.length === 0 ? (
+                <small className="muted">Nenhum procedimento adicionado.</small>
+              ) : (
+                procedimentosSelecionados.map((proc) => (
+                  <span key={proc} className="procedimentoChip">
+                    {proc}
+                    <button
+                      className="removeChipBtn"
+                      onClick={() => handleRemoveProcedimento(proc)}
+                      title="Remover"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))
+              )}
+            </div>
 
             <div className="botoes">
               <button onClick={() => setEditarPaciente(null)}>Cancelar</button>
-              <button className="danger" onClick={salvarEdicao}>
+              <button
+                className="danger"
+                onClick={salvarEdicao}
+                disabled={procedimentosSelecionados.length === 0}
+                title={procedimentosSelecionados.length ? "Salvar" : "Adicione pelo menos um procedimento"}
+              >
                 Salvar
               </button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }

@@ -1,366 +1,247 @@
-.sectionPatientDetails{
+/* ============================================
+   ÁREA PRINCIPAL DA PÁGINA
+============================================ */
+.sectionPatientDetails {
   display: flex;
-  align-items: center;
   flex-direction: column;
-  
+  align-items: center;
   color: var(--text-color);
   transition: var(--tran-06);
 }
-.sidebar.open ~ .sectionPatientDetails{
+.sidebar.open ~ .sectionPatientDetails {
   width: calc(100% - 220px);
   margin-left: 220px;
 }
-.sidebar.closed ~ .sectionPatientDetails{
+.sidebar.closed ~ .sectionPatientDetails {
   width: calc(100% - 80px);
   margin-left: 80px;
 }
 
-.detailsPatientHeader{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+/* ============================================
+   HEADER DO PACIENTE (nome + botões)
+============================================ */
+.detailsPatientHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  margin: 20px 0 10px 0;
+}
 
-    width: 90%;
-    margin: 40px 0 20px 0;
+.namePatientHeader {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
 }
-.namePatientHeader{
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-}
-.namePatientHeader i{
+
+.namePatientHeader i {
   font-size: 24px;
   margin-right: 10px;
 }
-.buttonPatientHeader{
-  padding: 10px;
+
+.buttonPatientHeader {
+  padding: 10px 16px;
   border: 1px solid var(--text-color);
   border-radius: 6px;
-
   color: var(--body-color);
   background-color: var(--text-color);
   transition: var(--tran-04);
+  font-size: 14px;
 }
-.buttonPatientHeader:hover{
+
+.buttonPatientHeader:hover {
   cursor: pointer;
-  color: var(--text-color);
   background-color: var(--body-color);
-}
-.buttonPatientHeader:first-child{
-    margin-right: 10px;
-}
-.buttonPatientHeader:first-child i{
-    margin-right: 10px;
+  color: var(--text-color);
 }
 
-.containerPatientDetails{
+.buttonPatientHeader:first-child {
+  margin-right: 10px;
+}
+
+/* ============================================
+   CONTAINER PRINCIPAL
+============================================ */
+.containerPatientDetails {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-
+  flex-direction: column;
   width: 90%;
 }
 
-/* Informações gerais pacientes */
-.patientGeneralInfo{
+/* ============================================
+   LINHA SUPERIOR: INFO GERAL + CALENDÁRIO
+============================================ */
+.patientOverviewRow {
   display: flex;
-  align-items: center;
-
-  width: 68%;
-  height: 40vh;
-  border-radius: 8px;
-  margin-right: 2%;
-  background-color: #fff;
-}
-.patientGeneralInfoEsq{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  width: 32%;
-  height: 100%;
-
-  border-right: 4px solid var(--body-color);
-}
-.patientGeneralInfoEsq img{
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-}
-.patientGeneralInfoEsq h4{
-    margin-top: 16px;
-    text-align: center;
-}
-.patientGeneralInfoEsq button{
-  padding: 10px;
-  border: 1px solid var(--text-color);
-  border-radius: 6px;
-  margin-top: 16px;
-  width: 80%;
-
-  color: var(--text-color);
-  background-color: transparent;
-  transition: var(--tran-04);
-}
-.patientGeneralInfoEsq button:hover{
-  cursor: pointer;
-  color: var(--text-color);
-  background-color: var(--body-color);
-}
-
-/* ============================
-   Conteúdo da área direita (abas)
-============================ */
-.patientGeneralInfoDir {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
   align-items: stretch;
-  width: 68%;
-  height: 100%;
-  padding: 1.2rem;
-  background-color: #fff;
-  border-radius: 0 8px 8px 0;
-  overflow-y: auto;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-/* ============================
-   Tabs de navegação internas
-============================ */
-.tabs {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-  padding-bottom: 8px;
-  margin-bottom: 12px;
-  border-bottom: 3px solid var(--body-color);
+/* proporção: 60% infos | 40% calendário */
+.patientOverviewRow > .patientGeneralInfo {
+  flex: 3;
 }
 
-.tabs button {
-  border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-
-  background: #f5f5f5;
-  color: var(--text-color);
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.patientOverviewRow > .patientVisitsWrapper {
+  flex: 2;
+  height: 36vh; /* altura sempre obedecida */
 }
 
-.tabs button i {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-.tabs button:hover {
-  background: #e2ecff;
-}
-
-.tabs button.active,
-.tabs button:focus {
-  background: #007bff;
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
-}
-
-/* ============================
-   Seções internas (conteúdo das abas)
-============================ */
-.sectionPatientInfo {
-  width: 100%;
-  height: auto;
-  max-height: 70vh;
-  overflow-y: auto;
-  background: #fafafa;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 10px;
-  animation: fadeIn 0.3s ease-in-out;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-.sectionPatientInfo h3,
-.sectionPatientInfo h4 {
-  margin-bottom: 12px;
-  color: #333;
-  border-left: 4px solid #007bff;
-  padding-left: 8px;
-  font-weight: 600;
-}
-
-.sectionPatientInfo ul {
-  margin: 10px 0;
-  padding-left: 20px;
-  list-style-type: disc;
-}
-
-.sectionPatientInfo li {
-  margin-bottom: 6px;
-}
-
-/* ============================
-   Layout da aba "Indicação Cirúrgica"
-============================ */
-.indicacao-grid {
+/* ============================================
+   NOVO LAYOUT DO PATIENTGENERALINFO
+   (estilo cartão moderno tipo Diane Cooper)
+============================================ */
+.patientGeneralInfo {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  grid-template-columns: minmax(220px, 260px) 1fr;
+  border-radius: 18px;
+  background: #f9fbff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  height: 36vh; /* 🔥 respeita os 40vh SEMPRE */
 }
 
-.indicacao-card {
-  background: #f9fafc;
-  border: 1px solid #e1e3e8;
-  border-radius: 8px;
-  padding: 1rem;
-  transition: all 0.2s ease;
-}
-
-.indicacao-card:hover {
-  background: #edf3ff;
-}
-
-.indicacao-card h4 {
-  margin-bottom: 0.4rem;
-  color: #007bff;
-}
-
-.indicacao-card li {
-  background: #fff;
-  border-radius: 4px;
-  padding: 0.3rem 0.5rem;
-  margin-bottom: 0.3rem;
-  font-size: 0.9rem;
-  border: 1px solid #e5e5e5;
-}
-
-.indicacao-details,
-.indicacao-observacoes {
-  background: #f9fafc;
-  border: 1px solid #e1e3e8;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-top: 1rem;
-}
-
-.indicacao-details h4,
-.indicacao-observacoes h4 {
-  color: #007bff;
-  margin-bottom: 0.6rem;
-}
-
-.indicacao-columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 0.5rem;
-}
-
-
-/* Documentação pacientes */
-.patientDocumentation{
+/* --- COLUNA ESQUERDA (perfil) --- */
+.patientGeneralInfoEsq {
   display: flex;
   flex-direction: column;
-
-  width: 26%;
-  height: 40vh;
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 2%;
-  background-color: #fff;
-}
-.patientDocumentationTitle{
-  display: flex;
-  justify-content: space-between;
-}
-.patientDocumentationTitle button{
-  cursor: pointer;
-  border: none;
-  color: var(--text-color);
-  background-color: transparent;
-}
-.containerPatientDocumentation{
-  display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  margin-top: 16px;
-  width: 100%;
-  overflow-y: auto;
-  border-radius: 6px;
-  color: var(--text-color);
-}
-.contentPatientDocumentation{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  width: 98%;
-  padding: 16px;
-  margin-top: 6px;
-
-  font-size: 14px;
-  border-radius: 6px;
-  border: 1px solid var(--text-color);
-}
-.contentPatientDocumentation i{
-  font-size: 16px;
-  margin-right: 6px;
-}
-.contentDocInfo{
-  display: flex;
-}
-.contentDocIcons i{
-  margin: 2px;
-  font-size: 16px;
-  cursor: pointer;
+  padding: 1.5rem 1.25rem;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  gap: 0.75rem;
 }
 
-/* Container da imagem */
 .paciente-foto {
-  width: 140px;              /* tamanho fixo para manter proporção */
-  height: 140px;
-  border-radius: 50%;        /* deixa a foto redonda */
-  object-fit: cover;         /* corta a imagem proporcionalmente sem distorcer */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  border: 3px solid #fff;
-  background-color: #f0f0f0;
-  margin-bottom: 10px;
-}
-
-/* Campo de upload da foto no modal */
-input[type="file"]#foto {
-  display: block;
-  margin-top: 8px;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  padding: 6px;
-  border-radius: 8px;
-  background-color: #fafafa;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-input[type="file"]#foto:hover {
-  background-color: #f3f3f3;
-}
-
-/* Pré-visualização da imagem no modal */
-.preview-foto {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  display: block;
-  margin-top: 10px;
-  border: 2px solid #ddd;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.patientGeneralInfoEsq h4 {
+  margin-top: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.patientGeneralInfoEsq small {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.patientGeneralInfoEsq button {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  width: 90%;
+  max-width: 220px;
+  background: #111827;
+  color: #fff;
+  transition: 0.15s ease;
+}
+
+.patientGeneralInfoEsq button:hover {
+  background: #0f172a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.25);
+}
+
+/* --- COLUNA DIREITA (informações) --- */
+.patientGeneralInfoDir {
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  
+  background: #ffffff;
+}
+
+.sectionPatientInfo {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.sectionPatientInfo h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.sectionPatientInfo p {
+  font-size: 0.85rem;
+  margin: 0.2rem 0;
+  color: #4b5563;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.35rem;
+}
+
+.sectionPatientInfo p b {
+  color: #111827;
+}
+
+/* Botão prontuário */
+.sectionPatientInfo .secondaryButton {
+  margin-top: 1rem;
+}
+
+.secondaryButton {
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.secondaryButton i {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+/* Hover */
+.secondaryButton:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #111827;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+/* Ativo / clique */
+.secondaryButton:active {
+  transform: scale(0.97);
+}
+
+/* ============================================
+   RESPONSIVO
+============================================ */
+@media (max-width: 960px) {
+  .patientGeneralInfo {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .patientGeneralInfoEsq {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
 }

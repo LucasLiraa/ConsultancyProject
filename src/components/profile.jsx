@@ -30,21 +30,8 @@ function ProfileUser() {
         <div className="profileSubCardMain">
             <div className="profileSubCard">
                 <h5>Próxima Cirurgia</h5>
-                <p>Wermercone Pereira (Meo)</p>
-                <p>05/11  - Mastopexia com prótese</p>
-            </div>
-
-            {/* Card status */}
-            <div className="profileSubCardStatus">
-                <h5>Status</h5>
-                <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                >
-                    <option>Disponível</option>
-                    <option>Em cirurgia</option>
-                    <option>Ausente</option>
-                </select>
+                <p>Elza Pereira dos Santos</p>
+                <p>03/12/2025 às 11:00</p>
             </div>
         </div>
 

@@ -1,0 +1,638 @@
+/* =========================================================
+   OVERLAY FULLSCREEN – ESTILO Mapa Cirúrgico
+========================================================= */
+
+.prontuarioOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: #111827;
+  overflow: hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.prontuarioHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.prontuarioHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #204b9b;
+}
+
+.closeProntuarioBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: #f3f4f6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #5e6b89;
+  transition: background 0.15s ease, transform 0.1s ease, color 0.15s ease;
+}
+
+.closeProntuarioBtn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   CONTAINER EM 3 COLUNAS
+========================================================= */
+
+.prontuarioContainer {
+  display: grid;
+  grid-template-columns: 1.4fr 1.8fr 1.3fr;
+  gap: 2rem;
+  padding: 2rem;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   COLUNA ESQUERDA – RESUMO DO PACIENTE
+========================================================= */
+
+.prontuarioSidebar {
+  background: #f8faff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  overflow-y: auto;
+}
+
+.prontuarioProfile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.prontuarioFoto {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.2);
+  margin-bottom: 0.75rem;
+}
+
+.prontuarioProfile h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.prontuarioAnamnese {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+/* Botões sociais */
+
+.prontuarioSocialButtons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.socialButton {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  background: #ffffff;
+  color: #374151;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.socialButton i {
+  font-size: 0.88rem;
+}
+
+.socialButton.instagram:hover {
+  background: #fdf2ff;
+  box-shadow: 0 4px 10px rgba(192, 38, 211, 0.16);
+  transform: translateY(-1px);
+}
+
+.socialButton.whatsapp:hover {
+  background: #ecfdf3;
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.16);
+  transform: translateY(-1px);
+}
+
+/* Blocos da coluna esquerda */
+
+.prontuarioBlock {
+  padding-top: 0.5rem;
+}
+
+.prontuarioBlock h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.placeholderText {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* =========================================================
+   LINHAS DE INFORMAÇÃO – COLUNA ESQUERDA
+========================================================= */
+
+.infoLines {
+  margin-top: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+}
+
+.infoLabel {
+  color: #9ca3af;
+}
+
+.infoValue {
+  color: #374151;
+  font-weight: 500;
+  text-align: right;
+}
+
+.situacaoBadge {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 0.75rem;
+}
+
+/* título pequeno acima de seções dentro do bloco */
+
+.infoSectionTitle {
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+  margin-top: 0.4rem;
+}
+
+/* =========================================================
+   PILLS DE PROCEDIMENTOS
+========================================================= */
+
+.proceduresPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.3rem 0 0.6rem;
+}
+
+.procedurePill {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: #e0ecff;
+  font-size: 0.75rem;
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+.proceduresEmpty {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.cirurgiaInfoLines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.1rem;
+}
+
+/* =========================================================
+   COLUNA CENTRAL – LINHA DO TEMPO
+========================================================= */
+
+.prontuarioMain {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.prontuarioMain h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.6rem;
+}
+
+.timelineList {
+  margin-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.timelineItem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.timelineTag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.timelineTag.avaliacao {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.timelineTag.exame {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.timelineTag.cirurgia {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.timelineContent {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #e5e7eb;
+}
+
+.timelineDate {
+  font-size: 0.75rem;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.timelineContent p {
+  font-size: 0.85rem;
+  color: #374151;
+  margin: 0;
+}
+
+/* =========================================================
+   COLUNA DIREITA – RESUMOS / INSIGHTS
+========================================================= */
+
+.prontuarioPanel {
+  background: #f8faff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  overflow-y: auto;
+}
+
+.prontuarioPanel h3 {
+  font-size: 1.1rem;
+  color: #204b9b;
+  margin-bottom: 0.3rem;
+}
+
+.prontuarioSummaryCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.prontuarioSummaryCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+}
+
+.prontuarioSummaryCard p {
+  font-size: 0.85rem;
+  color: #64728a;
+  margin-bottom: 0.35rem;
+}
+
+.prontuarioSummaryCard h2 {
+  font-size: 1.8rem;
+  color: #204b9b;
+  margin: 0;
+}
+
+.prontuarioSummaryCard h4 {
+  font-size: 1rem;
+  color: #111827;
+  margin: 0 0 0.1rem 0;
+}
+
+.prontuarioSummaryCard span {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.summaryList {
+  list-style: disc;
+  padding-left: 1.1rem;
+  margin: 0.2rem 0 0;
+}
+
+.summaryList li {
+  font-size: 0.8rem;
+  color: #4b5563;
+  margin-bottom: 0.15rem;
+}
+
+.smallText {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 1100px) {
+  .prontuarioContainer {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .prontuarioPanel {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .prontuarioContainer {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .prontuarioSidebar,
+  .prontuarioMain,
+  .prontuarioPanel {
+    width: 100%;
+  }
+
+  .prontuarioContainer {
+    height: calc(100vh - 80px);
+  }
+}
+
+/* =========================================================
+   ABAS DA COLUNA CENTRAL
+========================================================= */
+
+.prontuarioTabs {
+  display: inline-flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  background: #f3f4ff;
+  padding: 0.25rem;
+  border-radius: 999px;
+}
+
+.prontuarioTabs button {
+  border: none;
+  background: transparent;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #4b5563;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.prontuarioTabs button.active {
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 2px 6px rgba(129, 140, 248, 0.3);
+}
+
+/* =========================================================
+   VISÃO GERAL – CARDS DE MÓDULOS
+========================================================= */
+
+.overviewContent {
+  margin-top: 0.25rem;
+}
+
+.overviewGrid {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.8rem;
+}
+
+.overviewCard {
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 0.8rem 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease,
+    transform 0.1s ease, border-color 0.15s ease;
+}
+
+.overviewCard:hover {
+  background: #f3f4ff;
+  border-color: #c7d2fe;
+  box-shadow: 0 3px 8px rgba(129, 140, 248, 0.25);
+  transform: translateY(-1px);
+}
+
+.overviewCard.active {
+  background: #e0e7ff;
+  border-color: #4f46e5;
+}
+
+.overviewCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.overviewTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.overviewDescription {
+  font-size: 0.78rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* Badge de status dos módulos (reaproveita a ideia dos status) */
+
+.moduleStatusBadge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid transparent;
+}
+
+.moduleStatusBadge.status-pendente {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.moduleStatusBadge.status-parcial {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #facc15;
+}
+
+.moduleStatusBadge.status-completo {
+  background: #ecfdf3;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+/* =========================================================
+   ABA DOCUMENTOS – LISTAGEM
+========================================================= */
+
+.documentsContent {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.documentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+}
+
+.documentItem {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 0.6rem 0.8rem;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s ease, box-shadow 0.15s ease,
+    transform 0.1s ease, border-color 0.15s ease;
+}
+
+.documentItem:hover {
+  background: #f3f4ff;
+  border-color: #c7d2fe;
+  box-shadow: 0 2px 6px rgba(129, 140, 248, 0.2);
+  transform: translateY(-1px);
+}
+
+.documentItem.active {
+  background: #e0e7ff;
+  border-color: #4f46e5;
+}
+
+.documentMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.documentName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.documentMeta {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* =========================================================
+   ABA LINHA DO TEMPO (DENTRO DA ABA "LINHA DO TEMPO")
+========================================================= */
+
+.timelineTabContent {
+  margin-top: 0.25rem;
+}
+
+.timelineItem.clickable {
+  cursor: pointer;
+}
+
+.timelineItem.clickable:hover .timelineContent {
+  border-color: #c7d2fe;
+  box-shadow: 0 2px 6px rgba(129, 140, 248, 0.25);
+}
+
+.timelineItem.active .timelineContent {
+  background: #e0e7ff;
+  border-color: #4f46e5;
+}
