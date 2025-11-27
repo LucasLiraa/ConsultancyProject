@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import "./styles/appointments.css";
 
 import Topbar from "../components/topbar";
-
 import WeekBar from "../components/appointmentsComponents/WeekBar";
 import DaySchedule from "../components/appointmentsComponents/DaySchedule";
 import SurgicalMapOverlay from "../components/appointmentsComponents/SurgicalMapOverlay";
-
 import { supabase } from "../utils/supabaseClient";
 
 function Appointments() {
@@ -16,58 +14,54 @@ function Appointments() {
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
   const [showSurgeryMap, setShowSurgeryMap] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
-  const [reloadKey, setReloadKey] = useState(0); // incrementar para forçar reload no DaySchedule
+  const [reloadKey, setReloadKey] = useState(0);
+  const [showReschedulePopup, setShowReschedulePopup] = useState(false);
+  const [newDate, setNewDate] = useState("");
+  const [newTime, setNewTime] = useState("");
 
-  // Abre modal para criar novo (limpo)
   const handleNew = () => {
     setEditTarget(null);
     setAbrirModal(true);
   };
 
-  // Editar puxando do painel de detalhes
   const handleEditFromPanel = (event) => {
     setEditTarget(event);
     setAbrirModal(true);
   };
 
-  // Reagendar (painel): prompt -> atualiza DB -> dispara reload
-  const handleRescheduleFromPanel = async (event) => {
+  // 🔹 Abre mini interface de reagendamento
+  const openReschedulePopup = (event) => {
+    setEventoSelecionado(event);
+    setNewDate(event.date || selectedDate.toISOString().split("T")[0]);
+    setNewTime(event.time || "");
+    setShowReschedulePopup(true);
+  };
+
+  // 🔹 Reagendar (com popup)
+  const handleRescheduleFromPanel = async () => {
     try {
-      const newDate = prompt(
-        "Nova data (AAAA-MM-DD):",
-        event.date || selectedDate.toISOString().split("T")[0]
-      );
-      if (!newDate) return;
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
-        alert("Formato de data inválido. Use AAAA-MM-DD.");
-        return;
-      }
-      const newTime = prompt("Novo horário (HH:mm):", event.time || "");
-      if (!newTime) return;
-      if (!/^\d{2}:\d{2}$/.test(newTime)) {
-        alert("Formato de horário inválido. Use HH:mm.");
+      if (!newDate || !newTime) {
+        alert("Preencha a nova data e horário.");
         return;
       }
 
       const { error } = await supabase
         .from("agendamentos")
         .update({ date: newDate, time: newTime, updated_at: new Date() })
-        .eq("id", event.id);
+        .eq("id", eventoSelecionado.id);
 
       if (error) throw error;
 
-      // atualiza lista no DaySchedule via reloadKey
+      // fecha popup e recarrega
+      setShowReschedulePopup(false);
       setReloadKey((k) => k + 1);
-
-      // se o painel está mostrando esse evento, atualiza nele também
-      setEventoSelecionado({ ...event, date: newDate, time: newTime });
+      setEventoSelecionado({ ...eventoSelecionado, date: newDate, time: newTime });
     } catch (err) {
       console.error("Erro ao reagendar:", err);
       alert("Erro ao reagendar. Veja console.");
     }
   };
 
-  // Excluir (painel): confirma -> delete -> reload -> limpar painel
   const handleDeleteFromPanel = async (event) => {
     try {
       const ok = window.confirm("Tem certeza que deseja excluir este agendamento?");
@@ -84,16 +78,26 @@ function Appointments() {
     }
   };
 
+  // 🔹 Corrige exibição de data (-1 dia)
+  const formatDateBR = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr + "T00:00:00");
+    return date.toLocaleDateString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   return (
     <section className="sectionAppointments">
-      <Topbar showSearch={true} />
-
       <div className="containerAppointments">
         {/* Coluna esquerda */}
         <div className="containerAppointmentsEsq">
           <div className="bannerheaderAppointments">
             <div className="bannerTitleAppointments">
-              <h1>Faça seus agendamentos e cuide de seus pacientes aqui!</h1>
+              <h3>Faça seus agendamentos e cuide de seus pacientes aqui!</h3>
             </div>
             <div className="bannerButtonAppointments">
               <button onClick={handleNew}>
@@ -139,12 +143,7 @@ function Appointments() {
               <div className="eventDetailsCard">
                 <h2>{eventoSelecionado.title}</h2>
                 <p>
-                  <strong>Data:</strong>{" "}
-                  {new Date(eventoSelecionado.date).toLocaleDateString("pt-BR", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  <strong>Data:</strong> {formatDateBR(eventoSelecionado.date)}
                 </p>
                 <p><strong>Horário:</strong> {eventoSelecionado.time}</p>
                 <p><strong>Tipo:</strong> {eventoSelecionado.type}</p>
@@ -167,7 +166,7 @@ function Appointments() {
 
                 <div className="eventActions">
                   <button className="btn secondary" onClick={() => handleEditFromPanel(eventoSelecionado)}>✏️ Editar</button>
-                  <button className="btn secondary" onClick={() => handleRescheduleFromPanel(eventoSelecionado)}>📅 Reagendar</button>
+                  <button className="btn secondary" onClick={() => openReschedulePopup(eventoSelecionado)}>📅 Reagendar</button>
                   <button className="btn danger" onClick={() => handleDeleteFromPanel(eventoSelecionado)}>🗑️ Excluir</button>
                 </div>
               </div>
@@ -183,6 +182,25 @@ function Appointments() {
           events={events}
           onClose={() => setShowSurgeryMap(false)}
         />
+      )}
+
+      {/* 🔹 Popup de reagendamento */}
+      {showReschedulePopup && (
+        <div className="rescheduleOverlay">
+          <div className="reschedulePopup">
+            <h3>Reagendar</h3>
+            <label>Nova data:</label>
+            <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+
+            <label>Novo horário:</label>
+            <input type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+
+            <div className="rescheduleButtons">
+              <button className="btn primary" onClick={handleRescheduleFromPanel}>Salvar</button>
+              <button className="btn secondary" onClick={() => setShowReschedulePopup(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

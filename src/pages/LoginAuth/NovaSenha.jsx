@@ -1,89 +1,82 @@
+// src/pages/LoginAuth/NovaSenha.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "../../utils/supabaseClient";
 import "./NovaSenha.css";
 
 const NovaSenha = () => {
-  const [senha, setSenha] = useState("");
-  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [email, setEmail] = useState("");
+  const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState("");
-  const [carregando, setCarregando] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
+    setMensagem("");
     setErro("");
+    setLoading(true);
 
-    if (senha !== confirmarSenha) {
-      setErro("As senhas não coincidem.");
-      return;
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/login`,
+      });
+
+      if (error) throw error;
+
+      setMensagem("Enviamos um e-mail para redefinir sua senha.");
+    } catch (error) {
+      console.error(error);
+      setErro(error.message || "Erro ao enviar o e-mail.");
+    } finally {
+      setLoading(false);
     }
-
-    if (senha.length < 6) {
-      setErro("A senha deve ter pelo menos 6 caracteres.");
-      return;
-    }
-
-    setCarregando(true);
-
-    // Obtém o usuário logado
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      setErro("Não foi possível identificar o usuário logado.");
-      setCarregando(false);
-      return;
-    }
-
-    // Atualiza a senha no Supabase Auth
-    const { error: updateError } = await supabase.auth.updateUser({
-      password: senha,
-    });
-
-    if (updateError) {
-      setErro("Erro ao atualizar a senha. Tente novamente.");
-      setCarregando(false);
-      return;
-    }
-
-    // Atualiza o campo 'primeiro_login' na tabela 'usuarios'
-    const { error: flagError } = await supabase
-      .from("usuarios")
-      .update({ primeiro_login: false })
-      .eq("email", user.email);
-
-    if (flagError) {
-      setErro("Senha alterada, mas houve erro ao atualizar status de login.");
-      setCarregando(false);
-      return;
-    }
-
-    alert("Senha redefinida com sucesso!");
-    navigate("/");
   };
 
   return (
-    <div className="nova-senha-container">
-      <form className="nova-senha-form" onSubmit={handleSubmit}>
-        <h2>Defina uma nova senha</h2>
-        <input
-          type="password"
-          placeholder="Nova senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirmar nova senha"
-          value={confirmarSenha}
-          onChange={(e) => setConfirmarSenha(e.target.value)}
-          required
-        />
-        <button type="submit" disabled={carregando}>
-          {carregando ? "Salvando..." : "Salvar senha"}
-        </button>
-        {erro && <p className="erro">{erro}</p>}
-      </form>
+    <div className="reset-page">
+      <div className="reset-card">
+        {/* COLUNA ESQUERDA - IMAGEM (invertido em relação ao login) */}
+        <div className="reset-left">
+          <img src="/loginImage.jpg" alt="Fundo" />
+        </div>
+
+        {/* COLUNA DIREITA - FORMULÁRIO */}
+        <div className="reset-right">
+          <div className="resetHeader">
+            <h1>Esqueceu sua senha?</h1>
+            <p>Digite seu e-mail para enviarmos um link de recuperação.</p>
+
+            {mensagem && <div className="reset-success">{mensagem}</div>}
+            {erro && <div className="reset-error">{erro}</div>}
+          </div>
+
+          <form onSubmit={handleReset}>
+            <div className="input-wrapper">
+              <input
+                type="email"
+                placeholder="Seu e-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="reset-btn"
+            >
+              {loading ? "Enviando..." : "Enviar link"}
+            </button>
+          </form>
+
+          <div className="resetFooter">
+            <Link to="/login" className="back-to-login">
+              Voltar para o login
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

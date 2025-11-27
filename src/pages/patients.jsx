@@ -66,7 +66,6 @@ function Patients() {
 
   return (
     <section className="sectionPatients">
-
       <div className="containerPatients">
         <ListaPacientes
           pacientes={pacientes}
