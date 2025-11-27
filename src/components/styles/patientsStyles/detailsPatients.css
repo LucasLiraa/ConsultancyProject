@@ -244,4 +244,14 @@
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
   }
+
+}
+
+.patientDetailsDown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+
+  width: 90%;
 }
