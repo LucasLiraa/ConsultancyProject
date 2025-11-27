@@ -64,7 +64,7 @@ const Login = () => {
             <div className="input-wrapper">
               <input
                 type={showPassword ? "text" : "password"} // 👈 alterna tipo
-                placeholder="Password"
+                placeholder="Senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 required
@@ -82,6 +82,7 @@ const Login = () => {
                 ></i>
               </span>
             </div>
+          </form>
 
             <div className="loginFooter">
               {/* Linha Remember + Forgot */}
@@ -97,7 +98,7 @@ const Login = () => {
                 {loading ? "Entrando..." : "Login"}
               </button>
             </div>
-          </form>
+
         </div>
 
         {/* COLUNA DIREITA */}
