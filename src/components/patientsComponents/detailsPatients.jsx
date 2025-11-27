@@ -226,13 +226,13 @@ export default function PacienteDetalhes() {
           <PatientVisitsCalendar pacienteId={paciente.id} />
         </div>
 
-        {/* Situação (já existente) 
-        <TabComponent pacienteId={paciente.id} />*/}
+        {/* Situação (já existente) */}
+        <TabComponent pacienteId={paciente.id} />
 
-        {/* Documentos (já existente) 
+        {/* Documentos (já existente) */}
         <div className="patientDocumentation">
           <DocumentsManager pacienteId={paciente.id} />
-        </div>*/}
+        </div>
       </div>
 
       {/* Modal de edição funcional */}
@@ -246,4 +246,5 @@ export default function PacienteDetalhes() {
       )}
     </div>
   );
+
 }
