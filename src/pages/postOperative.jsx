@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../utils/supabaseClient";
 
-import Topbar from "../components/topbar";
 import Banners from "../components/banners";
 
 import PostOperativeDashboard from "../components/postOperativeComponents/PostOperativeDashboard";
@@ -39,9 +38,6 @@ export default function PostOperative() {
 
   return (
     <section className="sectionPostOperative">
-      {/* 🔹 Barra superior */}
-      <Topbar showSearch={true} />
-
       {/* 🔹 Header e botão */}
       <div className="containerPostOperative">
         <div className="contentPostOperativeHeader">
@@ -51,7 +47,12 @@ export default function PostOperative() {
         <div className="contentPostOperativeButton">
           <button
             className="primary"
-            onClick={() => setMostrarSelector(true)}
+            // 👉 Agora vai direto para o Manager (tela do print)
+            onClick={() => {
+              setPacienteSelecionado(null);   // novo fluxo, sem paciente pré-selecionado
+              setMostrarSelector(false);      // garante que o seletor fique fechado
+              setMostrarNovo(true);           // abre o PostOperativeManager
+            }}
           >
             Novo paciente
           </button>
@@ -69,7 +70,7 @@ export default function PostOperative() {
         />
       </div>
 
-      {/* 🔹 Overlay do SELETOR DE PACIENTE */}
+      {/* 🔹 Overlay do SELETOR DE PACIENTE (continua disponível se você quiser abrir em outro fluxo) */}
       <AnimatePresence>
         {mostrarSelector && (
           <motion.div
