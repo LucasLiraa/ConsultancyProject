@@ -115,7 +115,7 @@ const mockDocuments = [
   },
 ];
 
-// Mock de eventos da linha do tempo
+// Mock de eventos da aba "Linha do tempo"
 const mockTimelineEvents = [
   {
     id: "evt1",
@@ -145,6 +145,86 @@ const mockTimelineEvents = [
       "Realização da abdominoplastia conforme plano cirúrgico definido.",
   },
 ];
+
+// Mock de etapas do processo (timeline horizontal da visão geral)
+const processSteps = [
+  { id: "avaliacao", label: "Avaliação", state: "done" },
+  { id: "planejamento", label: "Planejamento", state: "done" },
+  { id: "exames", label: "Exames", state: "current" },
+  { id: "cirurgia", label: "Cirurgia", state: "upcoming" },
+  { id: "pos_op", label: "Pós-op", state: "upcoming" },
+];
+
+// Mock de agenda (card calendário da visão geral)
+const mockAppointments = [
+  {
+    id: 1,
+    title: "Retorno pós-op (7 dias)",
+    time: "10:00",
+    room: "Consultório 1",
+    status: "future",
+  },
+  {
+    id: 2,
+    title: "Revisão de curativos",
+    time: "11:30",
+    room: "Sala curativos",
+    status: "future",
+  },
+  {
+    id: 3,
+    title: "Controle de exames",
+    time: "14:00",
+    room: "Consultório 2",
+    status: "past",
+  },
+];
+
+// Mock de estatísticas de exames (gauge da visão geral)
+const mockExamStats = {
+  requested: 10,
+  delivered: 8,
+  approved: 7,
+  rejected: 1,
+};
+
+// Mock de status geral / risco / pós-op / mídia / KPIs
+const globalStatusMock = {
+  phase: "Pré-operatório",
+  label: "Pré-operatório",
+  riskLevel: "Moderado",
+  criticalAlerts: 1,
+  nextImportantDate: "Retorno em 21/12/2025",
+};
+
+const riskInfoMock = {
+  summary: "Risco cirúrgico moderado (ASA II).",
+  comorbidities: ["Hipertensão controlada", "IMC 27"],
+  allergies: ["Alergia a dipirona"],
+};
+
+const postopInfoMock = {
+  hasSurgery: true,
+  currentWeek: 2,
+  totalWeeks: 6,
+  nextReturn: "Revisão em 21/12/2025",
+  pending: ["Registrar curativo semana 3"],
+};
+
+const mediaPreviewMock = [
+  { id: 1, label: "Antes", date: "01/11/2025" },
+  { id: 2, label: "Pós-op semana 1", date: "19/11/2025" },
+];
+
+const kpiStatsMock = {
+  formsCompleted: 5,
+  formsTotal: 9,
+  signedDocs: 3,
+  signedDocsTotal: 4,
+  finishedVisits: 2,
+  totalVisits: 5,
+  daysSinceSurgery: 12,
+};
 
 export default function PatientProntuario() {
   const navigate = useNavigate();
@@ -186,18 +266,26 @@ export default function PatientProntuario() {
   const procedimentosUnicos = [...new Set(cirurgias.map((c) => c.nome))];
   const cirurgiaPrincipal = cirurgias[0] || null;
 
+  // Mapa rápido de módulos por id (para possíveis usos futuros)
+  const modulesById = React.useMemo(() => {
+    const map = {};
+    prontuarioModules.forEach((m) => {
+      map[m.id] = m;
+    });
+    return map;
+  }, []);
+
   // Estado da área central / direita
-  const [viewMode, setViewMode] = React.useState("overview"); // "overview" | "documents" | "timeline"
+  const [viewMode, setViewMode] = React.useState("overview"); // "overview" | "checklist" | "documents" | "timeline"
   const [selectedItem, setSelectedItem] = React.useState(null); // id dos módulos do prontuário
   const [selectedDocument, setSelectedDocument] = React.useState(null);
   const [selectedEvent, setSelectedEvent] = React.useState(null);
 
   const handleChangeView = (mode) => {
     setViewMode(mode);
-    // ao trocar de aba, não perder completamente a seleção de item,
-    // mas limpar documento/evento pra evitar conflito visual
     setSelectedDocument(null);
     setSelectedEvent(null);
+    setSelectedItem(null);
   };
 
   const handleSelectModule = (moduleId) => {
@@ -224,8 +312,35 @@ export default function PatientProntuario() {
     return "Pendente";
   };
 
+  // Para timeline horizontal: índice da etapa atual
+  const currentStageIndex =
+    processSteps.findIndex((s) => s.state === "current") !== -1
+      ? processSteps.findIndex((s) => s.state === "current")
+      : 0;
+
+  // Stats de exames (gauge)
+  const examRequested = mockExamStats.requested;
+  const examApproved = mockExamStats.approved;
+  const examDelivered = mockExamStats.delivered;
+  const examRejected = mockExamStats.rejected;
+
+  const approvalRate =
+    examRequested > 0
+      ? Math.round((examApproved / examRequested) * 100)
+      : 0;
+
+  const gaugeDeg = Math.round((approvalRate / 100) * 180);
+
+  // KPIs
+  const k = kpiStatsMock;
+
   // Renderiza o painel da direita conforme a seleção
   const renderRightPanelContent = () => {
+    // Se estiver na visão geral → painel não é mostrado (já tratamos no JSX)
+    if (viewMode === "overview") {
+      return null;
+    }
+
     // 1) Documento selecionado
     if (selectedDocument) {
       return (
@@ -296,7 +411,10 @@ export default function PatientProntuario() {
             >
               {getStatusLabel(module.status)}
             </span>
-            <span className="smallText" style={{ marginTop: "0.5rem", display: "block" }}>
+            <span
+              className="smallText"
+              style={{ marginTop: "0.5rem", display: "block" }}
+            >
               {module.shortDescription}
             </span>
           </div>
@@ -317,7 +435,7 @@ export default function PatientProntuario() {
       );
     }
 
-    // 4) Estado padrão (nada selecionado): resumo geral
+    // 4) Estado padrão (não está na visão geral e nada foi selecionado)
     return (
       <>
         <h3>Resumo do prontuário</h3>
@@ -366,7 +484,7 @@ export default function PatientProntuario() {
 
   return (
     <div className="prontuarioOverlay">
-      {/* HEADER FULLSCREEN, ESTILO MAPA CIRÚRGICO */}
+      {/* HEADER FULLSCREEN, ESTILO Mapa Cirúrgico */}
       <header className="prontuarioHeader">
         <h2>Prontuário do paciente</h2>
         <button
@@ -378,9 +496,13 @@ export default function PatientProntuario() {
         </button>
       </header>
 
-      {/* CONTAINER EM 3 COLUNAS (ESQ / CENTRO / DIR) */}
-      <div className="prontuarioContainer">
-        {/* COLUNA ESQUERDA – RESUMO DO PACIENTE */}
+      {/* CONTAINER EM 3 COLUNAS (ESQ / CENTRO / DIR) – na visão geral, ocupa só 2 colunas */}
+      <div
+        className={`prontuarioContainer ${
+          viewMode === "overview" ? "overviewLayout" : ""
+        }`}
+      >
+        {/* COLUNA ESQUERDA – RESUMO DO PACIENTE (compacto) */}
         <aside className="prontuarioSidebar">
           <div className="prontuarioProfile">
             <img
@@ -397,11 +519,9 @@ export default function PatientProntuario() {
             <div className="prontuarioSocialButtons">
               <button type="button" className="socialButton instagram">
                 <i className="fa-brands fa-instagram" />
-                Instagram
               </button>
-              <button type="button" className="socialButton whatsapp">
+              <button type="button" className="socialButton whatsapp icon-only">
                 <i className="fa-brands fa-whatsapp" />
-                WhatsApp
               </button>
             </div>
           </div>
@@ -494,6 +614,13 @@ export default function PatientProntuario() {
             </button>
             <button
               type="button"
+              className={viewMode === "checklist" ? "active" : ""}
+              onClick={() => handleChangeView("checklist")}
+            >
+              Checklist
+            </button>
+            <button
+              type="button"
               className={viewMode === "documents" ? "active" : ""}
               onClick={() => handleChangeView("documents")}
             >
@@ -508,12 +635,336 @@ export default function PatientProntuario() {
             </button>
           </div>
 
-          {/* Conteúdo das abas */}
+          {/* Visão geral – banner + timeline horizontal + cards dinâmicos */}
           {viewMode === "overview" && (
+            <div className="summaryContent">
+              {/* Banner de status geral */}
+              <section className="summaryCard statusBanner">
+                <div className="statusBannerTop">
+                  <div>
+                    <span className="statusBannerLabel">Status atual</span>
+                    <h3>{globalStatusMock.phase}</h3>
+                    <span className="summarySubtitle">
+                      {globalStatusMock.nextImportantDate}
+                    </span>
+                  </div>
+                  <div className="statusChips">
+                    <span className="riskChip risk-moderado">
+                      Risco {globalStatusMock.riskLevel}
+                    </span>
+                    {globalStatusMock.criticalAlerts > 0 && (
+                      <span className="alertChip">
+                        {globalStatusMock.criticalAlerts} alerta(s)
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </section>
+
+              {/* Timeline horizontal de etapas */}
+              <section className="summaryCard processCard">
+                <div className="summaryCardHeader">
+                  <div>
+                    <h3>Jornada da paciente</h3>
+                    <span className="summarySubtitle">
+                      Do primeiro contato ao pós-operatório.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="processTimelineTrack">
+                  {processSteps.map((step, index) => {
+                    const isActive =
+                      step.state === "done" || step.state === "current";
+                    const connectorActive = index < currentStageIndex;
+
+                    return (
+                      <React.Fragment key={step.id}>
+                        <div
+                          className={`processStep ${
+                            step.state
+                          } ${isActive ? "is-active" : ""}`}
+                        >
+                          <div className="stepIconCircle">
+                            <span className="stepIndex">
+                              {index + 1}
+                            </span>
+                          </div>
+                          <span className="stepLabel">
+                            {step.label}
+                          </span>
+                        </div>
+                        {index < processSteps.length - 1 && (
+                          <div
+                            className={`processConnector ${
+                              connectorActive ? "active" : ""
+                            }`}
+                          />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+              </section>
+
+              {/* Grid inferior de cards */}
+              <div className="summaryBottomGrid">
+                {/* Coluna esquerda: calendário + pós-op */}
+                <div className="summaryCol">
+                  {/* Card calendário */}
+                  <section className="summaryCard calendarCard">
+                    <div className="summaryCardHeader">
+                      <div>
+                        <h3>Agenda da paciente</h3>
+                        <span className="summarySubtitle">
+                          Próximos retornos e registros recentes.
+                        </span>
+                      </div>
+                      <span className="summaryBadge">
+                        {mockAppointments.length} eventos
+                      </span>
+                    </div>
+
+                    <div className="calendarTimeline">
+                      {mockAppointments.map((appt, index) => (
+                        <div key={appt.id} className="calendarRow">
+                          <div className="calendarTimeCol">
+                            <span className="calendarTime">
+                              {appt.time}
+                            </span>
+                            {index < mockAppointments.length - 1 && (
+                              <div className="calendarTimeLine" />
+                            )}
+                          </div>
+                          <div
+                            className={`calendarEventCard ${appt.status}`}
+                          >
+                            <strong>{appt.title}</strong>
+                            <span>{appt.room}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Card pós-operatório */}
+                  <section className="summaryCard postopCard">
+                    <div className="summaryCardHeader">
+                      <div>
+                        <h3>Pós-operatório</h3>
+                        <span className="summarySubtitle">
+                          Acompanhamento da recuperação da paciente.
+                        </span>
+                      </div>
+                    </div>
+
+                    {postopInfoMock.hasSurgery ? (
+                      <div className="postopContent">
+                        <div className="postopProgress">
+                          <div className="postopCircle">
+                            <span className="postopWeek">
+                              Semana {postopInfoMock.currentWeek}
+                            </span>
+                            <span className="postopTotal">
+                              de {postopInfoMock.totalWeeks}
+                            </span>
+                          </div>
+                          <div className="postopBarWrapper">
+                            <div className="postopBar">
+                              <div
+                                className="postopBarFill"
+                                style={{
+                                  width: `${
+                                    (postopInfoMock.currentWeek /
+                                      postopInfoMock.totalWeeks) *
+                                    100
+                                  }%`,
+                                }}
+                              />
+                            </div>
+                            <span className="postopNext">
+                              Próximo retorno: {postopInfoMock.nextReturn}
+                            </span>
+                          </div>
+                        </div>
+
+                        {postopInfoMock.pending.length > 0 && (
+                          <div className="postopPending">
+                            <span>Pendências:</span>
+                            <ul>
+                              {postopInfoMock.pending.map((p, idx) => (
+                                <li key={idx}>{p}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="placeholderText">
+                        Nenhuma cirurgia registrada para esta paciente.
+                      </p>
+                    )}
+                  </section>
+                </div>
+
+                {/* Coluna direita: exames + riscos + mídia + KPIs */}
+                <div className="summaryCol">
+                  {/* Card exames / gauge */}
+                  <section className="summaryCard examsCard">
+                    <div className="summaryCardHeader">
+                      <div>
+                        <h3>Exames pré-operatórios</h3>
+                        <span className="summarySubtitle">
+                          Progresso conforme conferência do médico.
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="examsGaugeWrapper">
+                      <div
+                        className="examsGauge"
+                        style={{ "--gauge-deg": gaugeDeg }}
+                      >
+                        <div className="examsGaugeInner">
+                          <span className="examsGaugeValue">
+                            {approvalRate}%
+                          </span>
+                          <span className="examsGaugeLabel">
+                            Exames aprovados
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="examsStats">
+                        <div className="examsStatRow">
+                          <span>Exames solicitados</span>
+                          <strong>{examRequested}</strong>
+                        </div>
+                        <div className="examsStatRow">
+                          <span>Exames entregues</span>
+                          <strong>{examDelivered}</strong>
+                        </div>
+                        <div className="examsStatRow">
+                          <span>Exames aprovados</span>
+                          <strong>{examApproved}</strong>
+                        </div>
+                        <div className="examsStatRow">
+                          <span>Exames recusados</span>
+                          <strong>{examRejected}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Card riscos & alertas */}
+                  <section className="summaryCard riskCard">
+                    <div className="summaryCardHeader">
+                      <div>
+                        <h3>Riscos & alertas</h3>
+                        <span className="summarySubtitle">
+                          Informações críticas para o ato cirúrgico.
+                        </span>
+                      </div>
+                    </div>
+                    <p className="riskSummary">{riskInfoMock.summary}</p>
+                    <div className="riskTags">
+                      {riskInfoMock.comorbidities.map((c) => (
+                        <span key={c} className="riskTag">
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="riskAllergy">
+                      <span>Alergias:</span>
+                      <strong>
+                        {riskInfoMock.allergies.length > 0
+                          ? riskInfoMock.allergies.join(", ")
+                          : "Nenhuma registrada"}
+                      </strong>
+                    </div>
+                  </section>
+
+                  {/* Card mídia */}
+                  <section className="summaryCard mediaCard">
+                    <div className="summaryCardHeader">
+                      <div>
+                        <h3>Últimas imagens</h3>
+                        <span className="summarySubtitle">
+                          Pré e pós-operatório da paciente.
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mediaGrid">
+                      {mediaPreviewMock.map((m) => (
+                        <div key={m.id} className="mediaThumb">
+                          <div className="mediaThumbImg" />
+                          <div className="mediaThumbInfo">
+                            <span className="mediaThumbLabel">
+                              {m.label}
+                            </span>
+                            <span className="mediaThumbDate">
+                              {m.date}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Card KPIs */}
+                  <section className="summaryCard kpiCard">
+                    <div className="summaryCardHeader">
+                      <div>
+                        <h3>Resumo rápido</h3>
+                        <span className="summarySubtitle">
+                          Indicadores gerais do prontuário.
+                        </span>
+                      </div>
+                    </div>
+                    <div className="kpiRow">
+                      <div className="kpiItem">
+                        <span className="kpiLabel">
+                          Formulários
+                        </span>
+                        <strong>
+                          {k.formsCompleted}/{k.formsTotal}
+                        </strong>
+                      </div>
+                      <div className="kpiItem">
+                        <span className="kpiLabel">
+                          Docs assinados
+                        </span>
+                        <strong>
+                          {k.signedDocs}/{k.signedDocsTotal}
+                        </strong>
+                      </div>
+                      <div className="kpiItem">
+                        <span className="kpiLabel">
+                          Retornos feitos
+                        </span>
+                        <strong>
+                          {k.finishedVisits}/{k.totalVisits}
+                        </strong>
+                      </div>
+                      <div className="kpiItem">
+                        <span className="kpiLabel">
+                          Dias pós-op
+                        </span>
+                        <strong>{k.daysSinceSurgery}</strong>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Checklist – mesmos módulos em cards */}
+          {viewMode === "checklist" && (
             <div className="overviewContent">
               <p className="placeholderText">
-                Visão consolidada dos módulos do prontuário: anamnese, termos,
-                exames, controles e medicações.
+                Checklist dos módulos do prontuário: acompanhe o que já foi
+                preenchido e o que ainda está pendente.
               </p>
               <div className="overviewGrid">
                 {prontuarioModules.map((mod) => (
@@ -526,7 +977,9 @@ export default function PatientProntuario() {
                     onClick={() => handleSelectModule(mod.id)}
                   >
                     <div className="overviewCardHeader">
-                      <span className="overviewTitle">{mod.title}</span>
+                      <span className="overviewTitle">
+                        {mod.title}
+                      </span>
                       <span
                         className={`moduleStatusBadge status-${mod.status}`}
                       >
@@ -542,6 +995,7 @@ export default function PatientProntuario() {
             </div>
           )}
 
+          {/* Documentos */}
           {viewMode === "documents" && (
             <div className="documentsContent">
               <p className="placeholderText">
@@ -570,6 +1024,7 @@ export default function PatientProntuario() {
             </div>
           )}
 
+          {/* Linha do tempo */}
           {viewMode === "timeline" && (
             <div className="timelineTabContent">
               <p className="placeholderText">
@@ -600,10 +1055,12 @@ export default function PatientProntuario() {
           )}
         </main>
 
-        {/* COLUNA DIREITA – PAINEL CONTEXTUAL */}
-        <aside className="prontuarioPanel">
-          {renderRightPanelContent()}
-        </aside>
+        {/* COLUNA DIREITA – PAINEL CONTEXTUAL (não é renderizado na visão geral) */}
+        {viewMode !== "overview" && (
+          <aside className="prontuarioPanel">
+            {renderRightPanelContent()}
+          </aside>
+        )}
       </div>
     </div>
   );

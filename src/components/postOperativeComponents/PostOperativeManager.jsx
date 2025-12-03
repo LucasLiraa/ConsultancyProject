@@ -52,7 +52,7 @@ const PostOperatoryManager = ({ onVoltar }) => {
         .from("pos_operatorio")
         .select("*")
         .eq("paciente_pos_id", selectedPostOp.id)
-        .order("created_at", { ascending: true }); // order arbitrary — we'll use semana
+        .order("criado_em", { ascending: true });
       if (error) {
         console.error("Erro ao carregar semanas:", error.message);
         setWeeks([]);
