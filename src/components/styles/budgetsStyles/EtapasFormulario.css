@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .orcamentoBuilderContainer {
   display: flex;
   gap: 32px;
@@ -56,3 +57,63 @@
   background-color: #cccccc;
   cursor: not-allowed;
 }
+=======
+.orcamentoBuilderContainer {
+  display: flex;
+  gap: 32px;
+  padding: 24px;
+}
+
+.etapaFormularioContainer {
+  flex: 1;
+  width: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.formStep h2 {
+  margin-bottom: 16px;
+}
+
+.formStep label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.formStep input {
+  width: 100%;
+  padding: 8px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.botoesNavegacao {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.botoesNavegacao button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.botoesNavegacao button:hover {
+  background-color: #43a047;
+}
+
+.botoesNavegacao button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+>>>>>>> e432c81afbfcf20f9e060b437fc8dcafc90f5cf5

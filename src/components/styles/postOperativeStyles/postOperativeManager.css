@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .managerRoot {
   display: flex;
   flex-direction: column;
@@ -95,4 +96,103 @@
   justify-content: center;
   height: 100%;
   color: #6b7280;
+=======
+.managerRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.managerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btnPrimary {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.btnGhost {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.managerBody {
+  display: flex;
+  gap: 12px;
+  height: calc(100% - 64px);
+}
+
+.postsList {
+  width: 260px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid #e6e6f0;
+  overflow-y: auto;
+}
+
+.postsListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.postItem {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.postItem:hover { background: #f8fafc; }
+.postItem.active { border-color: #c7d2fe; background: #eef2ff; }
+
+.postTitle { font-weight: 600; }
+.postSub { font-size: 0.85rem; color: #6b7280; }
+
+.managerMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.manageArea {
+  display: flex;
+  gap: 12px;
+  height: 100%;
+}
+
+.manageContent {
+  flex: 1;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.placeholderBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7280;
+>>>>>>> e432c81afbfcf20f9e060b437fc8dcafc90f5cf5
 }

@@ -1,0 +1,14 @@
+.gerenciadorContainer {
+  display: flex;
+  flex-direction: column; /* Empilha os itens verticalmente */
+}
+
+.postOperativeList {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os cards quebrem para a linha seguinte */
+}
+
+.postOperativeButtonNew {
+  display: flex;
+  justify-content: flex-start;
+}

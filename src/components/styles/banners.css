@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .bannerheader{
   display: flex;
   justify-content: space-between;
@@ -33,4 +34,41 @@
 .bannerCardTexts p{
   font-size: 16px;
   font-weight: lighter; 
+=======
+.bannerheader{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 20px;
+
+  width: 100%;
+  height: 26vh;
+
+  border-radius: 14px;
+  background-image: url("/public/hello.png"); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bannerCardHours{
+  width: 30%;
+  padding: 12px;
+  border-radius: 6px;
+
+  font-weight: bold;
+  color: var(--text-color);
+  background-color: var(--body-color);
+}
+
+.bannerCardTexts{
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 36px;
+  color: var(--body-color);
+}
+.bannerCardTexts p{
+  font-size: 16px;
+  font-weight: lighter; 
+>>>>>>> e432c81afbfcf20f9e060b437fc8dcafc90f5cf5
 }

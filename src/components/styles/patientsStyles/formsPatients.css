@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 :root {
@@ -276,3 +277,283 @@
   margin-top: 8px;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }
+=======
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+:root {
+  --body-color: #eeeeee;
+  --body-color-hover: #aaaaaa;
+  --text-color: #202020;
+  --text-color-hover: #383838;
+
+  --tran-02: all 0.2s ease;
+  --tran-04: all 0.4s ease;
+  --tran-06: all 0.6s ease;
+  --tran-08: all 0.8s ease;
+}
+
+
+/* -------------------------------------- */
+/* MODAL NOVO PACIENTE */
+/* -------------------------------------- */
+.containerNewPatient {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  flex-direction: row;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 100;
+  background-color: #20202054;
+}
+
+.contentNewPatient {
+  display: flex;
+  position: relative;
+  flex-direction: row; /* ← para acomodar sidebar + conteúdo */
+  background-color: var(--body-color);
+  border-radius: 8px;
+  width: 80%;
+  height: 80vh;
+  max-width: 1200px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* -------------------------------------- */
+/* SIDEBAR FIXA */
+/* -------------------------------------- */
+.sidebarSteps {
+  flex: 0 0 220px;
+  background: #f2f4f7;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-right: 2px solid #d4d8de;
+  overflow-y: auto;
+}
+
+.sidebarStep {
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: var(--tran-02);
+  font-size: 14px;
+  color: #202020;
+  user-select: none;
+}
+.sidebarStep:hover {
+  background: #e0e4ea;
+}
+.sidebarStep.active {
+  background: #3b52d3;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* -------------------------------------- */
+/* CONTEÚDO DO FORMULÁRIO */
+/* -------------------------------------- */
+.contentNewPatient form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.contentNewPatientBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 30px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+.contentNewPatientBody::-webkit-scrollbar {
+  width: 6px;
+}
+.contentNewPatientBody::-webkit-scrollbar-thumb {
+  background-color: #b3b3b3;
+  border-radius: 3px;
+}
+
+/* -------------------------------------- */
+/* CAMPOS DO FORMULÁRIO */
+/* -------------------------------------- */
+.formContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+}
+
+.formContent label {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.formContent input,
+.formContent select {
+  padding: 10px;
+  border: 1px solid var(--text-color);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.formContent textarea {
+  min-height: 80px;
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid var(--text-color);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.formContent h3 {
+  margin-bottom: 20px;
+}
+
+.formContent h4 {
+  margin: 16px 0 8px;
+  color: #3b52d3;
+}
+
+/* Checkbox estilizado */
+.form-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+.form-control input[type="checkbox"] {
+  appearance: none;
+  width: 1.3em;
+  height: 1.3em;
+  border: 2px solid currentColor;
+  border-radius: 0.25em;
+  position: relative;
+  cursor: pointer;
+}
+.form-control input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  width: 0.5em;
+  height: 0.9em;
+  border: solid currentColor;
+  border-width: 0 0.2em 0.2em 0;
+  transform: rotate(45deg);
+  top: 0;
+  left: 0.3em;
+  opacity: 0;
+}
+.form-control input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+.outros-input {
+  margin-top: 8px;
+}
+
+/* -------------------------------------- */
+/* BOTÕES DE NAVEGAÇÃO E SALVAR */
+/* -------------------------------------- */
+.contentNewPatientButton {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 20px 20px;
+  border-top: 1px solid #ddd;
+}
+
+.contentNewPatientButton button {
+  padding: 10px 18px;
+  border: 1px solid var(--text-color);
+  border-radius: 6px;
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+  font-weight: 500;
+}
+.contentNewPatientButton button:hover {
+  cursor: pointer;
+  color: var(--text-color);
+  background-color: var(--body-color);
+}
+
+/* -------------------------------------- */
+/* SEÇÕES CIRÚRGICAS */
+/* -------------------------------------- */
+.surgicalCase {
+  padding-bottom: 30px;
+}
+
+.surgical-section {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.surgical-section h4 {
+  margin-bottom: 8px;
+  color: #3b52d3;
+}
+
+/* -------------------------------------- */
+/* RESPONSIVIDADE */
+/* -------------------------------------- */
+@media (max-width: 1024px) {
+  .contentNewPatient {
+    width: 90%;
+    height: 85vh;
+  }
+
+  .sidebarSteps {
+    flex: 0 0 180px;
+  }
+
+  .contentNewPatientBody {
+    padding: 16px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentNewPatient {
+    flex-direction: column;
+    height: 90vh;
+  }
+
+  .sidebarSteps {
+    flex: 0 0 auto;
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 2px solid #d4d8de;
+  }
+
+  .sidebarStep {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+  }
+
+  .contentNewPatientBody {
+    margin: 0;
+    height: 100%;
+  }
+}
+
+.preview-foto {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-top: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+>>>>>>> e432c81afbfcf20f9e060b437fc8dcafc90f5cf5

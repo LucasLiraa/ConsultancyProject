@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .patientNotes {
   display: flex;
   justify-content: space-evenly;
@@ -155,4 +156,163 @@
 .contentPatientOptions select{
   width: 50%;
   height: 36px;
+=======
+.patientNotes {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+  padding: 16px;
+  width: 30%;
+  height: 40vh;
+  border-radius: 8px;
+  background-color: #fff;
+  position: relative;
+}
+
+.patientNotesTitle {
+  display: flex;
+  justify-content: space-between;
+}
+
+.patientNotesTitle button {
+  cursor: pointer;
+  border: none;
+  color: var(--text-color);
+  background-color: transparent;
+}
+
+.containerPatientNotes {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  width: 100%;
+  height: 60%;
+  margin-top: 12px;
+  border-radius: 4px;
+  background-color: var(--body-color);
+}
+
+.containerPatientNotes textarea {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  resize: none;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.containerPatientNotes button {
+  width: 40%;
+  height: 46px;
+  border: none;
+  border-radius: 4px;
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.containerPatientNotes button:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.contentPatientNotes {
+  margin-top: 16px;
+}
+
+.contentPatientNotesUser {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.contentPatientNotesUser p {
+  opacity: 0.5;
+  font-size: 12px;
+}
+.contentPatientNotesUserInfo{
+  display: flex;
+  align-items: center;
+}
+.contentPatientNotesImage {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  margin-right: 6px;
+}
+
+.allNotesList{
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  width: 90%;
+  max-height: 80vh;
+  transform: translateX(-50%);
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 28px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.allNotesList h4{
+  margin-bottom: 16px;
+}
+
+.noteItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: column;
+
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.noteHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.noteHeader img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.collapsedText {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limita a 3 linhas */
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.expandedText {
+  word-wrap: break-word;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.noteContent {
+  position: relative;
+}
+
+.contentPatientOptions{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+
+  width: 100%;
+  padding: 4px;
+}
+.contentPatientOptions select{
+  width: 50%;
+  height: 36px;
+>>>>>>> e432c81afbfcf20f9e060b437fc8dcafc90f5cf5
 }

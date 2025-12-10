@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
@@ -219,3 +220,226 @@ td img {
     transform: translateY(0);
   }
 }
+=======
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f8fc;
+}
+
+.container {
+  width: 90%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 26px;
+  margin-bottom: -16px;
+}
+.header button{
+  width: 20%;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.header button:hover{
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  background-color: var(--body-color);
+}
+
+.btn-add {
+  background-color: #2d2d2d;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.summary {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.card i{
+  font-size: 24px;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.card .title {
+  font-size: 24px;
+  color: var(--text-color);
+}
+
+.card .total {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.blue { border-left: 4px solid #3b82f6; }
+.orange { border-left: 4px solid #f59e0b; }
+.red { border-left: 4px solid #ef4444; }
+
+.inventory {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.search {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 40%;
+}
+
+.actions .btn {
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #e5e7eb;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.export {
+  
+  background-color: #3b82f6;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+thead {
+  background-color: #f1f5f9;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+td img {
+  width: 30px;
+  height: 30px;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.status.in-stock {
+  color: green;
+  font-weight: bold;
+}
+
+.status.out-stock {
+  color: red;
+  font-weight: bold;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.sectionsInventory{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  width: 100%;
+}
+.sectionsInventory button{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 30%;
+  height: 10vh;
+  padding: 18px;
+  border-radius: 6px;
+
+  font-weight: 100;
+  font-size: 26px;
+  color: var(--body-color);
+  background-color: var(--text-color);
+}
+
+.InvoicesNegative{
+  color: red;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  width: 80%;
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+>>>>>>> e432c81afbfcf20f9e060b437fc8dcafc90f5cf5

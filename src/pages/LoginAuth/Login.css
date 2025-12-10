@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .login-page{
   display: flex;
   justify-content: center;
@@ -137,4 +138,145 @@
   object-position: center;
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+=======
+.login-page{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100vh;
+}
+
+.login-card{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  width: 90%;
+  height: 90%;
+}
+
+.login-left{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+
+  width: 50vw;
+  height: 60%;
+}
+
+.login-left form{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 40%;
+}
+.loginHeader,
+.loginFooter{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 50%;
+  margin-top: 60px;
+}
+/* Wrapper do input com ícone */
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+.input-wrapper input {
+  width: 100%;
+  border-radius: 999px;
+  padding: 14px 48px 14px 18px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 15px;
+  transition: 0.2s;
+}
+.input-wrapper input:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Ícone dentro do input */
+.input-icon {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+/* Ícone do olho precisa ser clicável */
+.password-eye {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Linha: remember + forgot */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -6px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+.login-options{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #374151;
+}
+
+.forgot-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Botão azul */
+.login-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 999px;
+  background: #0d47ff;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.login-btn:hover {
+  background: #0451ff;
+  transform: translateY(-1px);
+}
+.login-btn:active {
+  transform: translateY(0);
+}
+
+
+.login-right{
+  width: 40vw;
+  height: 100%;
+}
+.login-right img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     
+  object-position: center;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+>>>>>>> e432c81afbfcf20f9e060b437fc8dcafc90f5cf5
 }
