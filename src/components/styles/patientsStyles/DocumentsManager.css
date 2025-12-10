@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .dropzone {
   display: flex;
   flex-direction: column;
@@ -76,83 +75,5 @@
   cursor: pointer;
   color: #c00;
   font-size: 16px;
-=======
-.dropzone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  border: 2px dashed var(--text-color);
-  border-radius: 8px;
-  padding: 16px;
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  transition: background 0.2s ease-in-out;
-}
-
-.dropzone.dragover {
-  background: rgba(0, 123, 255, 0.08);
-}
-
-.headerDocs {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
-}
-
-.headerDocs button {
-  border: none;
-  background: var(--text-color);
-  color: var(--body-color);
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: var(--tran-04);
-}
-
-.headerDocs button:hover {
-  opacity: 0.85;
-}
-
-.semDocs {
-  color: #666;
-  margin-top: 20px;
-}
-
-.listaDocs {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  margin-top: 12px;
-  max-height: 250px;
-  overflow-y: auto;
-}
-
-.docItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid var(--text-color);
-  border-radius: 6px;
-  padding: 8px 12px;
-  background: #fafafa;
-}
-
-.docItem a {
-  text-decoration: none;
-  color: var(--text-color);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-}
-
-.deleteIcon {
-  cursor: pointer;
-  color: #c00;
-  font-size: 16px;
->>>>>>> e432c81afbfcf20f9e060b437fc8dcafc90f5cf5
+  transition: color 0.2s ease-in-out;
 }

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .sidebarBox {
   width: 320px;
   background: #fff;
@@ -19,26 +18,5 @@
 .sidebarFooter { margin-top:auto; }
 .btnDanger { background:#dc2626; color:#fff; border:none; padding:8px; border-radius:8px; width:100%; cursor:pointer; }
 .btnSmall { background:#eef2ff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
-=======
-.sidebarBox {
-  width: 320px;
-  background: #fff;
-  border-radius: 10px;
-  border:1px solid #e6e6f0;
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
 
-.sidebarInfo div { margin-bottom:6px; }
-.weeksList { display:flex; flex-direction:column; gap:6px; max-height:300px; overflow:auto; }
-.weekBtn { padding:8px; border-radius:8px; border:1px solid #e6e6f0; background:#fff; cursor:pointer; text-align:left; }
-.weekBtn:hover { background:#f1f5ff; }
-.sidebarActions { margin-top:8px; }
-.muted { color:#9ca3af; font-size:0.95rem; }
-.sidebarFooter { margin-top:auto; }
-.btnDanger { background:#dc2626; color:#fff; border:none; padding:8px; border-radius:8px; width:100%; cursor:pointer; }
-.btnSmall { background:#eef2ff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
->>>>>>> e432c81afbfcf20f9e060b437fc8dcafc90f5cf5
 .btnPrimary.full { width:100%; }
