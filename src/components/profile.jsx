@@ -30,8 +30,8 @@ function ProfileUser() {
         <div className="profileSubCardMain">
             <div className="profileSubCard">
                 <h5>Próxima Cirurgia</h5>
-                <p>Elza Pereira dos Santos</p>
-                <p>03/12/2025 às 11:00</p>
+                <p>Marcia Braga</p>
+                <p>11/12/2025 às 11:00</p>
             </div>
         </div>
 
