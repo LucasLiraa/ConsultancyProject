@@ -1,0 +1,348 @@
+/* === SurgicalMapOverlay.css === */
+
+.surgicalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", "Poppins", sans-serif;
+  color: #2b2b2b;
+  overflow-y: auto;
+}
+
+.surgicalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.surgicalHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #204b9b;
+}
+
+.surgicalHeader button {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #5e6b89;
+  transition: 0.2s;
+}
+
+.surgicalHeader button:hover {
+  color: #204b9b;
+}
+
+/* === LAYOUT PRINCIPAL === */
+.surgicalContainer {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+
+/* === COLUNA ESQUERDA === */
+.surgicalLeft {
+  background: #f8faff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  overflow-y: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.surgicalLeft h3 {
+  font-size: 1.2rem;
+  color: #204b9b;
+  margin-bottom: 1rem;
+}
+
+.surgicalLeft .backButton {
+  background: #e0e9ff;
+  color: #204b9b;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.surgicalLeft .backButton:hover {
+  background: #d3deff;
+}
+
+.surgeryDayGroup {
+  margin-bottom: 1.5rem;
+}
+
+.surgeryDayGroup h4 {
+  font-size: 0.95rem;
+  color: #64728a;
+  margin-bottom: 0.5rem;
+}
+
+.surgeryCard {
+  background: white;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border-left: 4px solid #204b9b;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.surgeryCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.surgeryCard .time {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #204b9b;
+  min-width: 50px;
+}
+
+.surgeryCard .details {
+  flex: 1;
+}
+
+.surgeryCard .details strong {
+  font-size: 0.95rem;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.surgeryCard .details p {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0;
+}
+
+.surgeryCard .details span {
+  font-size: 0.8rem;
+  color: #8093b3;
+}
+
+/* === CALENDÁRIO === */
+.surgicalCenter {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.calendarHeader h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #204b9b;
+  text-transform: capitalize;
+}
+
+.calendarHeader button {
+  background: #e0e9ff;
+  border: none;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #204b9b;
+  transition: 0.2s;
+}
+
+.calendarHeader button:hover {
+  background: #cfdcff;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.day {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #f3f5fb;
+  color: #3c4a68;
+  transition: 0.2s;
+}
+
+.day.empty {
+  visibility: hidden;
+}
+
+.day.highlight {
+  border: 2px solid #204b9b;
+  font-weight: 600;
+  background: #eaf0ff;
+}
+
+.day.selected {
+  background: #204b9b;
+  color: white;
+  font-weight: 600;
+}
+
+/* === DASHBOARD DIREITA === */
+.surgicalRight {
+  background: #f8faff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.surgicalRight h3 {
+  font-size: 1.2rem;
+  color: #204b9b;
+  margin-bottom: 0.5rem;
+}
+
+.summaryCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.summaryCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.summaryCard p {
+  font-size: 0.85rem;
+  color: #64728a;
+  margin-bottom: 0.3rem;
+}
+
+.summaryCard h2 {
+  font-size: 1.8rem;
+  color: #204b9b;
+  margin: 0;
+}
+
+.summaryCard h4 {
+  font-size: 1rem;
+  color: #2b2b2b;
+  margin: 0;
+}
+
+.summaryCard span {
+  font-size: 0.8rem;
+  color: #8093b3;
+}
+
+/* === RESPONSIVO === */
+@media (max-width: 1100px) {
+  .surgicalContainer {
+    grid-template-columns: 1fr 1fr;
+  }
+  .surgicalRight {
+    grid-column: span 2;
+  }
+}
+
+/* === DETALHES DA CIRURGIA === */
+.detailsPanel {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.2s ease;
+}
+
+.detailsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.detailsHeader h3 {
+  color: #204b9b;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.detailsHeader button {
+  background: transparent;
+  border: none;
+  color: #7a89ab;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.detailsHeader button:hover {
+  color: #204b9b;
+}
+
+.detailsPanel p {
+  font-size: 0.85rem;
+  margin: 0.2rem 0;
+  color: #3b3b3b;
+}
+
+.detailsPanel strong {
+  color: #204b9b;
+}
+
+.surgeryCard.active {
+  background: #e9f0ff;
+  border-left-color: #4a6ee0;
+  transform: translateX(3px);
+}
+
+/* Animação suave */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+@media (max-width: 768px) {
+  .surgicalContainer {
+    grid-template-columns: 1fr;
+  }
+  .surgicalLeft,
+  .surgicalCenter,
+  .surgicalRight {
+    width: 100%;
+  }
+}

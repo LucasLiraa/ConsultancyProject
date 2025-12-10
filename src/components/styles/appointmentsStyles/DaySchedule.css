@@ -1,0 +1,312 @@
+.appointmentsDay {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #f8f9fb;
+  border-radius: 12px;
+  padding: 1.2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  width: 100%;
+}
+
+.appointmentsDay h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Nenhum evento */
+.noEvents {
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Lista estilo timeline */
+.appointmentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+  height: 46vh;
+}
+
+/* Cada card */
+.appointmentCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 0.5rem 1.25rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+  border: 1px solid #f1f1f1;
+}
+
+.appointmentCard:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+/* Info principal (hora, título, subtítulo) */
+.appointmentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.appointmentTime {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.appointmentTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.appointmentDescription {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* Badge do tipo */
+.appointmentType {
+  font-size: 0.75rem;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  text-transform: capitalize;
+  align-self: flex-start;
+}
+
+/* Ações (botões) */
+.appointmentActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.appointmentActions button {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.appointmentActions button:hover {
+  color: #1d4ed8;
+}
+
+.appointmentActions .deleteBtn {
+  color: #ef4444;
+}
+
+.appointmentActions .deleteBtn:hover {
+  color: #b91c1c;
+}
+
+/* ===== Modal Overlay ===== */
+.appointmentsFormOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(17, 24, 39, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* acima de tudo */
+}
+
+/* ===== Form ===== */
+.appointmentsForm {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 480px;
+  max-width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: scaleIn 0.2s ease;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.appointmentsForm h4 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.appointmentsForm label {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.appointmentsForm input,
+.appointmentsForm select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.appointmentsForm input:focus,
+.appointmentsForm select:focus {
+  border-color: #3b82f6;
+}
+
+.appointmentsForm button {
+  cursor: pointer;
+}
+
+.appointmentsForm .formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.appointmentsForm .formActions button:first-child {
+  background: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+}
+
+.appointmentsForm .formActions button:first-child:hover {
+  background: #2563eb;
+}
+
+.appointmentsForm .formActions button:last-child {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+}
+
+.appointmentsForm .formActions button:last-child:hover {
+  background: #e5e7eb;
+}
+
+/* ===================== TIMELINE LAYOUT ===================== */
+
+.timelineContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+/* Linha da Timeline (hora + card) */
+.timelineRow {
+  display: grid;
+  grid-template-columns: 90px 1fr; /* coluna esquerda fixa + card */
+  align-items: start;
+}
+
+/* Coluna do horário */
+.timelineHour {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-align: right;
+  padding-right: 1rem;
+}
+
+/* Card estilo do print */
+.timelineCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.timelineCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.10);
+}
+
+/* Bolinha colorida antes do título */
+.timelineCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.timelineDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.timelineTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.timelineDescription {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: -2px;
+}
+
+/* Rodapé do card */
+.timelineCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timelineTimeRange {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.timelineCardFooter button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #3b82f6;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.timelineCardFooter button:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}

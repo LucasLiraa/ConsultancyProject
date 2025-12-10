@@ -1,0 +1,1050 @@
+/* =========================================================
+   OVERLAY FULLSCREEN – ESTILO Mapa Cirúrgico
+========================================================= */
+
+.prontuarioOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(248, 250, 252, 0.96);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: #111827;
+  overflow: hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.prontuarioHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.prontuarioHeader h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #204b9b;
+}
+
+.closeProntuarioBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: #f3f4f6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #5e6b89;
+  transition: background 0.15s ease, transform 0.1s ease, color 0.15s ease;
+}
+
+.closeProntuarioBtn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   CONTAINER EM 2/3 COLUNAS
+========================================================= */
+
+.prontuarioContainer {
+  display: grid;
+  grid-template-columns: 1.1fr 2.1fr;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem 2rem;
+  height: calc(100vh - 72px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   COLUNA ESQUERDA – RESUMO DO PACIENTE (compacta)
+========================================================= */
+
+.prontuarioSidebar {
+  background: radial-gradient(circle at top left, #eef2ff 0, #f9fafb 45%);
+  border-radius: 18px;
+  padding: 1.2rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow:
+    0 16px 40px rgba(15, 23, 42, 0.12),
+    0 0 0 1px rgba(148, 163, 184, 0.2);
+  overflow-y: auto;
+}
+
+.prontuarioProfile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 0.6rem;
+}
+
+.prontuarioFoto {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  box-shadow:
+    0 10px 25px rgba(15, 23, 42, 0.22),
+    0 0 0 2px rgba(129, 140, 248, 0.35);
+  margin-bottom: 0.6rem;
+  background: #e5e7eb;
+}
+
+.prontuarioProfile h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.prontuarioAnamnese {
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: #4b5563;
+}
+
+/* Botões sociais */
+
+.prontuarioSocialButtons {
+  display: flex;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
+}
+.socialButton {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  background: #ffffff;
+  color: #374151;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+.socialButton.icon-only {
+  max-width: 40px;
+}
+.socialButton i {
+  font-size: 0.9rem;
+}
+.socialButton.instagram:hover {
+  background: #fdf2ff;
+  border-color: #e879f9;
+  box-shadow: 0 4px 12px rgba(192, 38, 211, 0.2);
+  transform: translateY(-1px);
+}
+.socialButton.whatsapp:hover {
+  background: #ecfdf3;
+  border-color: #22c55e;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+  transform: translateY(-1px);
+}
+
+.socialButtonLabel {
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+.socialEditRow {
+  margin-top: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.socialInput {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  color: #111827;
+  background: #ffffff;
+  outline: none;
+  font-family: inherit;
+}
+
+.socialInput:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.75);
+  background: #f9fafb;
+}
+
+.socialSaveBtn {
+  border-radius: 999px;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-image: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #ffffff;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.45);
+  transition: transform 0.1s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.socialSaveBtn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(55, 48, 163, 0.55);
+}
+
+.socialSaveBtn:disabled {
+  opacity: 0.7;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+
+/* Blocos da coluna esquerda */
+
+.prontuarioBlock {
+  padding-top: 0.4rem;
+}
+
+.prontuarioBlock h4 {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.45rem;
+}
+
+/* Cabeçalho do bloco com botão de edição */
+
+.prontuarioBlockHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.prontuarioBlockHeader h4 {
+  margin-bottom: 0;
+}
+
+/* Botão Editar */
+
+.prontuarioEditBtn {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #4f46e5;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.prontuarioEditBtn:hover {
+  background: #eef2ff;
+  border-color: #6366f1;
+  color: #3730a3;
+  box-shadow: 0 3px 10px rgba(129, 140, 248, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Botão Salvar */
+
+.prontuarioSaveBtn {
+  margin-top: 0.6rem;
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  padding: 0.52rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  background-image: linear-gradient(135deg, #4f46e5, #7c3aed);
+  box-shadow:
+    0 8px 18px rgba(79, 70, 229, 0.45),
+    0 0 0 1px rgba(129, 140, 248, 0.7);
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.prontuarioSaveBtn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 24px rgba(55, 48, 163, 0.55),
+    0 0 0 1px rgba(129, 140, 248, 0.9);
+}
+
+.prontuarioSaveBtn:disabled {
+  opacity: 0.7;
+  cursor: default;
+  box-shadow: none;
+  filter: none;
+}
+
+/* =========================================================
+   LINHAS DE INFORMAÇÃO – COLUNA ESQUERDA
+========================================================= */
+
+.infoLines {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  gap: 0.5rem;
+}
+
+.infoLabel {
+  color: #9ca3af;
+}
+
+.infoValue {
+  color: #374151;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* inputs de edição (select, input, textarea) */
+
+.infoInput {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.78rem;
+  color: #111827;
+  background: #ffffff;
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 32px;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.infoInput:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.8);
+  background: #f9fafb;
+}
+
+.infoInput::placeholder {
+  color: #9ca3af;
+  font-size: 0.76rem;
+}
+
+.situacaoBadge {
+  padding: 0.12rem 0.6rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 0.75rem;
+}
+
+/* Pequenos títulos dentro dos blocos */
+
+.infoSectionTitle {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 0.25rem;
+}
+
+/* =========================================================
+   PILLS DE PROCEDIMENTOS
+========================================================= */
+
+.proceduresPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.3rem 0 0.6rem;
+}
+
+.procedurePill {
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  background: #e0ecff;
+  font-size: 0.75rem;
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+.proceduresEmpty {
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+/* Linhas de info da cirurgia */
+
+.cirurgiaInfoLines {
+  margin-top: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Textos auxiliares menores */
+
+.smallText {
+  font-size: 0.74rem;
+  color: #6b7280;
+}
+
+/* Mensagens de loading / erro */
+
+.prontuarioLoading {
+  font-size: 0.8rem;
+  color: #4b5563;
+  margin-bottom: 0.4rem;
+}
+
+.prontuarioError {
+  font-size: 0.78rem;
+  color: #b91c1c;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  margin-bottom: 0.4rem;
+}
+
+/* =========================================================
+   COLUNA CENTRAL – CONTEÚDO
+========================================================= */
+
+.prontuarioMain {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.2rem 1.4rem;
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.14),
+    0 0 0 1px rgba(148, 163, 184, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   ABAS CENTRAL
+========================================================= */
+
+.prontuarioTabs {
+  display: inline-flex;
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+  background: #f3f4ff;
+  padding: 0.25rem;
+  border-radius: 999px;
+}
+
+.prontuarioTabs button {
+  border: none;
+  background: transparent;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #4b5563;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.prontuarioTabs button.active {
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 2px 6px rgba(129, 140, 248, 0.35);
+}
+
+/* Placeholder “em construção” */
+
+.prontuarioUnderConstruction {
+  flex: 1;
+  border-radius: 16px;
+  border: 1px dashed #cbd5e1;
+  background: radial-gradient(circle at top, #eff6ff 0, #f9fafb 50%);
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.prontuarioUnderConstruction h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.prontuarioUnderConstruction p {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+/* =========================================================
+   (Demais estilos existentes para visão geral, cards, etc.)
+   Mantidos para uso futuro
+========================================================= */
+
+.summaryContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.summaryCard {
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.04);
+}
+
+/* LINHA DO TEMPO – VISÃO GERAL */
+
+.processTimelineTrack {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 0.4rem 0.2rem 0;
+}
+
+.processStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.stepIconCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 2px solid #d1d5db;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15);
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.1s ease;
+}
+
+.stepIndex {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.stepCheckIcon {
+  font-size: 0.75rem;
+  color: #ffffff;
+}
+
+/* Linha que conecta os steps */
+
+.processConnector {
+  flex: 1 1 0;
+  height: 2px;
+  background: #e5e7eb;
+  margin: 0 0.25rem;
+  border-radius: 999px;
+  transition: background 0.18s ease;
+}
+
+/* Etapas concluídas (cheias e linha roxa) */
+
+.processStep.is-active .stepIconCircle {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow:
+    0 4px 10px rgba(79, 70, 229, 0.45),
+    0 0 0 2px rgba(191, 219, 254, 0.9);
+  transform: translateY(-1px);
+}
+
+.processStep.is-active .stepIndex {
+  color: #ffffff;
+}
+
+.processConnector.active {
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+}
+
+/* Etapa atual (círculo com borda roxa, fundo branco) */
+
+.processStep.current .stepIconCircle {
+  background: #ffffff;
+  border-color: #4f46e5;
+  box-shadow:
+    0 4px 12px rgba(79, 70, 229, 0.35),
+    0 0 0 2px rgba(199, 210, 254, 0.9);
+  transform: translateY(-1px);
+}
+
+.processStep.current .stepIndex {
+  color: #4f46e5;
+}
+
+/* Etiqueta de texto embaixo */
+
+.stepLabel {
+  margin-top: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #4b5563;
+  text-align: center;
+  max-width: 110px;
+}
+
+
+
+
+/* ... (restante dos estilos de summary, timeline, painel direito, responsivo) ... */
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 1100px) {
+  .prontuarioContainer {
+    grid-template-columns: 1.1fr 1.4fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .prontuarioContainer {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .prontuarioMain {
+    margin-top: 0.75rem;
+  }
+}
+
+
+/* ====== CARD DE PROCEDIMENTOS ====== */
+
+.proceduresChipsRow {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.procedureChip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 0.75rem;
+  cursor: default;
+  outline: none;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.procedureChip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+/* Ícone do chip */
+.procedureChip-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+/* Texto principal */
+.procedureChip-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.procedureChip-name {
+  font-weight: 500;
+  font-size: 0.78rem;
+  color: #111827;
+}
+
+.procedureChip-type {
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+/* Chips por tipo (cores) */
+.procedureChip.chip-lipo {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.08),
+    rgba(59, 130, 246, 0.02)
+  );
+}
+
+.procedureChip.chip-lipo .procedureChip-icon {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+}
+
+.procedureChip.chip-mama {
+  border-color: rgba(236, 72, 153, 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(236, 72, 153, 0.08),
+    rgba(236, 72, 153, 0.02)
+  );
+}
+
+.procedureChip.chip-mama .procedureChip-icon {
+  background: rgba(236, 72, 153, 0.12);
+  color: #be185d;
+}
+
+.procedureChip.chip-abdomen {
+  border-color: rgba(16, 185, 129, 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.08),
+    rgba(16, 185, 129, 0.02)
+  );
+}
+
+.procedureChip.chip-abdomen .procedureChip-icon {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+
+.procedureChip.chip-gluteo {
+  border-color: rgba(139, 92, 246, 0.5);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.08),
+    rgba(139, 92, 246, 0.02)
+  );
+}
+
+.procedureChip.chip-gluteo .procedureChip-icon {
+  background: rgba(139, 92, 246, 0.12);
+  color: #6d28d9;
+}
+
+.procedureChip.chip-outro {
+  border-color: rgba(148, 163, 184, 0.7);
+  background: linear-gradient(
+    135deg,
+    rgba(148, 163, 184, 0.08),
+    rgba(148, 163, 184, 0.02)
+  );
+}
+
+.procedureChip.chip-outro .procedureChip-icon {
+  background: rgba(148, 163, 184, 0.12);
+  color: #4b5563;
+}
+
+/* Texto quando não há procedimentos */
+.proceduresEmptyText {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* Tooltip simples usando o próprio chip */
+.procedureChip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translate(-50%, -6px);
+  background: #111827;
+  color: #f9fafb;
+  font-size: 0.7rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.35rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease;
+  z-index: 20;
+}
+
+.procedureChip:hover::after {
+  opacity: 1;
+  transform: translate(-50%, -2px);
+}
+
+/* ====== CHECKLIST PRÉ-OPERATÓRIO ====== */
+
+.preopChecklistGrid {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.preopItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-align: left;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.preopItem:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+.preopItem.is-checked {
+  border-color: rgba(34, 197, 94, 0.65);
+  background: linear-gradient(
+    135deg,
+    rgba(34, 197, 94, 0.08),
+    rgba(16, 185, 129, 0.02)
+  );
+}
+
+.preopCheckbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 2px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: #16a34a;
+  background: #ffffff;
+}
+
+.preopItem.is-checked .preopCheckbox {
+  border-color: #16a34a;
+  background: #bbf7d0;
+}
+
+.preopLabel {
+  font-size: 0.78rem;
+  color: #111827;
+}
+
+/* Botão de salvar */
+.preopActions {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.preopSaveBtn {
+  border-radius: 999px;
+  border: none;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background-image: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.45);
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.preopSaveBtn:hover:not(:disabled) {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(21, 128, 61, 0.6);
+}
+
+.preopSaveBtn:disabled {
+  opacity: 0.7;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ====== AVALIAÇÃO INICIAL (RESUMO CLÍNICO) ====== */
+
+.clinicalSummaryGrid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.clinicalMetricCard {
+  border-radius: 0.85rem;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-height: 64px;
+}
+
+.clinicalMetricCard.clinicalMetricWide {
+  grid-column: span 2;
+}
+
+.clinicalMetricCard.clinicalMetricFull {
+  grid-column: 1 / -1;
+}
+
+.clinicalMetricLabel {
+  font-size: 0.72rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.clinicalMetricValue {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.clinicalMetricTag {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.2rem;
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  font-size: 0.7rem;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Medidas corporais dentro do card */
+.clinicalMeasuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 0.25rem 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.measureItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.measureLabel {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.measureValue {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+/* Históricos clínicos */
+.clinicalHistoryList {
+  margin: 0.3rem 0 0;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.clinicalHistoryItem {
+  display: flex;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+}
+
+.historyLabel {
+  font-weight: 500;
+  color: #374151;
+}
+
+.historyValue {
+  color: #4b5563;
+}
+
+.clinicalHistoryEmpty {
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}

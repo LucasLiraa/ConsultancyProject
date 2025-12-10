@@ -1,0 +1,154 @@
+.weeklyBarContainer{
+  width: 100%;
+  height: 98%;
+  border-radius: 12px;
+  font-family: "Segoe UI", sans-serif;
+
+  margin-top: -20px;
+  color: #fff;
+  background: #1e1f29;
+}
+
+.weeklyBarHeader{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 100%;
+  height: 80px;
+  border-radius: 12px;
+
+  background-color: #3b52d3;
+}
+
+.weeklyDays {
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+  padding: 0 10px;
+
+  background: #282933;
+}
+
+
+.weeklyBarHeader select {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  color: #fff;
+  background: #2a2c3b;
+}
+
+
+.dayButton {
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  color: #aaa;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  flex: 1;
+}
+
+.dayButton .dayName {
+  display: block;
+  font-size: 0.8rem;
+}
+
+.dayButton .dayNumber {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+
+.dayButton.selected {
+  margin: 8px;
+  color: #fff;
+  background: #3b52d3;
+}
+
+.dayAgenda {
+  background: #2a2c3b;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.dayAgenda h4 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  color: #ddd;
+}
+
+
+
+/* Container da lista de dias e agendamentos */
+.weeklyDaysList {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  width: 100%;
+  height: 70%;
+  padding: 0 10px;
+  overflow-y: auto;
+  gap: 4px; /* espaço entre agendamentos */
+}
+
+.weeklyDaysList p {
+  color: #aaa;
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
+
+/* Lista interna de agendamentos */
+.dayAgenda ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dayAgenda li {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 6px; 
+  margin-bottom: 4px; /* espaçamento entre itens da lista */
+  font-size: 0.8rem;
+  border-radius: 4px;
+  background-color: #1e1f29;
+}
+
+/* Horário */
+.dayAgenda li .time {
+  min-width: 60px;
+  font-weight: 500;
+  color: #fff;
+}
+
+/* Bolinha de tipo */
+.dayAgenda li .typeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Informações do agendamento */
+.dayAgenda li .info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dayAgenda li .info strong {
+  font-weight: 600;
+  color: #fff;
+}
+
+.dayAgenda li .info span {
+  font-size: 0.85rem;
+  color: #aaa;
+}
