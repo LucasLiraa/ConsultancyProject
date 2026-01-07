@@ -243,3 +243,102 @@
     border-radius: 0;
   }
 }
+
+.patientVisitLayout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100%;
+  background: #f6f8fa;
+}
+
+/* SIDEBAR */
+.visitSidebar {
+  background: #e5e7eb;
+  padding: 24px;
+  border-radius: 16px 0 0 16px;
+}
+
+.visitSidebar h4 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.monthLabel {
+  font-size: 13px;
+  color: #555;
+}
+
+/* CONTEÚDO */
+.visitContent {
+  background: #fff;
+  padding: 32px;
+  border-radius: 0 16px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* HEADER */
+.visitHeaderCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 16px;
+}
+
+.visitHeaderCard h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.visitMeta {
+  font-size: 14px;
+  color: #666;
+}
+
+.closeBtn {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* SEÇÕES */
+.visitSection h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.visitSection p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #444;
+}
+
+/* CAIXA CLÍNICA */
+.clinicalBox {
+  background: #f9fafb;
+  border-left: 4px solid #2563eb;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* AÇÕES */
+.visitActions {
+  margin-top: auto;
+}
+
+.primaryBtn {
+  background: #2563eb;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}

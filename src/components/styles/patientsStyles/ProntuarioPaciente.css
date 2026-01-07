@@ -900,7 +900,6 @@
   border-color: #16a34a;
   background: #bbf7d0;
 }
-
 .preopLabel {
   font-size: 0.78rem;
   color: #111827;
@@ -912,7 +911,6 @@
   display: flex;
   justify-content: flex-end;
 }
-
 .preopSaveBtn {
   border-radius: 999px;
   border: none;
@@ -934,7 +932,6 @@
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(21, 128, 61, 0.6);
 }
-
 .preopSaveBtn:disabled {
   opacity: 0.7;
   cursor: default;
@@ -943,7 +940,6 @@
 }
 
 /* ====== AVALIAÇÃO INICIAL (RESUMO CLÍNICO) ====== */
-
 .clinicalSummaryGrid {
   margin-top: 1rem;
   display: grid;
@@ -961,11 +957,9 @@
   gap: 0.2rem;
   min-height: 64px;
 }
-
 .clinicalMetricCard.clinicalMetricWide {
   grid-column: span 2;
 }
-
 .clinicalMetricCard.clinicalMetricFull {
   grid-column: 1 / -1;
 }
@@ -976,13 +970,11 @@
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
-
 .clinicalMetricValue {
   font-size: 0.95rem;
   font-weight: 600;
   color: #111827;
 }
-
 .clinicalMetricTag {
   display: inline-flex;
   align-items: center;
@@ -1006,12 +998,10 @@
   display: flex;
   flex-direction: column;
 }
-
 .measureLabel {
   font-size: 0.7rem;
   color: #9ca3af;
 }
-
 .measureValue {
   font-size: 0.8rem;
   font-weight: 500;
@@ -1027,7 +1017,6 @@
   flex-direction: column;
   gap: 0.25rem;
 }
-
 .clinicalHistoryItem {
   display: flex;
   gap: 0.35rem;
@@ -1038,7 +1027,6 @@
   font-weight: 500;
   color: #374151;
 }
-
 .historyValue {
   color: #4b5563;
 }
@@ -1047,4 +1035,257 @@
   margin-top: 0.3rem;
   font-size: 0.78rem;
   color: #9ca3af;
+}
+
+.checklistStep {
+  border-left: 4px solid var(--border-color);
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--card-bg);
+}
+.checklistStep.concluido {
+  border-color: #22c55e;
+  opacity: 0.7;
+}
+.checklistStep.em_andamento {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+.checklistStep.pendente {
+  border-color: #94a3b8;
+  opacity: 0.4;
+}
+
+.stepHeader {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-weight: 600;
+}
+
+textarea {
+  width: 100%;
+  margin-top: 8px;
+  min-height: 70px;
+}
+
+/* ===== Stepper do checklist ===== */
+.prontuarioStepper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.stepRow {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.stepRail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stepCircle {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #d7dde6;
+  background: #fff;
+}
+
+.stepCircle .stepDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #d7dde6;
+}
+
+.stepLine {
+  width: 2px;
+  flex: 1;
+  min-height: 40px;
+  background: #d7dde6;
+  margin-top: 8px;
+  border-radius: 999px;
+}
+
+.stepCircle.concluido {
+  background: #e8fff3;
+  border-color: #2ecc71;
+}
+
+.stepCircle.concluido i {
+  color: #2ecc71;
+  font-size: 14px;
+}
+
+.stepCircle.em_andamento {
+  background: #eef4ff;
+  border-color: #3b82f6;
+}
+
+.stepCircle.em_andamento .stepDot {
+  background: #3b82f6;
+}
+
+.stepLine.concluido {
+  background: #2ecc71;
+}
+
+.stepLine.em_andamento {
+  background: linear-gradient(#3b82f6, #d7dde6);
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stepHeaderBtn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 2px 10px;
+  align-items: center;
+}
+
+.stepHeaderBtn:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.stepSmall {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  grid-column: 1 / 2;
+}
+
+.stepTitle {
+  font-size: 16px;
+  font-weight: 700;
+  grid-column: 1 / 2;
+}
+
+.stepStatusTag {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #d7dde6;
+  background: #fff;
+  opacity: 0.9;
+}
+
+.stepStatusTag.concluido {
+  border-color: #2ecc71;
+  background: #e8fff3;
+}
+
+.stepStatusTag.em_andamento {
+  border-color: #3b82f6;
+  background: #eef4ff;
+}
+
+.stepStatusTag.pendente {
+  opacity: 0.65;
+}
+
+.stepBody {
+  margin-left: 10px;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px dashed rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.stepResumoPreview p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.stepResumoEmpty {
+  opacity: 0.6;
+}
+
+.stepPendingText {
+  margin: 0;
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.stepTextarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  padding: 10px;
+  resize: vertical;
+  font-size: 14px;
+  outline: none;
+}
+
+.stepTextarea:focus {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.stepActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.iconBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.iconBtn.primary {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.iconBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.advanceBtn {
+  margin-left: auto;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.advanceBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
