@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../styles/patientsStyles/ProntuarioPaciente.css";
 import { supabase } from "../../utils/supabaseClient"; // ajuste o caminho se necessário
 import ProntuarioOverview from "./prontuarioOverview/ProntuarioOverview";
+import ProntuarioChecklist from "./prontuarioOverview/ProntuárioChecklist";
 
 // 🔹 Usa a mesma lógica de foto que você usa no Details
 // 🔹 Monta a URL pública da foto, igual nas outras telas
@@ -169,6 +170,7 @@ export default function PatientProntuario() {
             instagram_url,
             whatsapp_url,
             preop_checklist,
+            prontuario_checklist,
 
             "acimaPeso",
             "gorduraVisceral",
@@ -216,6 +218,7 @@ export default function PatientProntuario() {
           instagramUrl: data.instagram_url || null,
           whatsappUrl: data.whatsapp_url || null,
           preopChecklist: data.preop_checklist || {},
+          prontuarioChecklist: data.prontuario_checklist || {},
 
           acimaPeso: data.acimaPeso,
           gorduraVisceral: data.gorduraVisceral,
@@ -430,6 +433,41 @@ export default function PatientProntuario() {
       setErrorSocial("Ocorreu um erro ao salvar o link do WhatsApp.");
     } finally {
       setSavingSocial(null);
+    }
+  };
+
+  const handleSaveProntuarioChecklist = async (payload) => {
+    if (!paciente?.id) return;
+
+    try {
+      const { error } = await supabase
+        .from("pacientes")
+        .update({
+          prontuario_etapa_atual: payload.etapa_atual,
+          prontuario_etapas: payload.etapas,
+        })
+        .eq("id", paciente.id);
+
+      if (error) {
+        console.error(error);
+        // se quiser, exibir um toast/erro
+        return;
+      }
+
+      // atualiza estado local
+      setPaciente((prev) =>
+        prev
+          ? {
+              ...prev,
+              prontuario: {
+                etapa_atual: payload.etapa_atual,
+                etapas: payload.etapas,
+              },
+            }
+          : prev
+      );
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -806,14 +844,9 @@ export default function PatientProntuario() {
           )}
 
           {viewMode === "checklist" && (
-            <div className="prontuarioUnderConstruction">
-              <h3>Checklist do paciente</h3>
-              <p>
-                Em breve, esta área exibirá checklists pré e pós-operatórios,
-                exames obrigatórios e pendências.
-              </p>
-            </div>
+            <ProntuarioChecklist paciente={paciente} setPaciente={setPaciente} />
           )}
+
 
           {viewMode === "documents" && (
             <div className="prontuarioUnderConstruction">

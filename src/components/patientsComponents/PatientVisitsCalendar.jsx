@@ -1,33 +1,81 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import "../styles/patientsStyles/PatientVisitsCalendar.css";
+import { supabase } from "../../utils/supabaseClient";
 
 const weekDays = ["D", "S", "T", "Q", "Q", "S", "S"];
 
 export default function PatientVisitsCalendar({ pacienteId }) {
   const today = new Date();
 
-  // mês/ano navegáveis
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth()); // 0-11
-
-  // dia selecionado (para abrir o painel)
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
 
-  // 🔹 por enquanto, só um dia de exemplo marcado (hoje)
-  const exampleDateISO = today.toISOString().split("T")[0];
-  const visitsDates = [exampleDateISO];
-  const visitsInfo = {
-    [exampleDateISO]:
-      "Consulta de avaliação inicial. Registro da anamnese, fotos pré-operatórias e definição da conduta cirúrgica.",
+  // dados reais
+  const [appointments, setAppointments] = useState([]);
+  const [visitsMap, setVisitsMap] = useState({});
+
+  const [summaryText, setSummaryText] = useState("");
+  const [showSummaryForm, setShowSummaryForm] = useState(false);
+
+  // =========================
+  // FETCH AGENDAMENTOS + RESUMOS
+  // =========================
+  const fetchData = async () => {
+    if (!pacienteId) return;
+
+    const { data, error } = await supabase
+      .from("agendamentos")
+      .select(`
+        id,
+        date,
+        time,
+        type,
+        description,
+        patient_visits (
+          id,
+          summary
+        )
+      `)
+      .eq("patient_id", pacienteId);
+
+    if (error) {
+      console.error("Erro ao buscar agendamentos:", error);
+      return;
+    }
+
+    setAppointments(data || []);
+
+    const map = {};
+    (data || []).forEach(a => {
+      map[a.date] = {
+        id: a.id,
+        time: a.time,
+        type: a.type,
+        description: a.description,
+        summary: a.patient_visits?.summary || null,
+      };
+    });
+
+    setVisitsMap(map);
   };
 
+  useEffect(() => {
+    fetchData();
+  }, [pacienteId]);
+
+  const visitsDates = appointments.map(a => a.date);
+
+  // =========================
+  // CALENDÁRIO (INALTERADO)
+  // =========================
   const { monthLabel, year, weeks } = useMemo(() => {
     const year = currentYear;
     const month = currentMonth;
 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const firstWeekDay = firstDay.getDay(); // 0-6 (domingo-sábado)
+    const firstWeekDay = firstDay.getDay();
 
     const totalDays = lastDay.getDate();
     const weeks = [];
@@ -41,33 +89,25 @@ export default function PatientVisitsCalendar({ pacienteId }) {
       }
     }
 
-    if (currentWeek.length > 0) {
+    if (currentWeek.length) {
       while (currentWeek.length < 7) currentWeek.push(null);
       weeks.push(currentWeek);
     }
 
-    const monthLabel = firstDay.toLocaleDateString("pt-BR", {
-      month: "long",
-    });
-
+    const monthLabel = firstDay.toLocaleDateString("pt-BR", { month: "long" });
     return { monthLabel, year, weeks };
   }, [currentYear, currentMonth]);
 
   const changeMonth = (delta) => {
-    setCurrentMonth((prev) => {
-      let newMonth = prev + delta;
-      let newYear = currentYear;
+    setCurrentMonth(prev => {
+      let m = prev + delta;
+      let y = currentYear;
 
-      if (newMonth < 0) {
-        newMonth = 11;
-        newYear = currentYear - 1;
-      } else if (newMonth > 11) {
-        newMonth = 0;
-        newYear = currentYear + 1;
-      }
+      if (m < 0) { m = 11; y--; }
+      if (m > 11) { m = 0; y++; }
 
-      setCurrentYear(newYear);
-      return newMonth;
+      setCurrentYear(y);
+      return m;
     });
   };
 
@@ -80,63 +120,57 @@ export default function PatientVisitsCalendar({ pacienteId }) {
 
     if (visitsDates.includes(iso)) {
       setSelectedDate(iso);
+      setShowSummaryForm(false);
     }
   };
 
   const handleCloseDetails = () => {
     setSelectedDate(null);
+    setShowSummaryForm(false);
   };
 
-  const selectedInfo = selectedDate ? visitsInfo[selectedDate] : null;
+  const selectedInfo = selectedDate ? visitsMap[selectedDate] : null;
 
-  return (
+  useEffect(() => {
+    if (selectedInfo?.summary) {
+      setSummaryText(selectedInfo.summary);
+    } else {
+      setSummaryText("");
+    }
+  }, [selectedInfo]);
+
+    return (
     <>
-      {/* card de calendário fixo ao lado das infos gerais */}
+      {/* CALENDÁRIO (INALTERADO) */}
       <div className="patientVisitsWrapper">
         <div className="patientVisitsCalendar">
           <div className="calendarHeaderPatient">
             <div>
               <h4>Últimas visitas ao consultório</h4>
               <span className="calendarMonth">
-                {monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)}{" "}
-                {year}
+                {monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)} {year}
               </span>
             </div>
 
             <div className="calendarNav">
-              <button
-                type="button"
-                className="calendarNavBtn"
-                onClick={() => changeMonth(-1)}
-              >
+              <button className="calendarNavBtn" onClick={() => changeMonth(-1)}>
                 <i className="fa-solid fa-chevron-left"></i>
               </button>
-              <button
-                type="button"
-                className="calendarNavBtn"
-                onClick={() => changeMonth(1)}
-              >
+              <button className="calendarNavBtn" onClick={() => changeMonth(1)}>
                 <i className="fa-solid fa-chevron-right"></i>
               </button>
             </div>
           </div>
 
           <div className="calendarGridPatient">
-            {weekDays.map((d, idx) => (
-              <div key={idx} className="calendarWeekday">
-                {d}
-              </div>
+            {weekDays.map((d, i) => (
+              <div key={i} className="calendarWeekday">{d}</div>
             ))}
 
-            {weeks.map((week, wIdx) =>
-              week.map((day, dIdx) => {
+            {weeks.map((week, w) =>
+              week.map((day, d) => {
                 if (!day) {
-                  return (
-                    <div
-                      key={`${wIdx}-${dIdx}`}
-                      className="calendarDay empty"
-                    />
-                  );
+                  return <div key={`${w}-${d}`} className="calendarDay empty" />;
                 }
 
                 const iso = new Date(year, currentMonth, day)
@@ -146,19 +180,10 @@ export default function PatientVisitsCalendar({ pacienteId }) {
                 const hasVisit = visitsDates.includes(iso);
                 const isSelected = selectedDate === iso;
 
-                const classNames = [
-                  "calendarDay",
-                  hasVisit ? "has-visit" : "",
-                  isSelected ? "selected" : "",
-                ]
-                  .join(" ")
-                  .trim();
-
                 return (
                   <button
-                    key={`${wIdx}-${dIdx}`}
-                    type="button"
-                    className={classNames}
+                    key={`${w}-${d}`}
+                    className={`calendarDay ${hasVisit ? "has-visit" : ""} ${isSelected ? "selected" : ""}`}
                     onClick={() => handleDayClick(day)}
                     disabled={!hasVisit}
                   >
@@ -168,54 +193,110 @@ export default function PatientVisitsCalendar({ pacienteId }) {
               })
             )}
           </div>
-
-          <p className="calendarHint">
-            {/** Por enquanto apenas um dia de exemplo está marcado. Em breve esses
-            dados virão dos agendamentos do paciente.*/}
-          </p>
         </div>
       </div>
 
-      {/* painel lateral sobreposto */}
+      {/* OVERLAY MÉDICO */}
       {selectedDate && (
-        <div
-          className="visitsOverlayBackdrop"
-          onClick={handleCloseDetails}
-        >
+        <div className="visitsOverlayBackdrop" onClick={handleCloseDetails}>
           <aside
             className="patientVisitsDetailsOverlay"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
-            <div className="detailsOverlayHeader">
-              <h4>Informações do dia selecionado</h4>
-              <button
-                type="button"
-                className="closeDetailsBtn"
-                onClick={handleCloseDetails}
-                aria-label="Fechar detalhes"
-              >
-                <i className="fa-solid fa-xmark"></i>
-              </button>
-            </div>
-
-            <p className="selectedDateLabel">
-              {new Date(selectedDate).toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
 
             {selectedInfo ? (
-              <p className="visitDescription">{selectedInfo}</p>
+              <>
+                {/* HEADER DA VISITA */}
+                <div className="visitHeaderCard">
+                  <div>
+                    <h2>{selectedInfo.type}</h2>
+                    <span className="visitMeta">
+                      {selectedInfo.time?.slice(0, 5)} •{" "}
+                      {new Date(selectedDate).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+
+                  <button
+                    className="closeDetailsBtn"
+                    onClick={handleCloseDetails}
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+
+                {/* DESCRIÇÃO */}
+                {selectedInfo.description && (
+                  <div className="visitSection">
+                    <h3>Descrição</h3>
+                    <p>{selectedInfo.description}</p>
+                  </div>
+                )}
+
+                {/* EVOLUÇÃO / RESUMO */}
+                <div className="visitSection">
+                  <h3>Evolução / Resumo clínico</h3>
+
+                  {showSummaryForm ? (
+                    <>
+                      <textarea
+                        value={summaryText}
+                        onChange={(e) => setSummaryText(e.target.value)}
+                        placeholder="Descreva a evolução clínica, conduta, observações..."
+                        rows={6}
+                        className="summaryTextarea"
+                      />
+
+                      <div className="visitActions">
+                        <button
+                          className="primaryBtn"
+                          onClick={async () => {
+                            await supabase.from("patient_visits").upsert({
+                              patient_id: pacienteId,
+                              appointment_id: selectedInfo.id,
+                              summary: summaryText,
+                            });
+
+                            setShowSummaryForm(false);
+                            fetchData();
+                          }}
+                        >
+                          Salvar resumo
+                        </button>
+                      </div>
+                    </>
+                  ) : selectedInfo.summary ? (
+                    <>
+                      <div className="clinicalBox">
+                        {selectedInfo.summary}
+                      </div>
+
+                      <div className="visitActions">
+                        <button
+                          className="primaryBtn"
+                          onClick={() => setShowSummaryForm(true)}
+                        >
+                          ✏️ Editar resumo
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="visitActions">
+                      <button
+                        className="primaryBtn"
+                        onClick={() => setShowSummaryForm(true)}
+                      >
+                        ➕ Adicionar resumo da consulta
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
             ) : (
-              <p className="visitDescription">
-                Nenhuma informação registrada para este dia.
-              </p>
+              <p>Nenhuma informação registrada.</p>
             )}
           </aside>
         </div>
       )}
     </>
   );
-};
+}

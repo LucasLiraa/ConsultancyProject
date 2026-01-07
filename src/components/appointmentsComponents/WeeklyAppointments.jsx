@@ -71,6 +71,13 @@ const WeeklyAppointments = () => {
     fetchAppointments();
   }, [selectedDate]);
 
+  const formatSelectedDate = (date) => {
+    return date.toLocaleDateString("pt-BR", {
+      day: "numeric",
+      month: "long",
+    });
+  };
+
   return (
     <div className="weeklyBarContainer">
       <div className="weeklyBarHeader">
@@ -97,7 +104,7 @@ const WeeklyAppointments = () => {
 
       {/* Lista de agendamentos */}
       <div className="weeklyDaysList">
-        <p>24 de Setembro</p>
+        <p>{formatSelectedDate(selectedDate)}</p>
         <ul className="dayAgenda">
           {appointments.map((appointment) => (
             <li key={appointment.id}>

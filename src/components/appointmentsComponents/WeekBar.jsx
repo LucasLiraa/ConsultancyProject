@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/appointmentsStyles/WeekBar.css";
 
 const WeekBar = ({ selectedDate, onSelectDate }) => {
@@ -37,6 +37,11 @@ const WeekBar = ({ selectedDate, onSelectDate }) => {
     onSelectDate(newDate);
   };
 
+  useEffect(() => {
+    setCurrentDate(selectedDate);
+  }, [selectedDate]);
+
+
   return (
     <div className="weekBarContainer">
       <div className="weekBarHeader">
@@ -64,7 +69,10 @@ const WeekBar = ({ selectedDate, onSelectDate }) => {
             <button
               key={idx}
               className={`dayButton ${isSelected ? "selected" : ""}`}
-              onClick={() => onSelectDate(day)}
+              onClick={() => {
+              setCurrentDate(day);
+              onSelectDate(day);
+            }}
             >
               <span className="dayName">
                 {weekDays[day.getDay()]}
