@@ -845,3 +845,44 @@
     grid-template-columns: 1fr;
   }
 }
+
+.uploadButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 10px;
+  border-radius: 6px;
+
+  background-color: #2563eb; /* azul */
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.uploadButton:hover {
+  background-color: #1e40af;
+}
+
+.uploadButton:active {
+  transform: scale(0.97);
+}
+
+.uploadButton {
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px dashed #cbd5f5;
+}
+
+.uploadButton:hover {
+  background-color: #e2e8f0;
+}
+
+.uploadCount {
+  font-size: 12px;
+  opacity: 0.85;
+}

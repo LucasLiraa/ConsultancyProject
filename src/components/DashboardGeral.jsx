@@ -15,20 +15,20 @@ const DashboardGeral = () => {
 
   // Dados mockados (Operacional)
   const dadosInternos = [
-    { titulo: "Aguardando cirurgia", quantidade: 12, cor: "#7b68ee" },
-    { titulo: "Aguardando exames", quantidade: 8, cor: "#ff7f50" },
-    { titulo: "Aguardando resultados", quantidade: 6, cor: "#ffa500" },
-    { titulo: "Em recuperação", quantidade: 10, cor: "#20b2aa" },
-    { titulo: "Alta liberada", quantidade: 4, cor: "#2e8b57" }
+    { titulo: "Aguardando cirurgia", quantidade: 0, cor: "#7b68ee" },
+    { titulo: "Aguardando exames", quantidade: 0, cor: "#ff7f50" },
+    { titulo: "Aguardando resultados", quantidade: 0, cor: "#ffa500" },
+    { titulo: "Em recuperação", quantidade: 0, cor: "#20b2aa" },
+    { titulo: "Alta liberada", quantidade: 0, cor: "#2e8b57" }
   ];
 
   // Dados mockados (Jurídico / Documental)
   const dadosJuridicos = [
-    { titulo: "Aguardando orçamento", quantidade: 9, cor: "#4682b4" },
-    { titulo: "Aguardando contrato", quantidade: 7, cor: "#9370db" },
-    { titulo: "Aguardando pagamento de entrada", quantidade: 5, cor: "#ffa07a" },
-    { titulo: "Pagamento pendente", quantidade: 4, cor: "#ff6347" },
-    { titulo: "Contrato finalizado", quantidade: 6, cor: "#3cb371" }
+    { titulo: "Aguardando orçamento", quantidade: 0, cor: "#4682b4" },
+    { titulo: "Aguardando contrato", quantidade: 0, cor: "#9370db" },
+    { titulo: "Aguardando pagamento de entrada", quantidade: 0, cor: "#ffa07a" },
+    { titulo: "Pagamento pendente", quantidade: 0, cor: "#ff6347" },
+    { titulo: "Contrato finalizado", quantidade: 0, cor: "#3cb371" }
   ];
 
   const totalInternos = dadosInternos.reduce((acc, item) => acc + item.quantidade, 0);
