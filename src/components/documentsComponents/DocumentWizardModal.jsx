@@ -1,337 +1,297 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { supabase } from "../../utils/supabaseClient.js";
-import { useDocumentInstance } from "../../hooks/useDocumentInstance.js";
+import { useEffect, useState } from "react";
+import { supabase } from "../../utils/supabaseClient";
+import { PDFDocument } from "pdf-lib";
 import "../styles/documentsStyles/documentWizardModal.css";
 
-const BUCKET = "document_templates";
+const TEMPLATE_BUCKET = "document_templates";
+const INSTANCE_BUCKET = "document_instances";
 
-function DocumentWizardModal({ open, document, patient, onBack, onClose }) {
-  const [authUser, setAuthUser] = useState(null);
+/* =====================================================
+   PDF HELPERS
+===================================================== */
 
-  const [step, setStep] = useState("preview"); // "preview" | "edit" | "sign"
-  const [formValues, setFormValues] = useState({
-    paciente_nome: "",
-    data_documento: "",
-    documento_nome: "",
+async function extractPdfFieldsFromUrl(url) {
+  const res = await fetch(url);
+  const bytes = await res.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(bytes);
+  const form = pdfDoc.getForm();
+
+  return form.getFields().map((f) => ({
+    name: f.getName(),
+    type:
+      f.constructor.name === "PDFCheckBox"
+        ? "checkbox"
+        : "text",
+  }));
+}
+
+async function generateFilledPreview(url, values) {
+  const res = await fetch(url);
+  const bytes = await res.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(bytes);
+  const form = pdfDoc.getForm();
+
+  Object.entries(values).forEach(([k, v]) => {
+    try {
+      const field = form.getField(k);
+      if (field.constructor.name === "PDFCheckBox") {
+        v ? field.check() : field.uncheck();
+      } else {
+        field.setText(String(v ?? ""));
+      }
+    } catch {}
   });
+
+  const pdfBytes = await pdfDoc.save();
+  return URL.createObjectURL(
+    new Blob([pdfBytes], { type: "application/pdf" })
+  );
+}
+
+async function generateFinalPdfBytes(url, values) {
+  const res = await fetch(url);
+  const bytes = await res.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(bytes);
+  const form = pdfDoc.getForm();
+
+  Object.entries(values).forEach(([k, v]) => {
+    try {
+      const field = form.getField(k);
+      if (field.constructor.name === "PDFCheckBox") {
+        v ? field.check() : field.uncheck();
+      } else {
+        field.setText(String(v ?? ""));
+      }
+    } catch {}
+  });
+
+  form.flatten(); // 🔒 trava o PDF
+  return await pdfDoc.save();
+}
+
+/* =====================================================
+   COMPONENT
+===================================================== */
+
+function DocumentWizardModal({ open, document, patient, onClose }) {
+  const [templateUrl, setTemplateUrl] = useState("");
+  const [pdfFields, setPdfFields] = useState([]);
+  const [formValues, setFormValues] = useState({});
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [step, setStep] = useState("preview"); // preview | edit | sign
+  const [loading, setLoading] = useState(false);
 
   const [patientSigned, setPatientSigned] = useState(false);
   const [doctorSigned, setDoctorSigned] = useState(false);
 
-  // URL temporária pra exibir o documento do template
-  const [templateUrl, setTemplateUrl] = useState("");
-  const [templateUrlError, setTemplateUrlError] = useState("");
+  /* =========================
+     RESET
+  ========================= */
 
-  const { instance, createInstance, updateInstance, saving, saved } = useDocumentInstance({
-    templateId: document?.id,
-    pacienteId: patient?.id,
-    userId: authUser?.id,
-  });
-
-  // pega usuário logado
-  useEffect(() => {
-    const loadUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setAuthUser(data?.user || null);
-    };
-    loadUser();
-  }, []);
-
-  // Preenche automaticamente quando abrir / mudar doc/paciente
   useEffect(() => {
     if (!open) return;
 
+    setFormValues({});
+    setPdfFields([]);
+    setPreviewUrl("");
     setStep("preview");
     setPatientSigned(false);
     setDoctorSigned(false);
+  }, [open]);
 
-    setFormValues({
-      paciente_nome: patient?.nome || "",
-      data_documento: new Date().toLocaleDateString("pt-BR"),
-      documento_nome: document?.title || "",
+  /* =========================
+     TEMPLATE URL
+  ========================= */
+
+  useEffect(() => {
+    if (!open || !document) return;
+
+    supabase.storage
+      .from(TEMPLATE_BUCKET)
+      .createSignedUrl(document.file_path, 600)
+      .then(({ data }) => setTemplateUrl(data.signedUrl));
+  }, [open, document]);
+
+  /* =========================
+     READ FIELDS
+  ========================= */
+
+  useEffect(() => {
+    if (!templateUrl) return;
+
+    extractPdfFieldsFromUrl(templateUrl).then((fields) => {
+      setPdfFields(fields);
+
+      const initial = {};
+      fields.forEach((f) => {
+        if (f.name.startsWith("paciente_")) {
+          const key = f.name.replace("paciente_", "");
+          if (patient?.[key]) initial[f.name] = patient[key];
+        }
+      });
+
+      setFormValues(initial);
     });
-  }, [open, patient, document]);
+  }, [templateUrl, patient]);
 
-  // cria instância quando tiver tudo pronto
-  useEffect(() => {
-    if (!open || !document || !patient || !authUser) return;
+  /* =========================
+     FINALIZE
+  ========================= */
 
-    createInstance({
-      paciente_nome: patient.nome,
-      data_documento: new Date().toLocaleDateString("pt-BR"),
-      documento_nome: document.title,
+  async function finalizeDocument(status) {
+    setLoading(true);
+
+    const pdfBytes = await generateFinalPdfBytes(
+      templateUrl,
+      formValues
+    );
+
+    const path = `${patient.id}/${Date.now()}.pdf`;
+
+    await supabase.storage
+      .from(INSTANCE_BUCKET)
+      .upload(path, pdfBytes, {
+        contentType: "application/pdf",
+      });
+
+    await supabase.from("document_instances").insert({
+      template_id: document.id,
+      patient_id: patient.id,
+      document_title: document.title,
+      patient_name: patient.nome,
+      status,
+      filled_fields: formValues,
+      filled_pdf_path: path,
+      signed_at: status === "signed" ? new Date() : null,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, document?.id, patient?.id, authUser?.id]);
 
-  // auto-save
-  useEffect(() => {
-    if (!instance) return;
-    updateInstance(formValues, step === "sign" ? "filled" : "draft");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formValues, step, instance?.id]);
-
-  // Carrega signed URL do arquivo do template
-  useEffect(() => {
-    const loadTemplateUrl = async () => {
-      try {
-        setTemplateUrl("");
-        setTemplateUrlError("");
-
-        if (!open || !document?.file_path) return;
-
-        const { data, error } = await supabase.storage
-          .from(BUCKET)
-          .createSignedUrl(document.file_path, 60 * 10); // 10 min
-
-        if (error) throw error;
-        setTemplateUrl(data?.signedUrl || "");
-      } catch (err) {
-        console.error("template signedUrl error:", err);
-        setTemplateUrlError(err?.message || "Erro ao abrir documento");
-      }
-    };
-
-    loadTemplateUrl();
-  }, [open, document?.file_path]);
-
-  const values = useMemo(() => ({ ...formValues }), [formValues]);
+    setLoading(false);
+    onClose();
+  }
 
   if (!open) return null;
 
-  const canGoToSign = !!values.paciente_nome
-  const canFinish = patientSigned && doctorSigned;
-
-  const isPdf = (document?.mime_type || "").includes("pdf");
+  /* =========================
+     RENDER
+  ========================= */
 
   return (
     <div className="docWizardOverlay">
       <div className="docWizardModal">
-        {/* Header */}
-        <div className="docWizardHeader">
+        <header className="docWizardHeader">
           <div>
-            <div className="docWizardTitle">{document?.title}</div>
+            <div className="docWizardTitle">{document.title}</div>
             <div className="docWizardSubtitle">
-              {step === "preview" && "Documento oficial • visualização + dados automáticos"}
-              {step === "edit" && "Edição • ajuste os campos do documento"}
-              {step === "sign" && "Assinatura • paciente e médico"}
+              {step === "preview" && "Visualização"}
+              {step === "edit" && "Editar campos"}
+              {step === "sign" && "Assinaturas"}
             </div>
           </div>
+          <button onClick={onClose}>✕</button>
+        </header>
 
-          <button className="docWizardClose" onClick={onClose}>
-            ✕
-          </button>
-        </div>
-
-        {/* Body */}
         <div className="docWizardBody">
           {step === "preview" && (
-            <>
-              <div className="docWizardNotice">
-                Abaixo está o <strong>documento oficial</strong>. Em seguida você poderá editar campos e assinar.
-              </div>
-
-              {templateUrlError ? (
-                <div className="documentsPatientsEmpty">{templateUrlError}</div>
-              ) : !templateUrl ? (
-                <div className="documentsPatientsEmpty">Carregando documento...</div>
-              ) : (
-                <div style={{ display: "grid", gap: 12 }}>
-                  {/* Documento oficial */}
-                  {isPdf ? (
-                    <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #e5e5e5" }}>
-                      <iframe
-                        title="Documento oficial"
-                        src={templateUrl}
-                        style={{ width: "100%", height: 520, border: "0" }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="documentsPatientsEmpty">
-                      Este tipo de arquivo não tem preview embutido aqui.{" "}
-                      <a href={templateUrl} target="_blank" rel="noreferrer">
-                        Abrir em nova aba
-                      </a>
-                    </div>
-                  )}
-
-                  {/* Mini resumo automático */}
-                  <div className="docPreviewPaper mini">
-                    <h2>{values.documento_nome || document?.title}</h2>
-                    <p>
-                      Paciente: <strong>{values.paciente_nome || "__________"}</strong>
-                    </p>
-                    <p>
-                      Data: <strong>{values.data_documento}</strong>
-                    </p>
-                  </div>
-                </div>
-              )}
-            </>
+            <iframe
+              src={previewUrl || templateUrl}
+              title="PDF"
+              style={{ width: "100%", height: 500 }}
+            />
           )}
 
           {step === "edit" && (
-            <>
-              <div className="docWizardNotice">
-                Edite os campos abaixo. (O documento oficial permanece o mesmo; depois a gente liga “campos dentro do PDF”.)
-              </div>
+            <div className="docWizardForm">
+              {pdfFields.map((f) => (
+                <div key={f.name} className="docWizardField">
+                  <label>{f.name.replace(/_/g, " ")}</label>
 
-              <div className="docWizardEditGrid">
-                <div className="docWizardField">
-                  <label>Nome da paciente</label>
-                  <input
-                    value={formValues.paciente_nome}
-                    onChange={(e) => setFormValues((p) => ({ ...p, paciente_nome: e.target.value }))}
-                    placeholder="Ex: Maria Silva"
-                  />
+                  {f.type === "checkbox" ? (
+                    <input
+                      type="checkbox"
+                      checked={!!formValues[f.name]}
+                      onChange={(e) =>
+                        setFormValues((p) => ({
+                          ...p,
+                          [f.name]: e.target.checked,
+                        }))
+                      }
+                    />
+                  ) : (
+                    <input
+                      value={formValues[f.name] || ""}
+                      onChange={(e) =>
+                        setFormValues((p) => ({
+                          ...p,
+                          [f.name]: e.target.value,
+                        }))
+                      }
+                    />
+                  )}
                 </div>
-
-                <div className="docWizardField">
-                  <label>Data do documento</label>
-                  <input
-                    value={formValues.data_documento}
-                    onChange={(e) => setFormValues((p) => ({ ...p, data_documento: e.target.value }))}
-                    placeholder="dd/mm/aaaa"
-                  />
-                </div>
-
-                <div className="docWizardField">
-                  <label>Nome do documento</label>
-                  <input
-                    value={formValues.documento_nome}
-                    onChange={(e) => setFormValues((p) => ({ ...p, documento_nome: e.target.value }))}
-                    placeholder="Ex: Contrato - Honorários"
-                  />
-                </div>
-              </div>
-
-              {/* Preview pequeno */}
-              <div className="docWizardPreviewMini">
-                <div className="docWizardPreviewMiniTitle">Prévia</div>
-                <div className="docPreviewPaper mini">
-                  <h2>{values.documento_nome || document?.title}</h2>
-                  <p>
-                    Paciente: <strong>{values.paciente_nome || "__________"}</strong>
-                  </p>
-                  <p>
-                    Data: <strong>{values.data_documento}</strong>
-                  </p>
-                </div>
-              </div>
-            </>
+              ))}
+            </div>
           )}
 
           {step === "sign" && (
-            <>
-              <div className="docWizardNotice">
-                Confirme as assinaturas para finalizar. (Por enquanto: “assinar” simples.)
-              </div>
-
-              <div className="docWizardSignGrid">
-                <div className={`docWizardSignCard ${patientSigned ? "signed" : ""}`}>
-                  <div className="docWizardSignTitle">Assinatura da paciente</div>
-                  <div className="docWizardSignName">{values.paciente_nome || "Paciente"}</div>
-
-                  <button
-                    type="button"
-                    className="docWizardBtn primary small"
-                    onClick={() => setPatientSigned(true)}
-                    disabled={patientSigned}
-                  >
-                    {patientSigned ? "Assinado" : "Assinar"}
-                  </button>
-                </div>
-
-                <div className={`docWizardSignCard ${doctorSigned ? "signed" : ""}`}>
-                  <div className="docWizardSignTitle">Assinatura do médico</div>
-                  <div className="docWizardSignName">Dr(a). (em breve)</div>
-
-                  <button
-                    type="button"
-                    className="docWizardBtn primary small"
-                    onClick={() => setDoctorSigned(true)}
-                    disabled={doctorSigned}
-                  >
-                    {doctorSigned ? "Assinado" : "Assinar"}
-                  </button>
-                </div>
-              </div>
-
-              <div className="docWizardPreviewMini">
-                <div className="docWizardPreviewMiniTitle">Status</div>
-                <div className="docPreviewPaper mini">
-                  <p>Paciente: {patientSigned ? "✅ Assinado" : "⏳ Pendente"}</p>
-                  <p>Médico: {doctorSigned ? "✅ Assinado" : "⏳ Pendente"}</p>
-                </div>
-              </div>
-            </>
+            <div className="docWizardSignGrid">
+              <button onClick={() => setPatientSigned(true)}>
+                {patientSigned ? "Paciente assinado" : "Assinar paciente"}
+              </button>
+              <button onClick={() => setDoctorSigned(true)}>
+                {doctorSigned ? "Médico assinado" : "Assinar médico"}
+              </button>
+            </div>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="docWizardFooter">
-          <button
-            className="docWizardBtn ghost"
-            onClick={() => {
-              if (step === "preview") return onBack?.();
-              if (step === "edit") return setStep("preview");
-              if (step === "sign") return setStep("edit");
-            }}
-          >
-            Voltar
-          </button>
+        <footer className="docWizardFooter">
+          <button onClick={() => setStep("preview")}>Voltar</button>
 
           {step === "preview" && (
-            <>
-              <button className="docWizardBtn ghost" onClick={() => setStep("edit")}>
-                Editar
-              </button>
-
-              <button
-                className="docWizardBtn primary"
-                onClick={() => setStep("sign")}
-                disabled={!canGoToSign}
-                title={!canGoToSign ? "Preencha o nome para continuar" : ""}
-              >
-                Continuar
-              </button>
-            </>
+            <button onClick={() => setStep("edit")}>Editar</button>
           )}
 
           {step === "edit" && (
+            <button
+              onClick={async () => {
+                const url = await generateFilledPreview(
+                  templateUrl,
+                  formValues
+                );
+                setPreviewUrl(url);
+                setStep("preview");
+              }}
+            >
+              Confirmar edição
+            </button>
+          )}
+
+          {step === "preview" && previewUrl && (
             <>
-              <button className="docWizardBtn ghost" onClick={() => setStep("preview")}>
-                Ver documento
+              <button
+                onClick={() =>
+                  finalizeDocument("awaiting_signature")
+                }
+                disabled={loading}
+              >
+                Concluir
               </button>
 
-              <button className="docWizardBtn primary" onClick={() => setStep("sign")} disabled={!canGoToSign}>
-                Ir para assinatura
+              <button onClick={() => setStep("sign")}>
+                Assinar
               </button>
             </>
           )}
 
           {step === "sign" && (
-            <>
-              <button className="docWizardBtn ghost" onClick={() => setStep("edit")}>
-                Editar
-              </button>
-
-              <button
-                className="docWizardBtn primary"
-                disabled={!canFinish}
-                onClick={() => {
-                  alert("Documento finalizado! (mock)");
-                  onClose?.();
-                }}
-              >
-                Finalizar
-              </button>
-            </>
+            <button
+              disabled={!patientSigned || !doctorSigned}
+              onClick={() => finalizeDocument("signed")}
+            >
+              Concluir e assinar
+            </button>
           )}
-
-          {saving && <span className="docWizardSaving">Salvando…</span>}
-          {saved && <span className="docWizardSaved">Salvo</span>}
-        </div>
+        </footer>
       </div>
     </div>
   );

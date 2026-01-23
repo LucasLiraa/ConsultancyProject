@@ -4,8 +4,8 @@ import "../styles/patientsStyles/ProntuarioPaciente.css";
 import { supabase } from "../../utils/supabaseClient"; // ajuste o caminho se necessário
 import ProntuarioOverview from "./prontuarioOverview/ProntuarioOverview";
 import ProntuarioChecklist from "./prontuarioOverview/ProntuárioChecklist";
+import ControleEntregaExames from "./prontuarioOverview/ControleEntregaExames";
 
-// 🔹 Usa a mesma lógica de foto que você usa no Details
 // 🔹 Monta a URL pública da foto, igual nas outras telas
 const getFotoUrl = (fotoPath) => {
   if (!fotoPath) return "/profile-icon.jpg";
@@ -824,10 +824,10 @@ export default function PatientProntuario() {
 
             <button
               type="button"
-              className={viewMode === "documents" ? "active" : ""}
-              onClick={() => setViewMode("documents")}
+              className={viewMode === "exames" ? "active" : ""}
+              onClick={() => setViewMode("exames")}
             >
-              Documentos
+              Controle de exames
             </button>
 
             <button
@@ -835,8 +835,17 @@ export default function PatientProntuario() {
               className={viewMode === "timeline" ? "active" : ""}
               onClick={() => setViewMode("timeline")}
             >
-              Linha do tempo
+              Galeria do paciente
             </button>
+
+            <button
+              type="button"
+              className={viewMode === "documents" ? "active" : ""}
+              onClick={() => setViewMode("documents")}
+            >
+              Documentos
+            </button>
+
           </div>
 
           {viewMode === "overview" && (
@@ -847,15 +856,8 @@ export default function PatientProntuario() {
             <ProntuarioChecklist paciente={paciente} setPaciente={setPaciente} />
           )}
 
-
-          {viewMode === "documents" && (
-            <div className="prontuarioUnderConstruction">
-              <h3>Documentos do paciente</h3>
-              <p>
-                Em breve, esta área listará contratos, consentimentos,
-                laudos e anexos importantes da paciente.
-              </p>
-            </div>
+          {viewMode === "exames" && (
+            <ControleEntregaExames paciente={paciente} />
           )}
 
           {viewMode === "timeline" && (
@@ -867,6 +869,17 @@ export default function PatientProntuario() {
               </p>
             </div>
           )}
+
+          {viewMode === "documents" && (
+            <div className="prontuarioUnderConstruction">
+              <h3>Documentos do paciente</h3>
+              <p>
+                Em breve, esta área listará contratos, consentimentos,
+                laudos e anexos importantes da paciente.
+              </p>
+            </div>
+          )}
+
         </main>
       </div>
     </div>

@@ -699,14 +699,24 @@ const WeeklyControlForm = ({ postOp, semanaAtual, onSaved }) => {
 
           <div className="photosInputs">
             {PHOTO_CATEGORIES.map((cat) => (
-              <div key={cat.key} className="photosInputGroup">
+              <div className="photosInputGroup">
                 <div className="photosInputTitle">{cat.label}</div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => handleFilesChange(cat.key, e)}
-                />
+
+                <label className="uploadButton">
+                  Selecionar arquivos
+                  {pendingPhotos.filter(p => p.categoria === cat.key).length > 0 && (
+                    <span className="uploadCount">
+                      ({pendingPhotos.filter(p => p.categoria === cat.key).length})
+                    </span>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => handleFilesChange(cat.key, e)}
+                    hidden
+                  />
+                </label>
               </div>
             ))}
           </div>

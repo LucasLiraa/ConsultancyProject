@@ -108,7 +108,7 @@ const WeeklyAppointments = () => {
         <ul className="dayAgenda">
           {appointments.map((appointment) => (
             <li key={appointment.id}>
-              <span className="time">{appointment.time}</span>
+              <span className="time">{appointment.time?.slice(0, 5)}</span>
               <span
                 className="typeDot"
                 style={{ background: typeColors[appointment.type] || "gray" }}

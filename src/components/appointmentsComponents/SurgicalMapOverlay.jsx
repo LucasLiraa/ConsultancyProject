@@ -188,7 +188,7 @@ const SurgicalMapOverlay = ({ onClose }) => {
                       )
                     }
                   >
-                    <div className="time">{s.time}</div>
+                    <div className="time">{s.time?.slice(0, 5)}</div>
                     <div className="details">
                       <strong>{s.title}</strong>
                       <p>{s.procedure}</p>
@@ -238,7 +238,7 @@ const SurgicalMapOverlay = ({ onClose }) => {
               <h4>{nextSurgery.title}</h4>
               <span>
                 {new Date(nextSurgery.date + "T00:00:00").toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })} às{" "}
-                {nextSurgery.time}
+                {nextSurgery.time?.slice(0, 5)}
               </span>
             </div>
           )}
