@@ -4,10 +4,9 @@ import { supabase } from "../../utils/supabaseClient";
 
 import "../styles/patientsStyles/detailsPatients.css";
 
-import TabComponent from "../patientsComponents/situationPatients";
-import FormPatientModal from "../patientsComponents/FormPatientModal";
-import DocumentsManager from "../patientsComponents/DocumentsManager";
-import PatientVisitsCalendar from "../patientsComponents/PatientVisitsCalendar";
+import PatientFinancePanel from "./PatientFinancePanel";
+import FormPatientModal from "./FormPatientModal";
+import PatientVisitsCalendar from "./PatientVisitsCalendar";
 
 export default function PacienteDetalhes() {
   const { id } = useParams();
@@ -227,13 +226,8 @@ export default function PacienteDetalhes() {
         </div>
 
         <div className="patientDetailsDown">        
-          {/* Situação (já existente) */}
-          <TabComponent pacienteId={paciente.id} />
-
-          {/* Documentos (já existente) */}
-          <div className="patientDocumentation">
-            <DocumentsManager pacienteId={paciente.id} />
-          </div>
+          {/* Situação financeira */}
+          <PatientFinancePanel pacienteId={paciente.id} pacienteNome={paciente.nome} />
         </div>
       </div>
 

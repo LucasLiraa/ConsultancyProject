@@ -73,7 +73,7 @@ async function generateFinalPdfBytes(url, values) {
    COMPONENT
 ===================================================== */
 
-function DocumentWizardModal({ open, document, patient, onClose }) {
+function DocumentWizardModal({ open, document, patient, onBack, onClose }) {
   const [templateUrl, setTemplateUrl] = useState("");
   const [pdfFields, setPdfFields] = useState([]);
   const [formValues, setFormValues] = useState({});
@@ -187,7 +187,14 @@ function DocumentWizardModal({ open, document, patient, onClose }) {
               {step === "sign" && "Assinaturas"}
             </div>
           </div>
-          <button onClick={onClose}>✕</button>
+          <button
+            className="modalCloseBtn"
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+          >
+            ✕
+          </button>
         </header>
 
         <div className="docWizardBody">
@@ -245,14 +252,34 @@ function DocumentWizardModal({ open, document, patient, onClose }) {
         </div>
 
         <footer className="docWizardFooter">
-          <button onClick={() => setStep("preview")}>Voltar</button>
+          <button
+            className="docWizardBtn ghost"
+            type="button"
+            onClick={() => {
+              if (step === "preview" && !previewUrl) {
+                return onBack?.();
+              }
+
+              if (step === "edit") {
+                return setStep("preview");
+              }
+
+              if (step === "sign") {
+                return setStep("preview");
+              }
+
+              return onBack?.();
+            }}
+          >
+            Voltar
+          </button>
 
           {step === "preview" && (
-            <button onClick={() => setStep("edit")}>Editar</button>
+            <button className="docWizardBtn primary" onClick={() => setStep("edit")}>Editar</button>
           )}
 
           {step === "edit" && (
-            <button
+            <button className="docWizardBtn primary"
               onClick={async () => {
                 const url = await generateFilledPreview(
                   templateUrl,
@@ -268,7 +295,7 @@ function DocumentWizardModal({ open, document, patient, onClose }) {
 
           {step === "preview" && previewUrl && (
             <>
-              <button
+              <button className="docWizardBtn primary"
                 onClick={() =>
                   finalizeDocument("awaiting_signature")
                 }
@@ -277,7 +304,7 @@ function DocumentWizardModal({ open, document, patient, onClose }) {
                 Concluir
               </button>
 
-              <button onClick={() => setStep("sign")}>
+              <button className="docWizardBtn primary" onClick={() => setStep("sign")}>
                 Assinar
               </button>
             </>

@@ -5,6 +5,7 @@ import { supabase } from "../../utils/supabaseClient"; // ajuste o caminho se ne
 import ProntuarioOverview from "./prontuarioOverview/ProntuarioOverview";
 import ProntuarioChecklist from "./prontuarioOverview/ProntuárioChecklist";
 import ControleEntregaExames from "./prontuarioOverview/ControleEntregaExames";
+import PatientGalleryPanel from "./prontuarioOverview/PatientGalleryPanel.jsx";
 
 // 🔹 Monta a URL pública da foto, igual nas outras telas
 const getFotoUrl = (fotoPath) => {
@@ -140,6 +141,8 @@ export default function PatientProntuario() {
 
   // 🔹 Abas do meio
   const [viewMode, setViewMode] = React.useState("overview");
+
+  const [openPatientGallery, setOpenPatientGallery] = React.useState(false);
 
   // 🔹 Buscar paciente
   React.useEffect(() => {
@@ -861,13 +864,7 @@ export default function PatientProntuario() {
           )}
 
           {viewMode === "timeline" && (
-            <div className="prontuarioUnderConstruction">
-              <h3>Linha do tempo detalhada</h3>
-              <p>
-                Em breve, você poderá visualizar uma linha do tempo completa
-                com todos os registros clínicos, retornos e eventos.
-              </p>
-            </div>
+            <PatientGalleryPanel pacienteId={paciente?.id} />
           )}
 
           {viewMode === "documents" && (
