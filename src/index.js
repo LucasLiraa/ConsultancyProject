@@ -15,9 +15,9 @@ import DashboardGeral from "./components/DashboardGeral";
 import ProntuarioPaciente from "./components/patientsComponents/ProntuarioPaciente";
 
 import Patients from "./pages/patients";
-import Contracts from "./pages/contracts";
 import PostOperative from "./pages/postOperative";
 import Appointments from "./pages/appointments";
+import Documents from "./pages/documents";
 import Budgets from "./pages/budgets";
 import Financial from "./pages/financial";
 import Inventory from "./pages/inventory";
@@ -149,11 +149,11 @@ const App = () => {
           />
 
           <Route
-            path="/contratos"
+            path="/documentos"
             element={
               <ProtectedRoute>
                 <AppLayout>
-                  <Contracts />
+                  <Documents />
                 </AppLayout>
               </ProtectedRoute>
             }

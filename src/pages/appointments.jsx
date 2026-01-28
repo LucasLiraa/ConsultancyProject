@@ -90,6 +90,11 @@ function Appointments() {
     });
   };
 
+  const formatTime = (time) => {
+    if (!time) return "";
+    return time.slice(0, 5); // HH:mm
+  };
+
   return (
     <section className="sectionAppointments">
       <div className="containerAppointments">
@@ -145,7 +150,7 @@ function Appointments() {
                 <p>
                   <strong>Data:</strong> {formatDateBR(eventoSelecionado.date)}
                 </p>
-                <p><strong>Horário:</strong> {eventoSelecionado.time}</p>
+                <p><strong>Horário:</strong> {formatTime(eventoSelecionado.time)}</p>
                 <p><strong>Tipo:</strong> {eventoSelecionado.type}</p>
                 {eventoSelecionado.description && (
                   <p><strong>Descrição:</strong> {eventoSelecionado.description}</p>
@@ -165,9 +170,9 @@ function Appointments() {
                 )}
 
                 <div className="eventActions">
-                  <button className="btn secondary" onClick={() => handleEditFromPanel(eventoSelecionado)}>✏️ Editar</button>
-                  <button className="btn secondary" onClick={() => openReschedulePopup(eventoSelecionado)}>📅 Reagendar</button>
-                  <button className="btn danger" onClick={() => handleDeleteFromPanel(eventoSelecionado)}>🗑️ Excluir</button>
+                  <button className="btn secondary" onClick={() => handleEditFromPanel(eventoSelecionado)}><i className="fa-solid fa-pen-to-square"></i><br/>Editar</button>
+                  <button className="btn secondary" onClick={() => openReschedulePopup(eventoSelecionado)}><i class="fa-solid fa-calendar"></i><br/>Reagendar</button>
+                  <button className="btn danger" onClick={() => handleDeleteFromPanel(eventoSelecionado)}><i class="fa-solid fa-trash"></i><br/>Excluir</button>
                 </div>
               </div>
             ) : (
