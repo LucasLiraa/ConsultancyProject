@@ -64,8 +64,10 @@
 ============================================ */
 .containerPatientDetails {
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
   width: 90%;
+  height: 90vh;
 }
 
 /* ============================================
@@ -253,5 +255,4 @@
   flex-direction: row;
 
   width: 90%;
-  gap: 1.5rem;
 }

@@ -99,10 +99,13 @@
   border-radius: 14px;
   font-weight: 900;
   border: 1px solid rgba(16, 16, 24, 0.1);
+  
+  cursor: pointer;
 }
 
 .docWizardBtn.ghost {
   background: #ffffff;
+  
 }
 
 .docWizardBtn.primary {
@@ -196,6 +199,7 @@
   height: 36px;
   padding: 0 12px;
   border-radius: 12px;
+  cursor: pointer;
 }
 
 /* responsivo */
@@ -204,4 +208,28 @@
   .docWizardSignGrid {
     grid-template-columns: 1fr;
   }
+}
+
+.modalCloseBtn {
+  border: 0;
+  background: rgba(0, 0, 0, 0.06);
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.12s;
+  line-height: 1;
+}
+
+.modalCloseBtn:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.modalCloseBtn:active {
+  transform: scale(0.96);
 }

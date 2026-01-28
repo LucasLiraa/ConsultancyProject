@@ -36,7 +36,7 @@ const NavSidebar = () => {
                 <Link to="/pacientes" className={getLinkClass('/pacientes')}><li><i className="fa fa-users"></i>{isOpen && <span>Pacientes</span>}</li></Link>
                 <Link to="/documentos" className={getLinkClass('/documentos')}><li><i className="fa fa-folder-open"></i>{isOpen && <span>Documentos</span>}</li></Link>
                 <Link to="/agendamentos" className={getLinkClass('/agendamentos')}><li><i className="fa-solid fa-calendar-days"></i>{isOpen && <span>Agendamentos</span>}</li></Link>
-                <Link to="/prontuarios" className={getLinkClass('/prontuarios')}><li><i className="fa fa-file-medical"></i>{isOpen && <span>Prontuários</span>}</li></Link>
+                <Link to="/prontuarios" className={getLinkClass('/prontuarios')}><li><i className="fa fa-file-medical"></i>{isOpen && <span>Pós-Operatórios</span>}</li></Link>
                 <Link to="/orcamentos" className={getLinkClass('/orcamentos')}><li><i className="fa-solid fa-money-bill-wave"></i>{isOpen && <span>Orçamentos</span>}</li></Link>
                 <Link to="/faturamentos" className={getLinkClass('/faturamentos')}><li><i className="fa fa-money-bill-trend-up"></i>{isOpen && <span>Faturamento</span>}</li></Link>
                 <Link to="/insumos" className={getLinkClass('/insumos')}><li><i className="fa fa-boxes-stacked"></i>{isOpen && <span>Insumos</span>}</li></Link>
