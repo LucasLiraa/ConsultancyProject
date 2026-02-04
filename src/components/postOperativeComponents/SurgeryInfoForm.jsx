@@ -19,13 +19,24 @@ const SurgeryInfoForm = ({ patient, postOp = null, onSaved, onCancel }) => {
     dias_atestado: postOp?.dias_atestado || "",
     anestesia: postOp?.anestesia || "",
   });
+
   const [saving, setSaving] = useState(false);
   const editMode = !!postOp?.id;
 
   useEffect(() => {
-    // atualizar nome sempre que patient mudar
-    setForm((f) => ({ ...f, nome: patient?.nome || f.nome }));
-  }, [patient]);
+    // Se mudar o paciente ou entrar/sair do modo edição, sincroniza o form.
+    setForm({
+      nome: patient?.nome || "",
+      cirurgia: postOp?.cirurgia || "",
+      cirurgiao: postOp?.cirurgiao || "",
+      auxiliar: postOp?.auxiliar || "",
+      instrumentadoras: postOp?.instrumentadoras || "",
+      tecnologia: postOp?.tecnologia || "",
+      data_cirurgia: postOp?.data_cirurgia || "",
+      dias_atestado: postOp?.dias_atestado || "",
+      anestesia: postOp?.anestesia || "",
+    });
+  }, [patient, postOp]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,15 +64,15 @@ const SurgeryInfoForm = ({ patient, postOp = null, onSaved, onCancel }) => {
           .eq("id", postOp.id);
 
         if (error) throw error;
-        // refetch record to return up-to-date
+
         const { data } = await supabase
           .from("pacientes_pos")
           .select("*")
           .eq("id", postOp.id)
           .single();
+
         onSaved?.(data);
       } else {
-        // inserir novo postOp
         const payload = {
           nome: form.nome,
           cirurgia: form.cirurgia,
@@ -84,7 +95,7 @@ const SurgeryInfoForm = ({ patient, postOp = null, onSaved, onCancel }) => {
           .single();
 
         if (error) throw error;
-        // retorna o registro criado para o Manager (ele criará a semana 1)
+
         onSaved?.(data);
       }
     } catch (err) {
@@ -100,63 +111,107 @@ const SurgeryInfoForm = ({ patient, postOp = null, onSaved, onCancel }) => {
       <div className="surgeryHeader">
         <h3>{editMode ? "Editar Informações" : "Informações Iniciais do Pós"}</h3>
         <div className="surgeryHeaderActions">
-          <button className="btnGhost" onClick={onCancel}>Cancelar</button>
+          <button type="button" className="btnGhost" onClick={onCancel}>
+            Cancelar
+          </button>
         </div>
       </div>
 
       <form className="surgeryForm" onSubmit={handleSubmit}>
         <div className="row">
           <label>Nome do paciente</label>
-          <input name="nome" value={form.nome} disabled className="inputDisabled" />
+          <input
+            name="nome"
+            value={form.nome}
+            disabled
+            className="inputDisabled"
+          />
         </div>
 
         <div className="row">
           <label>Cirurgia</label>
-          <input name="cirurgia" value={form.cirurgia} onChange={handleChange} />
+          <input
+            name="cirurgia"
+            value={form.cirurgia}
+            onChange={handleChange}
+            placeholder="Ex: Lipoaspiração + Abdominoplastia"
+          />
         </div>
 
-        <div className="rowGroup">
-          <div className="col">
+        <div className="grid2">
+          <div className="row">
             <label>Cirurgião</label>
-            <input name="cirurgiao" value={form.cirurgiao} onChange={handleChange} />
+            <input
+              name="cirurgiao"
+              value={form.cirurgiao}
+              onChange={handleChange}
+            />
           </div>
-          <div className="col">
+
+          <div className="row">
             <label>Auxiliar</label>
-            <input name="auxiliar" value={form.auxiliar} onChange={handleChange} />
-          </div>
-        </div>
-
-        <div className="rowGroup">
-          <div className="col">
-            <label>Instrumentadora(s)</label>
-            <input name="instrumentadoras" value={form.instrumentadoras} onChange={handleChange} />
-          </div>
-          <div className="col">
-            <label>Tecnologia</label>
-            <input name="tecnologia" value={form.tecnologia} onChange={handleChange} />
-          </div>
-        </div>
-
-        <div className="rowGroup">
-          <div className="col">
-            <label>Data da cirurgia</label>
-            <input type="date" name="data_cirurgia" value={form.data_cirurgia || ""} onChange={handleChange} />
-          </div>
-          <div className="col">
-            <label>Dias de atestado</label>
-            <input name="dias_atestado" value={form.dias_atestado} onChange={handleChange} />
+            <input
+              name="auxiliar"
+              value={form.auxiliar}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
         <div className="row">
-          <label>Anestesia</label>
-          <input name="anestesia" value={form.anestesia} onChange={handleChange} />
+          <label>Instrumentadoras</label>
+          <input
+            name="instrumentadoras"
+            value={form.instrumentadoras}
+            onChange={handleChange}
+          />
         </div>
 
-        <div className="actionsRow">
-          <button type="button" className="btnGhost" onClick={onCancel}>Fechar</button>
-          <button type="submit" className="btnPrimary" disabled={saving}>
-            {saving ? "Salvando..." : editMode ? "Salvar alterações" : "Criar Pós e iniciar Semana 1"}
+        <div className="grid2">
+          <div className="row">
+            <label>Tecnologia</label>
+            <input
+              name="tecnologia"
+              value={form.tecnologia}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="row">
+            <label>Anestesia</label>
+            <input
+              name="anestesia"
+              value={form.anestesia}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        <div className="grid2">
+          <div className="row">
+            <label>Data da cirurgia</label>
+            <input
+              type="date"
+              name="data_cirurgia"
+              value={form.data_cirurgia || ""}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="row">
+            <label>Dias de atestado</label>
+            <input
+              name="dias_atestado"
+              value={form.dias_atestado}
+              onChange={handleChange}
+              placeholder="Ex: 10"
+            />
+          </div>
+        </div>
+
+        <div className="formActions">
+          <button className="btnPrimary" disabled={saving}>
+            {saving ? "Salvando..." : editMode ? "Atualizar" : "Salvar e iniciar"}
           </button>
         </div>
       </form>

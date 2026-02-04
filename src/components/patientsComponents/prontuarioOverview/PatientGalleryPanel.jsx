@@ -6,11 +6,11 @@ const GALLERY_TABLE = "paciente_galeria_fotos";
 const GALLERY_BUCKET = "paciente_galeria";
 
 const CATEGORIES = [
-  { key: "todas", label: "Todas", icon: "" },
-  { key: "rosto", label: "Rosto", icon: "" },
-  { key: "corpo", label: "Corpo", icon: "" },
-  { key: "exames", label: "Exames", icon: "" },
-  { key: "outros", label: "Outros", icon: "" },
+  { key: "Todas", label: "Todas", icon: "" },
+  { key: "Antes", label: "Antes", icon: "" },
+  { key: "Depois", label: "Depois", icon: "" },
+  { key: "Exames", label: "Exames", icon: "" },
+  { key: "Outras imagens", label: "Outras imagens", icon: "" },
 ];
 
 const formatDate = (iso) => {

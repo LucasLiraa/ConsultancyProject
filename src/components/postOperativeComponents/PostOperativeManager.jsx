@@ -1,36 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../utils/supabaseClient";
+
 import PostOperativePatientSelector from "./PostOperativePatientSelector";
 import SurgeryInfoForm from "./SurgeryInfoForm";
 import PostOpSidebar from "./PostOpSidebar";
 import WeeklyControlForm from "./WeeklyControlForm";
+import PostOperativeGalleryModal from "./PostOperativeGalleryModal";
+
 import "../styles/postOperativeStyles/postOperativeManager.css";
 
 /**
- * Gerencia todo o fluxo do pós-operatório:
- * - lista de pós ativos
- * - novo pós (selector -> form -> semana 1 criada automaticamente)
- * - abrir pós existente (calcula próxima semana)
+ * Manager do Pós-operatório
+ * - Coluna esquerda: lista de pós em andamento
+ * - Coluna direita: fluxo (novo pós -> cirurgia -> semanas -> formulário)
+ * - Galeria: modal real via Portal (por cima de tudo)
  */
 const PostOperatoryManager = ({ onVoltar }) => {
   const [showSelector, setShowSelector] = useState(false);
+
+  // paciente básico selecionado no selector (tabela pacientes)
   const [selectedPatient, setSelectedPatient] = useState(null); // { id, nome }
-  const [selectedPostOp, setSelectedPostOp] = useState(null); // registro pacientes_pos
-  const [weeks, setWeeks] = useState([]); // semanas do pos_operatorio
-  const [selectedWeek, setSelectedWeek] = useState(null); // objeto semana selecionada ou null
-  const [postsList, setPostsList] = useState([]); // lista de pacientes_pos ativos (alta = false)
+
+  // registro do pós (tabela pacientes_pos)
+  const [selectedPostOp, setSelectedPostOp] = useState(null);
+
+  // semanas (tabela pos_operatorio)
+  const [weeks, setWeeks] = useState([]);
+  const [selectedWeek, setSelectedWeek] = useState(null); // { semana: "1" } ou objeto semana
+
+  // lista de pós ativos
+  const [postsList, setPostsList] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
 
-  // Carrega lista de pós ativos (para a coluna / lista interna)
+  // ✅ Galeria (modal real)
+  const [galleryOpen, setGalleryOpen] = useState(false);
+
   const fetchPostsList = async () => {
     setLoadingPosts(true);
     const { data, error } = await supabase
       .from("pacientes_pos")
       .select("*")
-      .eq("alta", false) // apenas ativos
+      .eq("alta", false)
       .order("data_pos", { ascending: false, nullsFirst: false });
+
     if (error) {
       console.error("Erro ao carregar lista de pós:", error.message);
+      setPostsList([]);
     } else {
       setPostsList(data || []);
     }
@@ -41,35 +56,31 @@ const PostOperatoryManager = ({ onVoltar }) => {
     fetchPostsList();
   }, []);
 
-  // Carrega semanas do selectedPostOp
+  // carrega semanas do selectedPostOp
   useEffect(() => {
     const fetchWeeks = async () => {
       if (!selectedPostOp?.id) {
         setWeeks([]);
         return;
       }
+
       const { data, error } = await supabase
         .from("pos_operatorio")
         .select("*")
         .eq("paciente_pos_id", selectedPostOp.id)
-        .order("criado_em", { ascending: true });
+        .order("semana", { ascending: true });
+
       if (error) {
         console.error("Erro ao carregar semanas:", error.message);
         setWeeks([]);
       } else {
-        // garantir ordenação por número da semana (semana é text -> converte)
-        const sorted = (data || []).sort((a, b) => {
-          const na = Number(a.semana || "0");
-          const nb = Number(b.semana || "0");
-          return na - nb;
-        });
-        setWeeks(sorted);
+        setWeeks(data || []);
       }
     };
-    fetchWeeks();
-  }, [selectedPostOp]);
 
-  // Abre modal seletor
+    fetchWeeks();
+  }, [selectedPostOp?.id]);
+
   const handleOpenSelector = () => {
     setShowSelector(true);
     setSelectedPatient(null);
@@ -77,13 +88,10 @@ const PostOperatoryManager = ({ onVoltar }) => {
     setSelectedWeek(null);
   };
 
-  // Quando um paciente é selecionado no modal
   const handlePatientSelected = async (patient) => {
-    console.log("Paciente selecionado (selector):", patient);
     setSelectedPatient(patient);
     setShowSelector(false);
 
-    // Verifica se já existe pacientes_pos para esse paciente
     const { data: postOp, error } = await supabase
       .from("pacientes_pos")
       .select("*")
@@ -96,167 +104,180 @@ const PostOperatoryManager = ({ onVoltar }) => {
     }
 
     if (postOp) {
-      // já existe: abre gerenciamento e carrega semanas
       setSelectedPostOp(postOp);
-      // semanas serão carregadas pelo useEffect que observa selectedPostOp
-      // seleciona próxima semana automaticamente:
-      // determinamos a próxima semana com base no fetch de semanas (aguardar fetch)
-      // mas como fetchWeeks é assíncrono podemos calcular aqui também:
-      const { data: weeksData } = await supabase
+
+      const { data: weeksData, error: wErr } = await supabase
         .from("pos_operatorio")
         .select("semana")
         .eq("paciente_pos_id", postOp.id);
+
+      if (wErr) {
+        console.error("Erro ao buscar semanas:", wErr.message);
+        setSelectedWeek({ semana: "1" });
+        return;
+      }
 
       const maxWeek = (weeksData || [])
         .map((w) => Number(w.semana || "0"))
         .reduce((acc, n) => Math.max(acc, n), 0);
 
-      const nextWeekNum = maxWeek + 1;
-      // criamos um objeto temporário para representar a próxima semana (não salva ainda)
-      setSelectedWeek({ semana: String(nextWeekNum) });
+      setSelectedWeek({ semana: String(Math.max(1, maxWeek)) });
     } else {
-      // novo pós: abre formulário
+      // não tem pós ainda -> vai para SurgeryInfoForm
       setSelectedPostOp(null);
+      setWeeks([]);
       setSelectedWeek(null);
     }
   };
 
-  // Quando salva o SurgeryInfoForm (novo pós criado)
-  // Recebe postOpRecord (registro completo recém criado)
   const handleSurgerySaved = async (postOpRecord) => {
-    console.log("Surgery info saved:", postOpRecord);
-    // Definir selectedPostOp
     setSelectedPostOp(postOpRecord);
-    // criar automaticamente a semana 1 (com campos vazios) e abrir ela
+
+    // cria semana 1 automaticamente
     const payload = {
       paciente_pos_id: postOpRecord.id,
       paciente_id: postOpRecord.paciente_id,
       semana: "1",
       criado_em: new Date().toISOString(),
     };
-    const { data: weekData, error: wkErr } = await supabase
-      .from("pos_operatorio")
-      .insert([payload])
-      .select()
-      .maybeSingle();
+
+    const { error: wkErr } = await supabase.from("pos_operatorio").insert([payload]);
 
     if (wkErr) {
       console.error("Erro ao criar semana 1 automaticamente:", wkErr.message);
-    } else {
-      // recarregar semanas e selecionar semana 1
-      const { data } = await supabase
-        .from("pos_operatorio")
-        .select("*")
-        .eq("paciente_pos_id", postOpRecord.id)
-        .order("semana", { ascending: true });
-      setWeeks(data || []);
-      setSelectedWeek(weekData || { semana: "1" });
     }
 
-    // atualizar lista principal (aparecerá nos ativos)
+    const { data: updatedWeeks } = await supabase
+      .from("pos_operatorio")
+      .select("*")
+      .eq("paciente_pos_id", postOpRecord.id)
+      .order("semana", { ascending: true });
+
+    setWeeks(updatedWeeks || []);
+    setSelectedWeek({ semana: "1" });
+
     await fetchPostsList();
   };
 
-  // Criar nova semana explicitamente (clicando em "Nova Semana")
   const handleCreateNextWeek = async () => {
     if (!selectedPostOp?.id) return;
-    // calcula próxima semana a partir das semanas atuais
+
     const maxWeek = (weeks || [])
       .map((w) => Number(w.semana || "0"))
       .reduce((acc, n) => Math.max(acc, n), 0);
+
     const next = Math.max(1, maxWeek + 1);
+
     const payload = {
       paciente_pos_id: selectedPostOp.id,
       paciente_id: selectedPostOp.paciente_id,
       semana: String(next),
       criado_em: new Date().toISOString(),
     };
-    const { data, error } = await supabase
-      .from("pos_operatorio")
-      .insert([payload])
-      .select()
-      .maybeSingle();
+
+    const { error } = await supabase.from("pos_operatorio").insert([payload]);
     if (error) {
       console.error("Erro ao criar nova semana:", error.message);
       return;
     }
-    // atualizar semanas e selecionar a criada
+
     const { data: updated } = await supabase
       .from("pos_operatorio")
       .select("*")
       .eq("paciente_pos_id", selectedPostOp.id)
       .order("semana", { ascending: true });
+
     setWeeks(updated || []);
-    setSelectedWeek(data || { semana: String(next) });
+    setSelectedWeek({ semana: String(next) });
   };
 
-  // Ao marcar alta no WeeklyControlForm (ou no Sidebar), atualizamos pacientes_pos.alta = true
   const handleSetAlta = async (value) => {
     if (!selectedPostOp?.id) return;
+
     const { error } = await supabase
       .from("pacientes_pos")
       .update({ alta: value })
       .eq("id", selectedPostOp.id);
+
     if (error) {
       console.error("Erro ao atualizar alta:", error.message);
       return;
     }
-    // atualizar lista e fechar o pós (sumir da lista principal)
+
     await fetchPostsList();
+
     setSelectedPostOp(null);
     setSelectedPatient(null);
     setSelectedWeek(null);
+    setWeeks([]);
   };
 
-  // Ao salvar/atualizar semana pelo WeeklyControlForm, recarrega weeks
   const handleWeekSaved = async () => {
     if (!selectedPostOp?.id) return;
+
     const { data } = await supabase
       .from("pos_operatorio")
       .select("*")
       .eq("paciente_pos_id", selectedPostOp.id)
       .order("semana", { ascending: true });
+
     setWeeks(data || []);
   };
 
-  // Seleciona um post da lista lateral (abrir gerenciamento para ele)
   const handleOpenPostFromList = async (postOp) => {
     setSelectedPostOp(postOp);
     setSelectedPatient({ id: postOp.paciente_id, nome: postOp.nome || "" });
-    // carregar semanas e selecionar próxima semana automaticamente
+
     const { data: weeksData } = await supabase
       .from("pos_operatorio")
       .select("*")
-      .eq("paciente_pos_id", postOp.id);
-    const sorted = (weeksData || []).sort(
-      (a, b) => Number(a.semana || "0") - Number(b.semana || "0")
-    );
-    setWeeks(sorted);
-    const maxWeek = (sorted || []).map((w) => Number(w.semana || "0")).reduce((a,b) => Math.max(a,b), 0);
-    const next = maxWeek + 1;
-    setSelectedWeek({ semana: String(next) });
+      .eq("paciente_pos_id", postOp.id)
+      .order("semana", { ascending: true });
+
+    setWeeks(weeksData || []);
+
+    const maxWeek = (weeksData || [])
+      .map((w) => Number(w.semana || "0"))
+      .reduce((a, b) => Math.max(a, b), 1);
+
+    setSelectedWeek({ semana: String(maxWeek) });
   };
 
-  // Render
   return (
     <div className="managerRoot">
+      {/* ✅ GALERIA: modal real por cima de tudo (Portal no componente) */}
+      <PostOperativeGalleryModal
+        open={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        pacientePosId={selectedPostOp?.id}
+      />
+
+      {/* Header */}
       <div className="managerHeader">
-        <h3>Pós-Operatório</h3>
-        <div>
+        <div className="managerTitle">
+          <h3>Pós-operatório</h3>
+          <p>Gestão clínica • acompanhamento por semanas • registros e fotos</p>
+        </div>
+
+        <div className="managerHeaderActions">
           <button className="btnPrimary" onClick={handleOpenSelector}>
-            Novo Pós-Operatório
+            Novo pós
           </button>
-          <button className="btnGhost" onClick={() => { if(onVoltar) onVoltar(); }}>
+          <button className="btnGhost" onClick={() => onVoltar?.()}>
             Fechar
           </button>
         </div>
       </div>
 
       <div className="managerBody">
-        {/* coluna esquerda: lista de pós (ativos) */}
+        {/* Coluna esquerda */}
         <aside className="postsList">
           <div className="postsListHeader">
-            <h4>Em andamento</h4>
+            <div>
+              <h4>Em andamento</h4>
+              <span className="muted">{postsList.length} pacientes</span>
+            </div>
+
             <button className="btnSmall" onClick={fetchPostsList}>
               Atualizar
             </button>
@@ -264,27 +285,28 @@ const PostOperatoryManager = ({ onVoltar }) => {
 
           <div className="postsListContent">
             {loadingPosts ? (
-              <p>Carregando...</p>
+              <p className="muted">Carregando...</p>
             ) : postsList.length === 0 ? (
               <p className="muted">Nenhum pós em andamento</p>
             ) : (
               postsList.map((p) => (
-                <div
+                <button
+                  type="button"
                   key={p.id}
                   className={`postItem ${selectedPostOp?.id === p.id ? "active" : ""}`}
                   onClick={() => handleOpenPostFromList(p)}
                 >
                   <div className="postTitle">{p.nome || "—"}</div>
                   <div className="postSub">{p.cirurgia || "—"}</div>
-                </div>
+                </button>
               ))
             )}
           </div>
         </aside>
 
-        {/* painel principal */}
+        {/* Área principal */}
         <main className="managerMain">
-          {/* Se o selector estiver aberto, renderiza overlay */}
+          {/* Selector */}
           {showSelector && (
             <PostOperativePatientSelector
               onPatientSelected={handlePatientSelected}
@@ -292,16 +314,19 @@ const PostOperatoryManager = ({ onVoltar }) => {
             />
           )}
 
-          {/* Se existe selectedPatient mas não tem selectedPostOp -> novo pós (preencher info) */}
+          {/* Novo pós (sem pacientes_pos ainda) */}
           {selectedPatient && !selectedPostOp && !showSelector && (
             <SurgeryInfoForm
               patient={selectedPatient}
               onSaved={handleSurgerySaved}
-              onCancel={() => { setSelectedPatient(null); setShowSelector(true); }}
+              onCancel={() => {
+                setSelectedPatient(null);
+                setShowSelector(true);
+              }}
             />
           )}
 
-          {/* Se existe selectedPostOp -> gerenciar (sidebar + weekly form) */}
+          {/* Pós existente */}
           {selectedPostOp && !showSelector && (
             <div className="manageArea">
               <PostOpSidebar
@@ -313,6 +338,13 @@ const PostOperatoryManager = ({ onVoltar }) => {
               />
 
               <div className="manageContent">
+                {/* Barra de ações do pós (galeria etc.) */}
+                <div className="manageTopActions">
+                  <button className="btnGhost" onClick={() => setGalleryOpen(true)}>
+                    Abrir galeria
+                  </button>
+                </div>
+
                 {weeks.length === 0 ? (
                   <div className="placeholderBox">
                     <p>🕓 Aguardando início do pós-operatório.</p>
@@ -335,10 +367,16 @@ const PostOperatoryManager = ({ onVoltar }) => {
             </div>
           )}
 
-          {/* se nada selecionado */}
+          {/* Estado inicial */}
           {!selectedPatient && !selectedPostOp && !showSelector && (
             <div className="placeholderBox">
-              <p>Use "Novo Pós-Operatório" para iniciar ou clique em um da lista à esquerda.</p>
+              <p>
+                Clique em <strong>Novo pós</strong> ou selecione um paciente em andamento na
+                coluna à esquerda.
+              </p>
+              <button className="btnPrimary" onClick={handleOpenSelector}>
+                Iniciar novo pós
+              </button>
             </div>
           )}
         </main>

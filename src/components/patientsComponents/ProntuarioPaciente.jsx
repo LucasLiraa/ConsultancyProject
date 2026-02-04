@@ -6,6 +6,7 @@ import ProntuarioOverview from "./prontuarioOverview/ProntuarioOverview";
 import ProntuarioChecklist from "./prontuarioOverview/ProntuárioChecklist";
 import ControleEntregaExames from "./prontuarioOverview/ControleEntregaExames";
 import PatientGalleryPanel from "./prontuarioOverview/PatientGalleryPanel.jsx";
+import PatientDocumentsPanel from "./prontuarioOverview/PatientDocumentsPanel.jsx";
 
 // 🔹 Monta a URL pública da foto, igual nas outras telas
 const getFotoUrl = (fotoPath) => {
@@ -868,13 +869,7 @@ export default function PatientProntuario() {
           )}
 
           {viewMode === "documents" && (
-            <div className="prontuarioUnderConstruction">
-              <h3>Documentos do paciente</h3>
-              <p>
-                Em breve, esta área listará contratos, consentimentos,
-                laudos e anexos importantes da paciente.
-              </p>
-            </div>
+            <PatientDocumentsPanel pacienteId={paciente?.id} />
           )}
 
         </main>

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../utils/supabaseClient";
 import { Search, X } from "lucide-react";
 import "../styles/postOperativeStyles/postOperativeSelector.css";
 
 /**
- * Modal simples para escolher paciente.
- * Chama onPatientSelected(patient) no clique.
+ * Seleciona um paciente.
+ * IMPORTANTE: este componente agora é "embutível":
+ * - NÃO renderiza overlay/fixed
+ * - quem controla o modal/overlay é o componente pai (PostOperative.jsx)
  */
 const PostOperativePatientSelector = ({ onPatientSelected, onClose }) => {
   const [pacientes, setPacientes] = useState([]);
@@ -27,42 +29,52 @@ const PostOperativePatientSelector = ({ onPatientSelected, onClose }) => {
     fetch();
   }, []);
 
-  const filtered = pacientes.filter((p) =>
-    p.nome.toLowerCase().includes(busca.toLowerCase())
-  );
+  const filtered = useMemo(() => {
+    const q = (busca || "").trim().toLowerCase();
+    if (!q) return pacientes;
+    return (pacientes || []).filter((p) =>
+      (p.nome || "").toLowerCase().includes(q)
+    );
+  }, [pacientes, busca]);
 
   return (
-    <div className="selectorOverlay">
-      <div className="selectorContainer">
-        <div className="selectorHeader">
+    <div className="selectorContainer">
+      <div className="selectorHeader">
+        <div className="selectorTitle">
           <h3>Selecionar paciente</h3>
-          <button className="btnIcon" onClick={onClose}><X size={18} /></button>
+          <p>Escolha um paciente para iniciar o pós-operatório.</p>
         </div>
 
-        <div className="searchRow">
-          <Search size={16} />
-          <input
-            placeholder="Buscar paciente..."
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-          />
-        </div>
+        <button className="btnIcon" onClick={onClose} type="button" title="Fechar">
+          <X size={18} />
+        </button>
+      </div>
 
-        <div className="patientList">
-          {filtered.length === 0 ? (
-            <div className="emptyList">Nenhum paciente</div>
-          ) : (
-            filtered.map((p) => (
-              <div
-                className="patientRow"
-                key={p.id}
-                onClick={() => onPatientSelected?.(p)}
-              >
-                <div className="patientName">{p.nome}</div>
-              </div>
-            ))
-          )}
-        </div>
+      <div className="searchRow">
+        <Search size={16} />
+        <input
+          placeholder="Buscar paciente..."
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+        />
+      </div>
+
+      <div className="patientList">
+        {filtered.length === 0 ? (
+          <div className="emptyList">Nenhum paciente encontrado</div>
+        ) : (
+          filtered.map((p) => (
+            <button
+              type="button"
+              className="patientRow"
+              key={p.id}
+              onClick={() => onPatientSelected?.(p)}
+            >
+              <div className="patientName">{p.nome}</div>
+              <span className="pill">Selecionar</span>
+            </button>
+          ))
+        )}
       </div>
     </div>
   );
