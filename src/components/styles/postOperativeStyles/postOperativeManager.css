@@ -1,98 +1,243 @@
+/* ===== PostOperativeManager — layout premium e correto ===== */
+
 .managerRoot {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px;
-  height: 100%;
-  box-sizing: border-box;
+  gap: 14px;
+  min-width: 0;
 }
 
+/* Header premium */
 .managerHeader {
   display: flex;
+  align-items: flex-end;
   justify-content: space-between;
-  align-items: center;
-}
-
-.btnPrimary {
-  background: #4f46e5;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-left: 8px;
-}
-
-.btnGhost {
-  background: transparent;
-  border: 1px solid #e5e7eb;
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.managerBody {
-  display: flex;
   gap: 12px;
-  height: calc(100% - 64px);
+
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  box-shadow: 0 12px 40px rgba(16, 24, 40, 0.06);
 }
 
+.managerTitle h3 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: #101828;
+}
+
+.managerTitle p {
+  margin: 6px 0 0;
+  color: rgba(16, 24, 40, 0.6);
+  font-size: 12.5px;
+}
+
+.managerHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Corpo: lista à esquerda + painel à direita */
+.managerBody {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 14px;
+  align-items: start;
+  min-width: 0;
+}
+
+/* ===== Lista lateral ===== */
 .postsList {
-  width: 260px;
-  background: #fff;
-  border-radius: 8px;
-  padding: 12px;
-  border: 1px solid #e6e6f0;
-  overflow-y: auto;
+  position: sticky;
+  top: 14px;
+
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  box-shadow: 0 12px 40px rgba(16, 24, 40, 0.06);
+  overflow: hidden;
 }
 
 .postsListHeader {
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid rgba(16, 24, 40, 0.06);
+
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.postItem {
+.postsListHeader h4 {
+  margin: 0;
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
+  color: #101828;
+}
+
+.postsListContent {
   padding: 10px;
-  border-radius: 8px;
-  border: 1px solid transparent;
+  max-height: calc(100vh - 220px);
+  overflow: auto;
+}
+
+/* Itens */
+.postItem {
+  width: 100%;
+  text-align: left;
+
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.07);
+  background: rgba(255, 255, 255, 0.90);
+  padding: 12px;
+
   cursor: pointer;
+  display: grid;
+  gap: 6px;
   margin-bottom: 8px;
+
+  transition: box-shadow 0.15s ease, transform 0.05s ease, border-color 0.15s ease;
 }
 
-.postItem:hover { background: #f8fafc; }
-.postItem.active { border-color: #c7d2fe; background: #eef2ff; }
+.postItem:hover { box-shadow: 0 14px 30px rgba(16, 24, 40, 0.08); }
+.postItem:active { transform: translateY(1px); }
 
-.postTitle { font-weight: 600; }
-.postSub { font-size: 0.85rem; color: #6b7280; }
+.postItem.active {
+  border-color: rgba(70, 130, 255, 0.35);
+  box-shadow: 0 14px 36px rgba(70, 130, 255, 0.10);
+}
 
+.postTitle {
+  font-weight: 800;
+  font-size: 13px;
+  color: #101828;
+}
+
+.postSub {
+  font-size: 12px;
+  color: rgba(16, 24, 40, 0.6);
+}
+
+/* ===== Área principal ===== */
 .managerMain {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
+  display: grid;
+  gap: 14px;
 }
 
+/* Aqui é onde o "sidebar do paciente" fica do LADO e não no topo */
 .manageArea {
-  display: flex;
-  gap: 12px;
-  height: 100%;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 14px;
+  align-items: start;
+  min-width: 0;
+}
+
+/* garante que a sidebar fique “travada” no lado */
+.manageArea > .sidebarBox {
+  position: sticky;
+  top: 14px;
 }
 
 .manageContent {
-  flex: 1;
-  background: #f9fafb;
-  border-radius: 8px;
-  padding: 12px;
-  overflow-y: auto;
+  min-width: 0;
+  display: grid;
+  gap: 14px;
 }
 
+/* placeholder */
 .placeholderBox {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.80);
+  border: 1px dashed rgba(16, 24, 40, 0.18);
+  padding: 18px;
+  text-align: left;
+}
+
+.placeholderBox p {
+  margin: 0 0 10px;
+  color: rgba(16, 24, 40, 0.65);
+}
+
+/* ===== Botões (padrão do sistema) ===== */
+.btnPrimary,
+.btnGhost,
+.btnSmall {
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.86);
+  color: #101828;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 13px;
+  transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btnPrimary:hover,
+.btnGhost:hover,
+.btnSmall:hover {
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+}
+
+.btnPrimary:active,
+.btnGhost:active,
+.btnSmall:active {
+  transform: translateY(1px);
+}
+
+.btnPrimary {
+  border: 1px solid rgba(70, 130, 255, 0.35);
+  background: linear-gradient(180deg, rgba(70, 130, 255, 0.16), rgba(70, 130, 255, 0.08));
+}
+
+.btnGhost {
+  background: rgba(255, 255, 255, 0.70);
+}
+
+.btnSmall {
+  padding: 8px 10px;
+  font-size: 12px;
+  border-radius: 10px;
+}
+
+.muted {
+  color: rgba(16, 24, 40, 0.55);
+  font-size: 12px;
+}
+
+/* Responsivo */
+@media (max-width: 1120px) {
+  .managerBody {
+    grid-template-columns: 1fr;
+  }
+  .postsList {
+    position: static;
+  }
+  .manageArea {
+    grid-template-columns: 1fr;
+  }
+  .manageArea > .sidebarBox {
+    position: static;
+  }
+}
+
+.managerRoot,
+.managerMain,
+.manageContent {
+  overflow: visible;
+}
+
+.manageTopActions {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #6b7280;
+  justify-content: flex-end;
+  gap: 10px;
 }

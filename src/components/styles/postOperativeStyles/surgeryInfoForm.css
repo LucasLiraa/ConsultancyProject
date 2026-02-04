@@ -1,21 +1,171 @@
+/* ===== SurgeryInfoForm — consultório fino ===== */
+
 .surgeryFormBox {
-  background: #fff;
-  padding: 16px;
-  border-radius: 10px;
-  border: 1px solid #e6e6f0;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  box-shadow: 0 12px 40px rgba(16, 24, 40, 0.06);
+  padding: 14px;
+  overflow: hidden;
 }
 
-.surgeryHeader { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-.surgeryForm { display:flex; flex-direction:column; gap:10px; }
+/* header */
+.surgeryHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 
-.row, .rowGroup { display:flex; flex-direction:column; gap:6px; }
-.rowGroup { display:flex; gap:12px; }
-.col { flex:1; }
-
-.inputDisabled { background:#f3f4f6; border:1px solid #e6e6f0; padding:8px; border-radius:6px; color:#6b7280; }
-
-.row input, .rowGroup input, textarea {
-  border:1px solid #e6e6f0; padding:8px; border-radius:6px; outline:none;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  margin-bottom: 12px;
 }
 
-.actionsRow { display:flex; justify-content:flex-end; gap:8px; margin-top:6px; }
+.surgeryHeader h3 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: #101828;
+}
+
+.surgeryHeader p {
+  margin: 6px 0 0;
+  color: rgba(16, 24, 40, 0.60);
+  font-size: 12.5px;
+}
+
+.surgeryHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* form */
+.surgeryForm {
+  display: grid;
+  gap: 12px;
+}
+
+/* grid */
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* linha padrão */
+.row {
+  display: grid;
+  gap: 8px;
+}
+
+.row label {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: rgba(16, 24, 40, 0.85);
+}
+
+/* inputs */
+.surgeryForm input[type="text"],
+.surgeryForm input[type="date"],
+.surgeryForm input[type="number"],
+.surgeryForm textarea,
+.surgeryForm select {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 10px 12px;
+  outline: none;
+  font-size: 13px;
+  color: #101828;
+}
+
+.surgeryForm textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.surgeryForm input:focus,
+.surgeryForm textarea:focus,
+.surgeryForm select:focus {
+  border-color: rgba(70, 130, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(70, 130, 255, 0.10);
+}
+
+.inputDisabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+/* ações do form */
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+/* botões */
+.btnPrimary,
+.btnGhost {
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.86);
+  color: #101828;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 13px;
+  transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btnPrimary:hover,
+.btnGhost:hover {
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+}
+
+.btnPrimary:active,
+.btnGhost:active {
+  transform: translateY(1px);
+}
+
+.btnPrimary:disabled,
+.btnGhost:disabled {
+  opacity: 0.65;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+.btnPrimary {
+  border: 1px solid rgba(70, 130, 255, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(70, 130, 255, 0.16),
+    rgba(70, 130, 255, 0.08)
+  );
+}
+
+.btnGhost {
+  background: transparent;
+}
+
+/* responsivo */
+@media (max-width: 820px) {
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+  .surgeryHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .surgeryHeaderActions {
+    justify-content: flex-end;
+  }
+}

@@ -1,22 +1,157 @@
+/* ===== PostOpSidebar — consultório fino ===== */
+
 .sidebarBox {
-  width: 320px;
-  background: #fff;
-  border-radius: 10px;
-  border:1px solid #e6e6f0;
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  position: sticky;
+  top: 14px;
+
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  box-shadow: 0 12px 40px rgba(16, 24, 40, 0.06);
+  overflow: hidden;
 }
 
-.sidebarInfo div { margin-bottom:6px; }
-.weeksList { display:flex; flex-direction:column; gap:6px; max-height:300px; overflow:auto; }
-.weekBtn { padding:8px; border-radius:8px; border:1px solid #e6e6f0; background:#fff; cursor:pointer; text-align:left; }
-.weekBtn:hover { background:#f1f5ff; }
-.sidebarActions { margin-top:8px; }
-.muted { color:#9ca3af; font-size:0.95rem; }
-.sidebarFooter { margin-top:auto; }
-.btnDanger { background:#dc2626; color:#fff; border:none; padding:8px; border-radius:8px; width:100%; cursor:pointer; }
-.btnSmall { background:#eef2ff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
+/* header */
+.sidebarHeader {
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid rgba(16, 24, 40, 0.06);
+}
 
-.btnPrimary.full { width:100%; }
+.sidebarHeader h4 {
+  margin: 0;
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
+  color: #101828;
+}
+
+/* info */
+.sidebarInfo {
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+  color: rgba(16, 24, 40, 0.86);
+  font-size: 12.5px;
+}
+
+.sidebarInfo strong {
+  color: rgba(16, 24, 40, 0.92);
+  font-weight: 800;
+}
+
+/* semanas */
+.sidebarWeeks {
+  padding: 12px 14px;
+  border-top: 1px solid rgba(16, 24, 40, 0.06);
+}
+
+.sidebarWeeks h5 {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+  color: rgba(16, 24, 40, 0.84);
+}
+
+.weeksList {
+  display: grid;
+  gap: 8px;
+}
+
+/* botão semana */
+.weekBtn {
+  width: 100%;
+  text-align: left;
+
+  border-radius: 14px;
+  padding: 10px 12px;
+
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: rgba(255, 255, 255, 0.90);
+  color: #101828;
+
+  font-weight: 750;
+  font-size: 12.5px;
+
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.05s ease, border-color 0.15s ease;
+}
+
+.weekBtn:hover {
+  box-shadow: 0 14px 30px rgba(16, 24, 40, 0.08);
+}
+
+.weekBtn:active {
+  transform: translateY(1px);
+}
+
+/* ações */
+.sidebarActions {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+/* footer */
+.sidebarFooter {
+  padding: 12px 14px 14px;
+  border-top: 1px solid rgba(16, 24, 40, 0.06);
+}
+
+.muted {
+  color: rgba(16, 24, 40, 0.55);
+  font-size: 12px;
+}
+
+/* ===== Botões (compatíveis com sua classe "btnPrimary full" e "btnDanger full") ===== */
+.btnPrimary,
+.btnDanger {
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.86);
+  color: #101828;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 13px;
+
+  transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btnPrimary:hover,
+.btnDanger:hover {
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+}
+
+.btnPrimary:active,
+.btnDanger:active {
+  transform: translateY(1px);
+}
+
+.btnPrimary {
+  border: 1px solid rgba(70, 130, 255, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(70, 130, 255, 0.16),
+    rgba(70, 130, 255, 0.08)
+  );
+}
+
+.btnDanger {
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  background: linear-gradient(
+    180deg,
+    rgba(220, 38, 38, 0.10),
+    rgba(220, 38, 38, 0.05)
+  );
+}
+
+.full {
+  width: 100%;
+}
+
+/* responsivo */
+@media (max-width: 1120px) {
+  .sidebarBox {
+    position: static;
+  }
+}

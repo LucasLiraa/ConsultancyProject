@@ -1,30 +1,168 @@
-.selectorOverlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.35);
-  z-index: 9999;
-}
+/* ===== PostOperativePatientSelector — consultório fino (embutível) ===== */
 
 .selectorContainer {
-  width: 420px;
-  max-height: 80vh;
-  background: #fff;
-  border-radius: 10px;
-  padding: 14px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  box-shadow: 0 12px 40px rgba(16, 24, 40, 0.06);
+
+  padding: 14px;
+  overflow: hidden;
 }
 
-.selectorHeader { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-.searchRow { display:flex; gap:8px; align-items:center; padding:8px; border-radius:8px; background:#f3f4f6; margin-bottom:8px; }
-.searchRow input { border:none; outline:none; background:transparent; flex:1; padding:6px; }
+/* Header */
+.selectorHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
 
-.patientList { overflow:auto; flex:1; display:flex; flex-direction:column; gap:6px; }
-.patientRow { padding:10px; border-radius:8px; cursor:pointer; }
-.patientRow:hover { background:#eef2ff; color:#3730a3; }
-.emptyList { color:#9ca3af; text-align:center; padding:12px; }
-.btnIcon { background:transparent; border:none; cursor:pointer; }
+.selectorTitle h3 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: #101828;
+}
+
+.selectorTitle p {
+  margin: 6px 0 0;
+  color: rgba(16, 24, 40, 0.6);
+  font-size: 12.5px;
+}
+
+/* botão X */
+.btnIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.86);
+  color: #101828;
+
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+
+  transition: transform 0.05s ease, box-shadow 0.15s ease;
+}
+
+.btnIcon:hover {
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+}
+
+.btnIcon:active {
+  transform: translateY(1px);
+}
+
+/* Search */
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.searchRow svg {
+  color: rgba(16, 24, 40, 0.55);
+}
+
+.searchRow input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  color: #101828;
+}
+
+.searchRow:focus-within {
+  border-color: rgba(70, 130, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(70, 130, 255, 0.10);
+}
+
+/* Lista */
+.patientList {
+  overflow: auto;
+  max-height: 56vh;
+  padding-right: 4px;
+}
+
+.emptyList {
+  padding: 18px 14px;
+  border-radius: 16px;
+  border: 1px dashed rgba(16, 24, 40, 0.14);
+  background: rgba(255, 255, 255, 0.60);
+  color: rgba(16, 24, 40, 0.65);
+  text-align: center;
+}
+
+/* Item */
+.patientRow {
+  width: 100%;
+  text-align: left;
+
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.07);
+  background: rgba(255, 255, 255, 0.90);
+
+  padding: 12px;
+  cursor: pointer;
+  margin-bottom: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  transition: box-shadow 0.15s ease, transform 0.05s ease, border-color 0.15s ease;
+}
+
+.patientRow:hover {
+  box-shadow: 0 14px 30px rgba(16, 24, 40, 0.08);
+}
+
+.patientRow:active {
+  transform: translateY(1px);
+}
+
+.patientName {
+  font-weight: 760;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: #101828;
+}
+
+.pill {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(70, 130, 255, 0.28);
+  background: rgba(70, 130, 255, 0.08);
+  color: rgba(16, 24, 40, 0.75);
+}
+
+/* scrollbar suave */
+.patientList::-webkit-scrollbar {
+  width: 10px;
+}
+.patientList::-webkit-scrollbar-thumb {
+  background: rgba(16, 24, 40, 0.14);
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+.patientList::-webkit-scrollbar-track {
+  background: transparent;
+}

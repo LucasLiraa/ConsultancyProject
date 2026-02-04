@@ -110,7 +110,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.8rem;
-  height: 28vh;
+  height: 100%;
   transition: all 0.25s ease;
 }
 .pacienteCard:hover {
