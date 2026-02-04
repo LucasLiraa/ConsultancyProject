@@ -1,98 +1,225 @@
-.sectionPostOperative{
+/* ===== Compatibilidade direta com Sidebar global ===== */
+/* A .poPage precisa ser irmã da .sidebar no DOM para o seletor ~ funcionar */
+
+.poPage {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  min-height: 100vh;
+
+  margin: 0 auto;
+
+  /* respeita tema global */
+  background-color: var(--body-color);
+  transition: var(--tran-04);
+
+  /* tema premium (fundo) */
+  padding: 18px;
+  color: #101828;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+  background: radial-gradient(
+      1200px 800px at 20% 10%,
+      rgba(70, 130, 255, 0.08),
+      transparent 55%
+    ),
+    radial-gradient(
+      900px 600px at 85% 0%,
+      rgba(190, 90, 255, 0.06),
+      transparent 60%
+    ),
+    #f6f7fb;
+}
+
+/* Sidebar aberta */
+.sidebar.open ~ .poPage {
+  padding-left: 220px;
+}
+
+/* Sidebar fechada */
+.sidebar.closed ~ .poPage {
+  padding-left: 80px;
+}
+
+/* ===== Topbar ===== */
+.poTopbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 14px 16px;
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  box-shadow: 0 12px 40px rgba(16, 24, 40, 0.07);
+}
+
+.poTitle h1 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.poTitle p {
+  margin: 6px 0 0;
+  color: rgba(16, 24, 40, 0.6);
+  font-size: 12.5px;
+}
+
+/* ===== Ações (busca + botões) ===== */
+.poActions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  transition: var(--tran-04);
-}
-.sidebar.open ~ .sectionPostOperative{
-  margin-left: 220px;
-}
-.sidebar.closed ~ .sectionPostOperative{
-  margin-left: 80px;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
-.containerPostOperative{
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  width: 90%;
-  margin-top: 26px;
+.poSearch input {
+  width: 360px;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 10px 12px;
+  outline: none;
+  font-size: 13px;
+  color: #101828;
 }
-.contentPostOperativeHeader{
-  width: 72%;
-}
-.contentPostOperativeButton{
- display: flex;
- align-items: center;
- justify-content: space-between;
- flex-direction: column;
- width: 26%;
- height: 26vh;
- 
- border-radius: 14px;
-}
-.contentPostOperativeButton button{
-  width: 100%;
-  height: 12vh;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
 
-  border: none;
+.poSearch input:focus {
+  border-color: rgba(70, 130, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(70, 130, 255, 0.10);
+}
+
+/* ===== Botões ===== */
+.poBtn {
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.86);
+  color: #101828;
+  padding: 10px 12px;
+  border-radius: 12px;
   cursor: pointer;
-  color: var(--body-color);
-  background-color: var(--text-color);
-  transition: var(--tran-04);
-}
-.contentPostOperativeButton button:hover{
-  border: 1px solid var(--text-color);
-  color: var(--text-color);
-  background-color: var(--body-color);
+  font-weight: 700;
+  font-size: 13px;
+  transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
-.contentPostOperative{
-  width: 90%;
+.poBtn:hover {
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
 }
 
-.selectorOverlay,
-.managerOverlay {
+.poBtn:active {
+  transform: translateY(1px);
+}
+
+.poBtnPrimary {
+  border: 1px solid rgba(70, 130, 255, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(70, 130, 255, 0.16),
+    rgba(70, 130, 255, 0.08)
+  );
+}
+
+.poContent {
+  margin-top: 14px;
+}
+
+/* ===== Overlay/Modal base (selector e manager) ===== */
+.poOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(5px);
+  background: rgba(16, 24, 40, 0.42);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+  padding: 18px;
+}
+
+.poModal {
+  width: min(980px, 100%);
+  max-height: min(88vh, 920px);
+  overflow: auto;
+
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  box-shadow: 0 30px 80px rgba(16, 24, 40, 0.22);
+  padding: 14px;
+}
+
+.poModalLarge {
+  width: min(1240px, 100%);
+}
+
+/* ===== Modal / Galeria (caso use as classes padrão do GalleryModal) ===== */
+/* (isso ajuda a evitar “modal sem css”) */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.38);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+  padding: 18px;
+}
+
+.modalContent {
+  width: min(980px, 100%);
+  max-height: min(86vh, 860px);
+  overflow: hidden;
+
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  box-shadow: 0 30px 80px rgba(16, 24, 40, 0.22);
+}
+
+.modalHeader {
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 9999;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(16, 24, 40, 0.08);
 }
 
-/* Modal base (usado em ambos) */
-.selectorModal,
-.managerModal {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  width: 90%;
-  max-width: 80%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+.modalHeader h3 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: -0.01em;
 }
 
-/* Botão padrão */
-.managerModal button.primary {
-  background: #4e6cf0;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  transition: 0.2s;
+.modalBody {
+  padding: 14px;
+  overflow: auto;
+  max-height: calc(86vh - 60px);
 }
 
-.managerModal button.primary:hover {
-  background: #3e5cdd;
+/* ===== Responsivo ===== */
+@media (max-width: 900px) {
+  .poTopbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .poActions {
+    justify-content: stretch;
+  }
+
+  .poSearch input {
+    width: 100%;
+  }
+}
+
+/* ===== Corrige overlay/fixed quando a poPage usa transform (sidebar) ===== */
+body.modal-open .poPage {
+  transform: none !important;
 }

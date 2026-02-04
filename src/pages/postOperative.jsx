@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../utils/supabaseClient";
-
-import Banners from "../components/banners";
 
 import PostOperativeDashboard from "../components/postOperativeComponents/PostOperativeDashboard";
 import PostOperativePatientSelector from "../components/postOperativeComponents/PostOperativePatientSelector";
@@ -13,8 +11,11 @@ import "./styles/postOperative.css";
 export default function PostOperative() {
   const [pacientes, setPacientes] = useState([]);
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
+
   const [mostrarSelector, setMostrarSelector] = useState(false);
   const [mostrarNovo, setMostrarNovo] = useState(false);
+
+  const [search, setSearch] = useState("");
 
   // 🔄 Buscar pacientes em pós-operatório
   const fetchPacientes = async () => {
@@ -23,7 +24,7 @@ export default function PostOperative() {
       .select("*")
       .order("data_cirurgia", { ascending: false });
 
-    if (!error) setPacientes(data);
+    if (!error) setPacientes(data || []);
     else console.error("Erro ao buscar pacientes:", error.message);
   };
 
@@ -36,55 +37,78 @@ export default function PostOperative() {
     setMostrarNovo(false);
   };
 
+  const handleNovoPaciente = () => {
+    // abre o manager sem paciente selecionado (fluxo novo)
+    setPacienteSelecionado(null);
+    setMostrarSelector(true); // abre seletor primeiro (mais elegante)
+    setMostrarNovo(false);
+  };
+
+  const filteredPacientes = useMemo(() => {
+    const q = (search || "").trim().toLowerCase();
+    if (!q) return pacientes;
+
+    return (pacientes || []).filter((p) => {
+      const nome = (p.nome || "").toLowerCase();
+      const cirurgia = (p.cirurgia || p.procedimento || "").toLowerCase();
+      return nome.includes(q) || cirurgia.includes(q);
+    });
+  }, [pacientes, search]);
+
   return (
-    <section className="sectionPostOperative">
-      {/* 🔹 Header e botão */}
-      <div className="containerPostOperative">
-        <div className="contentPostOperativeHeader">
-          <Banners />
+    <section className="poPage">
+      {/* Topbar (sem banner) */}
+      <header className="poTopbar">
+        <div className="poTitle">
+          <h1>Pós-operatório</h1>
+          <p>Gestão clínica • acompanhamento por semanas • registros e fotos</p>
         </div>
 
-        <div className="contentPostOperativeButton">
-          <button
-            className="primary"
-            // 👉 Agora vai direto para o Manager (tela do print)
-            onClick={() => {
-              setPacienteSelecionado(null);   // novo fluxo, sem paciente pré-selecionado
-              setMostrarSelector(false);      // garante que o seletor fique fechado
-              setMostrarNovo(true);           // abre o PostOperativeManager
-            }}
-          >
+        <div className="poActions">
+          <div className="poSearch">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar por nome ou cirurgia…"
+            />
+          </div>
+
+          <button className="poBtn poBtnPrimary" onClick={handleNovoPaciente}>
             Novo paciente
           </button>
-        </div>
-      </div>
 
-      {/* 🔹 Lista principal (Dashboard) */}
-      <div className="contentPostOperative">
+          <button className="poBtn" onClick={fetchPacientes} title="Atualizar lista">
+            Atualizar
+          </button>
+        </div>
+      </header>
+
+      {/* Conteúdo principal */}
+      <main className="poContent">
         <PostOperativeDashboard
-          pacientes={pacientes}
+          pacientes={filteredPacientes}
           onSelecionar={(paciente) => {
             setPacienteSelecionado(paciente);
             setMostrarNovo(true);
           }}
         />
-      </div>
+      </main>
 
-      {/* 🔹 Overlay do SELETOR DE PACIENTE (continua disponível se você quiser abrir em outro fluxo) */}
+      {/* Overlay do SELETOR DE PACIENTE */}
       <AnimatePresence>
         {mostrarSelector && (
           <motion.div
-            className="selectorOverlay"
+            className="poOverlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="selectorModal"
-              initial={{ scale: 0.95, opacity: 0 }}
+              className="poModal"
+              initial={{ scale: 0.98, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.18 }}
             >
               <PostOperativePatientSelector
                 onPatientSelected={(p) => {
@@ -99,21 +123,21 @@ export default function PostOperative() {
         )}
       </AnimatePresence>
 
-      {/* 🔹 Overlay do MANAGER (fluxo de pós-operatório) */}
+      {/* Overlay do MANAGER */}
       <AnimatePresence>
         {(pacienteSelecionado || mostrarNovo) && (
           <motion.div
-            className="managerOverlay"
+            className="poOverlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="managerModal"
-              initial={{ scale: 0.95, opacity: 0 }}
+              className="poModal poModalLarge"
+              initial={{ scale: 0.98, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.18 }}
             >
               <PostOperativeManager
                 paciente={pacienteSelecionado}
