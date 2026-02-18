@@ -1,49 +1,61 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../utils/supabaseClient";
 import "./NovaSenha.css";
 
 const NovaSenha = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 👇 modo de recuperação (quando veio pelo link / já tem sessão de recovery)
   const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
   useEffect(() => {
     const checkRecovery = async () => {
-      // Supabase normalmente manda: #access_token=...&type=recovery
-      const hash = window.location.hash || "";
-      const search = window.location.search || "";
+      try {
+        // ✅ suporte a redirect com ?code=... (PKCE)
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get("code");
+        if (code) {
+          await supabase.auth.exchangeCodeForSession(code);
+        }
 
-      const hashParams = new URLSearchParams(
-        hash.startsWith("#") ? hash.slice(1) : hash
-      );
-      const searchParams = new URLSearchParams(search);
+        // Se já existir sessão (ex.: logado via link), habilita troca de senha
+        const { data, error } = await supabase.auth.getSession();
+        if (!error && data?.session) {
+          setIsRecoveryMode(true);
+          return;
+        }
 
-      const typeFromHash = hashParams.get("type");
-      const typeFromSearch = searchParams.get("type");
+        // fallback: links antigos com type=recovery (se algum dia usar)
+        const hash = window.location.hash || "";
+        const search = window.location.search || "";
 
-      if (typeFromHash === "recovery" || typeFromSearch === "recovery") {
-        setIsRecoveryMode(true);
-        return;
-      }
+        const hashParams = new URLSearchParams(
+          hash.startsWith("#") ? hash.slice(1) : hash
+        );
+        const searchParams = new URLSearchParams(search);
 
-      // fallback: se já existir sessão (ex.: já logado via link), também habilita troca de senha
-      const { data, error } = await supabase.auth.getSession();
-      if (!error && data?.session) {
-        setIsRecoveryMode(true);
+        const typeFromHash = hashParams.get("type");
+        const typeFromSearch = searchParams.get("type");
+
+        if (typeFromHash === "recovery" || typeFromSearch === "recovery") {
+          setIsRecoveryMode(true);
+        }
+      } catch (e) {
+        console.error(e);
       }
     };
 
     checkRecovery();
   }, []);
 
-  // 🔹 envia o e-mail de recuperação
+  // 🔹 envia o e-mail (link) para recuperar/criar senha
   const handleReset = async (e) => {
     e.preventDefault();
     setMensagem("");
@@ -51,14 +63,14 @@ const NovaSenha = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        // importante: voltar para /nova-senha, não /login
-        redirectTo: `${window.location.origin}/nova-senha`,
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: `${window.location.origin}/nova-senha` },
       });
 
       if (error) throw error;
 
-      setMensagem("Enviamos um e-mail para redefinir sua senha.");
+      setMensagem("Enviamos um e-mail com um link para você definir sua senha.");
     } catch (error) {
       console.error(error);
       setErro(error.message || "Erro ao enviar o e-mail.");
@@ -86,15 +98,20 @@ const NovaSenha = () => {
     setLoading(true);
 
     try {
+      // ✅ Atualiza senha e desativa flag de primeiro acesso (metadata)
       const { error } = await supabase.auth.updateUser({
         password: novaSenha,
+        data: { must_change_password: false },
       });
 
       if (error) throw error;
 
-      setMensagem("Senha atualizada com sucesso! Você já pode fazer login.");
+      setMensagem("Senha atualizada com sucesso! Redirecionando...");
       setNovaSenha("");
       setConfirmarSenha("");
+
+      // manda pro sistema (ou pro login, se preferir)
+      navigate("/", { replace: true });
     } catch (error) {
       console.error(error);
       setErro(error.message || "Não foi possível atualizar a senha.");
@@ -106,8 +123,8 @@ const NovaSenha = () => {
   return (
     <div className="reset-page">
       <div className="reset-card">
-        {/* COLUNA ESQUERDA (pode ser imagem ou texto, como já estava no seu CSS) */}
         <div className="reset-left">
+          <img src="/loginImage.jpg" alt="Background" className="reset-bg-img" />
           <h1>Redefinir senha</h1>
           <p>
             {isRecoveryMode
@@ -116,13 +133,11 @@ const NovaSenha = () => {
           </p>
         </div>
 
-        {/* COLUNA DIREITA */}
         <div className="reset-right">
           {mensagem && <div className="reset-success">{mensagem}</div>}
           {erro && <div className="reset-error">{erro}</div>}
 
           {isRecoveryMode ? (
-            // 👉 MODO 1: veio pelo link do e-mail → trocar senha
             <form onSubmit={handleChangePassword}>
               <label>
                 Nova senha
@@ -151,7 +166,6 @@ const NovaSenha = () => {
               </button>
             </form>
           ) : (
-            // 👉 MODO 2: apenas esqueceu a senha → pedir e-mail
             <form onSubmit={handleReset}>
               <label>
                 E-mail

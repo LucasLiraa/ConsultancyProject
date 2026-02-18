@@ -21,7 +21,7 @@ function Documents() {
   const [category, setCategory] = useState("Todas");
 
   const [docModalOpen, setDocModalOpen] = useState(false);
-  const [docModalStep, setDocModalStep] = useState("intro"); // "intro" | "patient"
+  const [docModalStep, setDocModalStep] = useState("intro");
   const [selectedDoc, setSelectedDoc] = useState(null);
 
   const [patientQuery, setPatientQuery] = useState("");
@@ -476,12 +476,12 @@ function Documents() {
             </div>
 
             <div className="documentsSidebarPlaceholder">
-              <div className="documentsPlaceholderTitle">Espaço reservado</div>
+              <div className="documentsPlaceholderTitle"></div>
               <div className="documentsPlaceholderText">
-                Aqui vamos decidir depois: estatísticas, atalhos, documentos recentes, etc.
+                
               </div>
               <button className="documentsSidebarBtn" type="button" onClick={() => {}}>
-                Configurar depois
+                
               </button>
             </div>
           </div>

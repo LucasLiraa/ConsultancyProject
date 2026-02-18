@@ -6,6 +6,7 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
   const [checking, setChecking] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mustSetPassword, setMustSetPassword] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -15,12 +16,27 @@ const ProtectedRoute = ({ children }) => {
         if (error) {
           console.error("Erro ao obter sessão:", error.message);
           setIsAuthenticated(false);
-        } else {
-          setIsAuthenticated(!!data?.session);
+          setMustSetPassword(false);
+          return;
         }
+
+        const session = data?.session;
+
+        if (!session) {
+          setIsAuthenticated(false);
+          setMustSetPassword(false);
+          return;
+        }
+
+        setIsAuthenticated(true);
+
+        // ✅ Sem tabela: usa metadata do próprio Auth
+        const mustChange = !!session.user?.user_metadata?.must_change_password;
+        setMustSetPassword(mustChange);
       } catch (err) {
         console.error("Erro inesperado na checagem de sessão:", err);
         setIsAuthenticated(false);
+        setMustSetPassword(false);
       } finally {
         setChecking(false);
       }
@@ -38,11 +54,14 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    // Não logado → joga pro login
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  // Logado → libera o conteúdo protegido
+  // ✅ Logado, mas precisa definir senha → manda pra /nova-senha
+  if (mustSetPassword && location.pathname !== "/nova-senha") {
+    return <Navigate to="/nova-senha" replace state={{ from: location }} />;
+  }
+
   return children;
 };
 

@@ -36,7 +36,7 @@ const HomePage = ({ isSidebarOpen }) => {
     >
       <div className="containerHomeContent" style={{ display: "flex" }}>
         <div className="containerHomeContentEsq">
-          <Topbar showSearch={true} />
+          <Topbar showSearch={true} isSidebarOpen={isSidebarOpen} />
 
           <div className="containerHomeContentUp">
             <Banners />
