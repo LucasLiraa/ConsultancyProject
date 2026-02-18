@@ -101,6 +101,8 @@
 
 /* sidebar settings */
 .navSettings{
+  display: flex;
+  flex-direction: column;
   margin-bottom: 50px;
 }
 .navSettings a{
@@ -108,4 +110,17 @@
 }
 .navSettings.closed span{
   display: none;
+}
+.navSettings button{
+  margin-top: 10px;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+  cursor: pointer;
+}
+.navSettings button:hover{
+  background-color: var(--text-color-hover);
 }

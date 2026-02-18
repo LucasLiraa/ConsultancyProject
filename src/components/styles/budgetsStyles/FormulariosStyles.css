@@ -1,141 +1,125 @@
-.formStep {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+/* FormulariosStyles.css — FINAL (Pré-visualização) */
 
-.formStep h2 {
-  margin-bottom: 8px;
-  font-size: 22px;
-  color: #2c3e50;
-}
-
-.formStep label {
-  display: flex;
-  flex-direction: column;
-  font-size: 15px;
-  color: #333;
-}
-
-.formStep input,
-.formStep textarea {
-  margin-top: 6px;
-  padding: 10px;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.procedimentoContainer {
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  padding: 12px;
-  border-radius: 10px;
-  background: #f9f9f9;
-}
-
-.procedimentoContainer label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
-input, select, textarea {
+.preview{
   width: 100%;
-  padding: 6px;
-  margin-top: 4px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.buttonFormBudget {
-  margin-top: 10px;
-  padding: 8px 12px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.somaContainer {
-  margin-top: 30px;
-  padding: 12px;
-  background-color: #e6f7ff;
-  border-radius: 8px;
-}
-
-
-.checkboxRow {
-  margin-bottom: 16px;
-  border-bottom: 1px dashed #ccc;
-  padding-bottom: 10px;
-}
-
-.checkboxFlex {
+  min-height: 100%;
   display: flex;
-  align-items: center;
-  font-weight: 500;
-  gap: 10px;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.preview__header{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed rgba(17,24,39,0.12);
+}
+
+.preview__badge{
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 900;
+  color: #2563eb;
+  background: rgba(37,99,235,0.10);
+  padding: 6px 10px;
+  border-radius: 999px;
   margin-bottom: 8px;
 }
 
-.checkboxInputs {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
+.preview__title{
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #111827;
+  letter-spacing: -0.3px;
 }
 
-.checkboxInputs input {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-.linhaFormulario {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.linhaFormulario label {
-  flex: 1;
-  min-width: 200px;
-}
-#area-pdf {
-  font-family: 'Arial', sans-serif;
-  padding: 20px;
-  background: white;
-  color: #2c3e50;
+.preview__subtitle{
+  margin: 6px 0 0;
   font-size: 13px;
-  line-height: 1.5;
+  color: #6b7280;
 }
 
-.resumoBloco {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 12px;
-  background-color: #fdfdfd;
+.preview__actions{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.resumoBloco h4 {
-  margin-bottom: 6px;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: #333;
+.preview__content{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-#area-pdf h2 {
-  font-size: 18px;
-  margin-bottom: 20px;
-  text-align: center;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 10px;
+.preview__card{
+  background: #fff;
+  border: 1px solid rgba(17,24,39,0.12);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(17,24,39,0.06);
 }
 
-#area-pdf ul {
-  padding-left: 18px;
-  margin-top: 6px;
+.preview__cardHeader{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.preview__cardHeader h3{
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+  color: #111827;
+}
+
+.preview__valor{
+  font-size: 15px;
+  font-weight: 900;
+  color: #16a34a;
+}
+
+.preview__cardBody p{
+  margin: 6px 0;
+  font-size: 13px;
+  color: #111827;
+  line-height: 1.45;
+}
+
+.preview__obs{
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.preview__empty{
+  font-size: 12px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.preview__footer{
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(17,24,39,0.18);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 900;
+  color: #111827;
+}
+
+@media (max-width: 768px){
+  .preview__header{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .preview__title{
+    font-size: 20px;
+  }
 }

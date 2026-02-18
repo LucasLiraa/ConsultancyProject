@@ -1,58 +1,90 @@
-.orcamentoBuilderContainer {
-  display: flex;
-  gap: 32px;
-  padding: 24px;
-}
+/* EtapasFormulario.css — FINAL */
 
-.etapaFormularioContainer {
-  flex: 1;
+.etapasForm{
   width: 100%;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.formStep h2 {
-  margin-bottom: 16px;
-}
-
-.formStep label {
-  display: block;
-  margin-bottom: 12px;
-  font-size: 16px;
-}
-
-.formStep input {
-  width: 100%;
-  padding: 8px;
-  font-size: 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.botoesNavegacao {
-  margin-top: 20px;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 18px;
 }
 
-.botoesNavegacao button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  background-color: #4caf50;
-  color: white;
-  cursor: pointer;
-  transition: background 0.2s ease;
+/* Header da etapa */
+.etapasForm__header{
+  padding-bottom: 14px;
+  border-bottom: 1px dashed rgba(17,24,39,0.12);
 }
 
-.botoesNavegacao button:hover {
-  background-color: #43a047;
+.etapasForm__step{
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #2563eb;
+  background: rgba(37,99,235,0.10);
+  padding: 6px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
 }
 
-.botoesNavegacao button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.etapasForm__title{
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+  color: #111827;
+  letter-spacing: -0.2px;
+}
+
+.etapasForm__subtitle{
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Conteúdo */
+.etapasForm__content{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+/* Campos */
+.etapasForm__field{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.etapasForm__field label{
+  font-size: 13px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.etapasForm__field input,
+.etapasForm__field textarea{
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(17,24,39,0.14);
+  background: rgba(17,24,39,0.02);
+  font-size: 13px;
+  color: #111827;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.etapasForm__field input:focus,
+.etapasForm__field textarea:focus{
+  border-color: rgba(37,99,235,0.45);
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.18);
+  background: #fff;
+}
+
+.etapasForm__field textarea{
+  resize: vertical;
+}
+
+/* Responsivo */
+@media (max-width: 768px){
+  .etapasForm__title{
+    font-size: 18px;
+  }
 }

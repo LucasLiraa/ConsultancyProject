@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
 :root {
   --body-color: #eeeeee;
   --text-color: #202020;
@@ -8,45 +9,42 @@
   --tran-04: all 0.4s ease;
   --tran-06: all 0.6s ease;
   --tran-08: all 0.8s ease;
+
+  /* extras (pode ajustar) */
+  --tb-bg: rgba(255, 255, 255, 0.72);
+  --tb-border: rgba(17, 24, 39, 0.12);
+  --tb-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --tb-shadow-strong: 0 18px 50px rgba(0, 0, 0, 0.12);
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
 }
 
+/* ========= Topbar ========= */
 .topbar {
   display: flex;
-
   width: 100%;
-  padding: 10px 00px;
+  padding: 10px 0;
   margin-top: 16px;
+
+  /* “glass” */
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* respiro */
+  padding-left: 14px;
+  padding-right: 14px;
 }
 
-.topbarLeft{
+.topbarLeft {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 14px;
   width: 100%;
 }
 
-.topbarSearch {
-  display: flex;
-  align-items: center;
-
-  border-radius: 10px;
-  border: 1px solid var(--text-color);
-
-  width: 70%;
-  height: 40px;
-}
-.topbarSearch input{
-  flex: 1;
-  margin-top: 12px;
-  border: none;
-  outline: none;
-  background: transparent;
-}
-.topbarSearch i{
-  cursor: pointer;
-  margin-right: 20px;
-  color: var(--text-color);
-}
 .topbar.with-search {
   justify-content: space-between;
 }
@@ -54,53 +52,209 @@
   justify-content: flex-end;
 }
 
-.searchResultsContainer {
-  position: absolute;
-  top: 70px;
-  left: 306px;
-  width: 40%;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  z-index: 1000;
-}
-.searchItem {
+/* ========= Search ========= */
+.topbarSearch {
+  position: relative; /* importante: dropdown fica ancorado aqui */
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
-  font-size: 16px;
-  border-bottom: 1px solid #f0f0f0;
-  cursor: pointer;
-  transition: background 0.2s ease-in-out;
+
+  width: min(680px, 74%);
+  height: 44px;
+
+  border-radius: 999px; /* pill */
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  background: rgba(255, 255, 255, 0.85);
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: var(--tran-02);
 }
-.searchItem:hover {
-  background: #f9f9f9;
+
+.topbarSearch:focus-within {
+  transform: translateY(-1px);
+  border-color: rgba(17, 24, 39, 0.26);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.10);
 }
-.noResults {
-  padding: 12px;
-  text-align: center;
-  color: gray;
+
+.topbarSearch input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+
+  font-family: "Poppins", sans-serif;
   font-size: 14px;
+  color: var(--text-color);
+
+  padding: 0 6px 0 16px;
+  margin: 0; /* remove seu margin-top:12px que desalinhava */
+  height: 100%;
 }
 
-.topbarNotification{
-  width: 40px;
-  height: 40px;
+.topbarSearch input::placeholder {
+  color: rgba(32, 32, 32, 0.55);
+}
 
-  font-size: 22px;
+.topbarSearch i {
   cursor: pointer;
+  margin-right: 14px;
+  color: rgba(32, 32, 32, 0.75);
+  transition: var(--tran-02);
+}
+
+.topbarSearch i:hover {
+  color: var(--text-color);
+  transform: scale(1.06);
+}
+
+/* ========= Dropdown Results ========= */
+.searchResultsContainer {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 100%;
+
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  border-radius: 16px;
+  box-shadow: var(--tb-shadow-strong);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  overflow: hidden;
+  z-index: 1000;
+
+  /* animação suave */
+  transform-origin: top;
+  animation: tbDropIn 160ms ease-out;
+}
+
+@keyframes tbDropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.searchResults {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* scrollbar discreta */
+.searchResults::-webkit-scrollbar {
+  width: 10px;
+}
+.searchResults::-webkit-scrollbar-thumb {
+  background: rgba(17, 24, 39, 0.12);
+  border-radius: 999px;
+  border: 3px solid rgba(255, 255, 255, 0.7);
+}
+.searchResults::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.searchItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 14px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
 
   border: none;
-  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
 
-  color: var(--text-color);
-  background: none;
+  transition: var(--tran-02);
+  text-align: left;
 }
+
+.searchItem i {
+  color: rgba(32, 32, 32, 0.65);
+  margin: 0; /* evita conflito com o i do input */
+}
+
+.searchItem p {
+  margin: 0;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.searchItem:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.searchItem:active {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.noResults {
+  padding: 14px;
+  text-align: center;
+  color: rgba(32, 32, 32, 0.55);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ========= Notificação ========= */
+.topbarNotification {
+  width: 44px;
+  height: 44px;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 20px;
+  cursor: pointer;
+
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  border-radius: 999px;
+
+  color: rgba(32, 32, 32, 0.85);
+  background: rgba(255, 255, 255, 0.70);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+
+  transition: var(--tran-02);
+}
+
+.topbarNotification:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.10);
+  color: var(--text-color);
+}
+
+.topbarNotification:active {
+  transform: translateY(0px);
+}
+
+/* divider (se você usar em algum lugar) */
 .divider {
   width: 1px;
   height: 30px;
-  margin: 0 20px 0 20px;
-  background-color: var(--text-color);
+  margin: 0 20px;
+  background-color: rgba(32, 32, 32, 0.25);
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+  .topbarSearch {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .topbar {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .topbarSearch input {
+    font-size: 13px;
+  }
 }
