@@ -1,0 +1,218 @@
+.etapasForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+  height: 100%;
+}
+
+.etapasForm__section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  width: min(90%, 1200px);
+  margin: 0 auto;
+}
+
+.etapasForm__section h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.etapasForm__section p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.etapasForm__subtitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+  line-height: 1.35;
+}
+
+.etapasForm__info {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(37, 99, 235, 0.06);
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  font-size: 13px;
+  color: #1f2937;
+  line-height: 1.45;
+}
+
+.etapasForm__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.etapasForm__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.etapasForm__row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.etapasForm__row--between {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.etapasForm__inline {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.etapasForm__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  line-height: 1.4;
+}
+
+.etapasForm__checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+  flex-shrink: 0;
+}
+
+.etapasForm__tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.06);
+  color: #4b5563;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.etapasForm__card,
+.etapasForm__subcard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(249, 250, 251, 0.72), #ffffff);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.etapasForm__subcard {
+  border-style: dashed;
+  background: rgba(17, 24, 39, 0.02);
+}
+
+.etapasForm__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.etapasForm input,
+.etapasForm select,
+.etapasForm textarea {
+  width: 100%;
+  min-width: 0; 
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  font-size: 14px;
+  color: #111827;
+  background: #fff;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.etapasForm input::placeholder,
+.etapasForm textarea::placeholder {
+  color: #9ca3af;
+}
+
+.etapasForm input:focus,
+.etapasForm select:focus,
+.etapasForm textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  background: #fff;
+}
+
+.etapasForm input:disabled,
+.etapasForm select:disabled,
+.etapasForm textarea:disabled {
+  cursor: not-allowed;
+  background: rgba(17, 24, 39, 0.04);
+  color: #6b7280;
+  opacity: 0.9;
+}
+
+.etapasForm textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+@media (max-width: 980px) {
+  .etapasForm__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .etapasForm {
+    gap: 16px;
+  }
+
+  .etapasForm__section h3 {
+    font-size: 16px;
+  }
+
+  .etapasForm__row--between {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .etapasForm__card,
+  .etapasForm__subcard {
+    padding: 12px;
+  }
+
+  .etapasForm input,
+  .etapasForm select,
+  .etapasForm textarea {
+    font-size: 13px;
+  }
+
+  .etapasForm__actions .btn {
+    width: 100%;
+  }
+}

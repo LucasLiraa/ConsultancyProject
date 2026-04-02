@@ -1,0 +1,42 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+:root {
+  --body-color: #eeeeee;
+  --text-color: #202020;
+  --text-color-hover: #888888;
+
+  --tran-02: all 0.2s ease;
+  --tran-04: all 0.4s ease;
+  --tran-06: all 0.6s ease;
+  --tran-08: all 0.8s ease;
+}
+
+/* ======== CONTAINER PRINCIPAL ======== */
+.sectionPatients {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--body-color);
+  transition: var(--tran-04);
+}
+
+/* Compatível com sidebar */
+.sidebar.open ~ .sectionPatients {
+  margin-left: 220px;
+}
+
+.sidebar.closed ~ .sectionPatients {
+  margin-left: 80px;
+}
+
+/* ======== CONTAINER INTERNO ======== */
+.containerPatients {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 90%;
+  height: 100vh;
+  
+}

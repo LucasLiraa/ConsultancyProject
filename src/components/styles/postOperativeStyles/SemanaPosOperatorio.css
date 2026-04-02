@@ -1,0 +1,44 @@
+.semanaPosContainer{
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-bottom: 2rem;
+
+  height: 80vh;
+  overflow-y: auto;
+}
+
+.semanaPosOperatorio input,
+.semanaPosOperatorio textarea,
+.semanaPosOperatorio select {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.semanaPosOperatorio fieldset {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.semanaPosOperatorio legend {
+  font-weight: bold;
+}
+
+.salvarBtn {
+  padding: 0.75rem 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.salvarBtn:hover {
+  background-color: #2563eb;
+}

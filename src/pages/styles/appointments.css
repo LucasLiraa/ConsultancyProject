@@ -1,0 +1,330 @@
+.sectionAppointments{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  
+  transition: var(--tran-04);
+}
+.sidebar.open ~ .sectionAppointments{
+  margin-left: 220px; /* Com sidebar aberto */
+}
+.sidebar.closed ~ .sectionAppointments{
+  margin-left: 80px; /* Com sidebar fechado */
+}
+
+.sectionContainerAppointments{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 10vh;
+}
+
+.containerAppointments{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  width: 90%;
+  margin-top: 16px;
+}
+.containerAppointmentsEsq{
+  display: flex;
+  flex-direction: column;
+  width: 72%;
+}
+.containerAppointmentsDir{
+  display: flex;
+  flex-direction: column;
+  width: 26%;
+}
+
+.contentAppointmentsDir{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 100%;
+  height: 20vh;
+
+  border-radius: 14px;
+  background-image: url("/public/cirurgymap.png"); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.contentAppointmentsDir button{
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--body-color);
+  border: none;
+  background: transparent;
+}
+
+.contentAppointmentsDetailsDir {
+  margin-top: 20px;
+}
+
+.bannerheaderAppointments{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  padding: 20px;
+
+  width: 100%;
+  height: 26vh;
+
+  border-radius: 14px;
+  background-image: url("/public/appointments.png"); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.bannerTitleAppointments{
+  width: 40%;
+  color: var(--body-color);
+}
+.bannerButtonAppointments button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  width: 26%;
+  height: 5vh;
+  font-size: 14px;
+  font-weight: bold;
+
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #fff;
+  background-color: #3b82f6;
+  transition: var(--tran-04);
+}
+.bannerButtonAppointments button:hover{
+  color: #3b82f6;
+  background-color: #fff;
+  border: 1px solid #3b82f6;
+}
+
+
+
+
+.surgeryMapButton{
+  width: 80%;
+  height: 6vh;
+
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.surgeryMapButton:hover{
+  color: var(--text-color);
+  background-color: var(--body-color);
+  border: 1px solid var(--text-color);
+}
+
+
+/* ============================= */
+/* DETALHES DO AGENDAMENTO (PAINEL DIREITO) */
+/* ============================= */
+
+.contentAppointmentsDetailsDir {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-top: 20px;
+  width: 100%;
+  height: 74vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: all 0.3s ease-in-out;
+}
+
+.contentAppointmentsDetailsDir h1 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 16px;
+}
+
+/* Cartão dos detalhes */
+.eventDetailsCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.eventDetailsCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.eventDetailsCard h2 {
+  margin-bottom: 16px;
+  font-size: 1.4rem;
+  color: #222;
+}
+
+.eventDetailsCard p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+.eventDetailsCard strong {
+  color: #111;
+  font-weight: 600;
+}
+
+/* Descrição */
+.eventDetailsCard p:last-of-type {
+  margin-bottom: 14px;
+}
+
+/* CIRURGIA */
+.surgeryDetails {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f7f9ff, #eef1ff);
+  border-left: 4px solid #3b5bfd;
+}
+
+.surgeryDetails p {
+  font-size: 0.9rem;
+}
+
+/* Quando nenhum evento estiver selecionado */
+.noEventSelected {
+  font-size: 0.95rem;
+  color: #888;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* AÇÕES */
+.eventActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.eventActions .btn {
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.eventActions .btn.secondary {
+  background: #f1f3f5;
+  color: #333;
+}
+
+.eventActions .btn.secondary:hover {
+  background: #e2e6ea;
+}
+
+.eventActions .btn.danger {
+  background: #ff4d4f;
+  color: #fff;
+}
+
+.eventActions .btn.danger:hover {
+  background: #e43d3f;
+}
+
+/* NENHUM SELECIONADO */
+.noEventSelected {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  color: #777;
+  text-align: center;
+}
+
+/* ANIMAÇÃO */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rescheduleOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+}
+
+.reschedulePopup {
+  background: var(--card-color, #fff);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  padding: 20px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reschedulePopup h3 {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.reschedulePopup input {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+}
+
+.rescheduleButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.rescheduleButtons .btn {
+  flex: 1;
+  margin: 0 4px;
+}
+
+.rescheduleButtons button{
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: #f9fafb;
+  background-color: #3b82f6;
+}
+.rescheduleButtons button:hover{
+  background-color: #2563eb;
+}

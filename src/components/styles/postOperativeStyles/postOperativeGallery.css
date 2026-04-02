@@ -1,0 +1,303 @@
+/* ===== Galeria Pós-operatório — premium / fullscreen (modal real) ===== */
+
+.poGalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+
+  background: rgba(16, 24, 40, 0.42);
+  backdrop-filter: blur(10px);
+
+  display: grid;
+  place-items: center;
+  padding: 18px;
+
+  overflow: hidden;
+}
+
+.poGalModal {
+  width: min(1180px, 96vw);
+  height: min(86vh, 920px);
+
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  box-shadow: 0 30px 80px rgba(16, 24, 40, 0.22);
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}
+
+/* ===== Header ===== */
+.poGalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(16, 24, 40, 0.08);
+}
+
+.poGalHeader h3 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: #101828;
+}
+
+.poGalHeaderActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ===== Body ===== */
+.poGalBody {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  padding: 14px;
+  gap: 12px;
+  min-height: 0;
+}
+
+/* ===== Tabs ===== */
+.poGalTabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.poGalTab {
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 800;
+  font-size: 12px;
+
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+}
+
+.poGalTab.active {
+  border-color: rgba(70, 130, 255, 0.35);
+  background: rgba(70, 130, 255, 0.10);
+}
+
+/* ===== Viewer ===== */
+.poGalViewer {
+  min-height: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: rgba(255, 255, 255, 0.70);
+
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden; /* ✅ impede invadir header/footer */
+}
+
+/* ===== Top controls ===== */
+.poGalTopbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(16, 24, 40, 0.06);
+  background: rgba(255, 255, 255, 0.70);
+}
+
+.poGalNav,
+.poGalTools {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.poGalCounter {
+  color: rgba(16, 24, 40, 0.60);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ===== Stage (onde a imagem fica) ===== */
+.poGalStage {
+  position: relative;
+  min-height: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: rgba(16, 24, 40, 0.02);
+
+  overflow: hidden; /* ✅ corta o que exceder no zoom */
+  border-radius: 18px; /* ✅ alinha com o card */
+}
+
+/* fundo blur com base na própria imagem */
+.poGalStageBg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(18px);
+  transform: scale(1.08);
+  opacity: 0.35;
+}
+
+/* wrapper centralizador */
+.poGalImageWrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+
+  display: grid;
+  place-items: center;
+
+  padding: 18px; /* ✅ respiro */
+  overflow: hidden; /* ✅ nunca invade */
+}
+
+/*
+  ✅ Regra final para "não cortar" no zoom 1:
+  - usamos contain
+  - e a imagem respeita max-height/max-width do palco
+*/
+.poGalImage {
+  width: auto !important;
+  height: auto !important;
+
+  max-width: 100% !important;
+  max-height: 100% !important;
+
+  object-fit: contain !important;
+  display: block;
+
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.80);
+  box-shadow: 0 18px 50px rgba(16, 24, 40, 0.18);
+
+  transform-origin: center;
+  transition: transform 0.12s ease;
+  will-change: transform;
+}
+
+/* ===== Footer ===== */
+.poGalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 12px 14px;
+  border-top: 1px solid rgba(16, 24, 40, 0.06);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.86)
+  );
+}
+
+.poGalMeta strong {
+  display: block;
+  font-size: 13px;
+  color: #101828;
+}
+
+.poGalMeta .muted {
+  color: rgba(16, 24, 40, 0.58);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+/* ===== Buttons ===== */
+.poBtnSm,
+.poBtnGhost,
+.poBtnDanger {
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.86);
+  color: #101828;
+
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+
+  font-weight: 800;
+  font-size: 12px;
+
+  transition: transform 0.05s ease, box-shadow 0.15s ease;
+}
+
+.poBtnSm:hover,
+.poBtnGhost:hover,
+.poBtnDanger:hover {
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+}
+
+.poBtnSm:active,
+.poBtnGhost:active,
+.poBtnDanger:active {
+  transform: translateY(1px);
+}
+
+.poBtnSm:disabled {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+.poBtnGhost {
+  background: rgba(255, 255, 255, 0.70);
+}
+
+.poBtnDanger {
+  border-color: rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.06);
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 700px) {
+  .poGalModal {
+    width: 100%;
+    height: 92vh;
+    border-radius: 18px;
+  }
+  .poGalHeader {
+    padding: 12px 14px;
+  }
+  .poGalBody {
+    padding: 12px;
+  }
+}
+
+/* ===== FIX DEFINITIVO: imagem nunca corta no zoom 1 ===== */
+
+/* mantém o respiro */
+.poGalImageWrap {
+  padding: 18px;
+}
+
+/* faz a imagem respeitar a área útil (descontando o padding) */
+.poGalImage {
+  width: auto !important;
+  height: auto !important;
+
+  max-width: calc(100% - 36px) !important;  /* 18px * 2 */
+  max-height: calc(100% - 36px) !important; /* 18px * 2 */
+
+  object-fit: contain !important;
+  display: block;
+}
+
+.poGalImageWrap { padding: 12px; }
+.poGalImage {
+  max-width: calc(100% - 24px) !important;
+  max-height: calc(100% - 24px) !important;
+}

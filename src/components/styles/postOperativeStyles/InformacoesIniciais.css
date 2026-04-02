@@ -1,0 +1,29 @@
+.informacoesIniciais {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  background-color: var(--body-color);
+}
+
+.informacoesIniciais input,
+.informacoesIniciais textarea,
+.informacoesIniciais select {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.informacoesIniciais fieldset {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.informacoesIniciais legend {
+  font-weight: bold;
+}

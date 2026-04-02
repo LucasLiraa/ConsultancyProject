@@ -1,0 +1,510 @@
+/* ===== WeeklyControlForm — consultório fino ===== */
+
+.weeklyBox {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  box-shadow: 0 12px 40px rgba(16, 24, 40, 0.06);
+  padding: 14px;
+  overflow: hidden;
+}
+
+/* Header */
+.weeklyHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 12px 12px 10px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  margin-bottom: 12px;
+}
+
+.weeklyHeader h3 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: #101828;
+}
+
+.weeklyHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Form */
+.weeklyForm {
+  display: grid;
+  gap: 12px;
+}
+
+/* Inputs padrões (sem quebrar) */
+.weeklyForm input[type="text"],
+.weeklyForm input[type="date"],
+.weeklyForm input[type="number"],
+.weeklyForm textarea,
+.weeklyForm select {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 10px 12px;
+  outline: none;
+  font-size: 13px;
+  color: #101828;
+}
+
+.weeklyForm textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.weeklyForm input:focus,
+.weeklyForm textarea:focus,
+.weeklyForm select:focus {
+  border-color: rgba(70, 130, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(70, 130, 255, 0.10);
+}
+
+/* Blocos / grupos */
+.checklistGroup {
+  border-radius: 18px;
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  background: rgba(255, 255, 255, 0.70);
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.checkRow {
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  background: rgba(255, 255, 255, 0.75);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.fullLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 750;
+  font-size: 12.5px;
+  color: rgba(16, 24, 40, 0.88);
+}
+
+.obsRow {
+  display: grid;
+  gap: 8px;
+}
+
+/* Alta row */
+.altaRow {
+  border-radius: 16px;
+  border: 1px dashed rgba(16, 24, 40, 0.18);
+  background: rgba(255, 255, 255, 0.60);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* ===== Botões (padrão premium) ===== */
+.btnPrimary,
+.btnSecondary,
+.uploadButton {
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.86);
+  color: #101828;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 750;
+  font-size: 13px;
+  transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btnPrimary:hover,
+.btnSecondary:hover,
+.uploadButton:hover {
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+}
+
+.btnPrimary:active,
+.btnSecondary:active,
+.uploadButton:active {
+  transform: translateY(1px);
+}
+
+.btnPrimary:disabled,
+.btnSecondary:disabled,
+.uploadButton:disabled {
+  opacity: 0.65;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+/* primário suave */
+.btnPrimary {
+  border: 1px solid rgba(70, 130, 255, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(70, 130, 255, 0.16),
+    rgba(70, 130, 255, 0.08)
+  );
+}
+
+/* secundário neutro */
+.btnSecondary {
+  background: rgba(255, 255, 255, 0.70);
+}
+
+/* Upload */
+.uploadButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.uploadCount {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 850;
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.75);
+  color: rgba(16, 24, 40, 0.78);
+}
+
+/* ===== Fotos ===== */
+.photosSection {
+  border-radius: 18px;
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  background: rgba(255, 255, 255, 0.70);
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.photosHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.photosHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.photosHint {
+  color: rgba(16, 24, 40, 0.55);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.photosInputGroup {
+  display: grid;
+  gap: 8px;
+}
+
+.photosInputTitle,
+.photosExistingTitle {
+  font-weight: 800;
+  font-size: 12.5px;
+  color: rgba(16, 24, 40, 0.85);
+}
+
+.photosInputs {
+  display: grid;
+  gap: 10px;
+}
+
+/* Pendentes */
+.photosPending {
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 10px;
+}
+
+.photosPendingHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.photosPendingList {
+  display: grid;
+  gap: 10px;
+}
+
+.photoRow {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 12px;
+  align-items: center;
+
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  background: rgba(255, 255, 255, 0.80);
+  padding: 10px;
+}
+
+.photoThumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(16, 24, 40, 0.03);
+}
+
+.photoPreview {
+  display: grid;
+  gap: 6px;
+}
+
+.photoRemove {
+  border-radius: 12px;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.06);
+  color: rgba(16, 24, 40, 0.85);
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 750;
+  font-size: 12px;
+  transition: transform 0.05s ease, box-shadow 0.15s ease;
+}
+.photoRemove:hover {
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+}
+.photoRemove:active {
+  transform: translateY(1px);
+}
+
+/* Existentes */
+.photosExisting {
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 10px;
+}
+
+.photosExistingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.photoThumbImageWrapper {
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: rgba(255, 255, 255, 0.85);
+  overflow: hidden;
+  display: grid;
+}
+
+.photoThumbFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border-top: 1px solid rgba(16, 24, 40, 0.06);
+}
+
+.photoThumbName {
+  font-weight: 800;
+  font-size: 12px;
+  color: rgba(16, 24, 40, 0.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photoDeleteBtn {
+  border-radius: 12px;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.06);
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.photoCategoryTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 850;
+  font-size: 11px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.65);
+  color: rgba(16, 24, 40, 0.75);
+}
+
+.photoCategoryTag.small {
+  padding: 5px 8px;
+  font-size: 10.5px;
+}
+
+/* Cores suaves por categoria */
+.photoCategoryTag.cat-antes {
+  border-color: rgba(70, 130, 255, 0.28);
+  background: rgba(70, 130, 255, 0.08);
+}
+.photoCategoryTag.cat-depois {
+  border-color: rgba(34, 197, 94, 0.25);
+  background: rgba(34, 197, 94, 0.07);
+}
+.photoCategoryTag.cat-outros {
+  border-color: rgba(168, 85, 247, 0.22);
+  background: rgba(168, 85, 247, 0.06);
+}
+
+/* Responsivo */
+@media (max-width: 980px) {
+  .photosExistingGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .weeklyHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .weeklyHeaderActions {
+    justify-content: flex-end;
+  }
+  .photoRow {
+    grid-template-columns: 56px 1fr;
+  }
+  .photoRemove {
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+  .photosExistingGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Fix checklist: checkbox alinhado com texto ===== */
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  /* deixa clicável e com aparência premium */
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkRow input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;              /* remove deslocamento padrão */
+  flex: 0 0 18px;         /* impede esticar */
+  accent-color: rgba(70, 130, 255, 0.9);
+  transform: translateY(1px); /* ajuste fino visual */
+}
+
+.checkRow span {
+  line-height: 1.2;
+  font-weight: 760;
+  color: rgba(16, 24, 40, 0.88);
+}
+
+/* ===== Fix overflow de previews/imagens no upload ===== */
+
+/* garante que qualquer coluna/box permita encolher sem estourar grid */
+.weeklyBox,
+.weeklyForm,
+.photosSection,
+.photosPending,
+.photoRow,
+.photoPreview,
+.photosExisting,
+.photosExistingGrid,
+.manageContent {
+  min-width: 0;
+}
+
+/* wrapper genérico de preview: nada pode passar do container */
+.photosPending,
+.photosExisting,
+.photosSection {
+  overflow: hidden;
+}
+
+/* imagens nunca passam do width do card */
+.photosSection img,
+.photosPending img,
+.photosExisting img,
+.photoRow img,
+.photoThumb,
+.photoThumbImageWrapper img,
+.previewImage,
+.previewThumb {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: cover;
+  display: block;
+}
+
+/* se você tem um container de preview grande (tipo esse retângulo azul),
+   isso impede de estourar e mantém proporção */
+.previewBox,
+.previewArea,
+.previewCard,
+.filePreviewCard,
+.photoPreviewBox {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+/* se o preview for uma lista horizontal, impede overflow */
+.previewList,
+.filesPreviewList {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* textos longos (nome do arquivo) não estouram */
+.photoThumbName,
+.fileName,
+.previewName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}

@@ -1,0 +1,177 @@
+.containerInvoices{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 100%;
+  margin-top: 16px;
+}
+
+.invoicesHeader{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+
+  width: 90%;
+}
+.contentInvoicesHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;   
+  width: 46%;
+}
+.contentInvoicesHeaderButton{
+  display: flex;
+  justify-content: space-evenly;
+  width: 50%;
+}
+.contentInvoicesHeaderButton button{
+  padding: 12px 26px 12px 26px;
+
+  border-radius: 12px;
+  color: var(--body-color);
+  background-color: var(--text-color);
+}
+.contentInvoicesHeaderButton button:hover{
+  color: var(--text-color);
+  border: 1px solid var(--text-color);
+  background-color: var(--body-color);
+}
+
+.contentInvoiceBalance{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+
+  width: 90%;
+  margin-top: 16px;
+}
+.contentInvoiceBalanceEsq{
+  display: flex;
+  flex-direction: column;
+
+  width: 56%;
+  gap: 26px;
+}
+.contentInvoiceBalanceUp{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+
+  width: 100%;
+  height: 26vh;
+  border-radius: 6px;
+  border: 1px solid var(--text-color);
+  background-color: var(--text-color);
+}
+.contentInvoiceBalanceUp span{
+  font-weight: bold;
+  color: var(--body-color);
+}
+.contentInvoicesBalanceUpLeft{
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+
+  margin-left: 26px;
+  
+  color: var(--body-color);
+}
+.contentInvoicesBalanceUpRight{
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-direction: column;
+
+  margin-right: 26px;
+  color: var(--body-color);
+}
+
+.divisor{
+  width: 100%;
+  margin: 18px 0 18px 0;
+  border-bottom: 1px solid var(--body-color);
+}
+
+.contentInvoiceBalanceDown{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 100%;
+  height: 46vh;
+  padding: 12px;
+  overflow-y: auto;
+  border-radius: 6px;
+  border: 1px solid var(--text-color);
+}
+.contentInvoiceBalanceDownHeader{
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  border-bottom: 1px solid var(--text-color);
+}
+.contentInvoiceBalanceDownCelis{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  margin-top: 26px;
+  width: 100%;
+
+  border-bottom: 1px solid #0000005b;
+}
+
+.contentInvoiceBalanceDir{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 42%;
+  height: 75vh;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--text-color);
+}
+
+.contentInvoceBalancePositive{
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 48%;
+
+  border-bottom: 1px solid var(--text-color);
+  overflow-y: auto;
+}
+.contentInvoceBalanceList{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 26px;
+  border-bottom: 1px solid var(--text-color);
+}
+.contentInvoceBalanceCelis{
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 12px;
+  border-bottom: 1px solid #0000005b;
+}
+
+.contentInvoceBalanceNegative{
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 48%;
+  padding-top: 18px;
+  overflow-y: auto;
+}

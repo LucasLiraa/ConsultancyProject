@@ -1,0 +1,83 @@
+.sectionAppointments{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  
+  transition: var(--tran-04);
+}
+.sidebar.open ~ .sectionAppointments{
+  margin-left: 220px; /* Com sidebar aberto */
+}
+.sidebar.closed ~ .sectionAppointments{
+  margin-left: 80px; /* Com sidebar fechado */
+}
+
+.sectionContainerAppointments{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 10vh;
+}
+
+.bannerheaderAppointments{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  padding: 20px;
+
+  width: 58%;
+  height: 26vh;
+
+  border-radius: 14px;
+  background-image: url("/public/appointments.png"); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.bannerTitleAppointments{
+  width: 40%;
+  color: var(--body-color);
+}
+
+.bannerButtonAppointments button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  width: 26%;
+  height: 5vh;
+  font-size: 17px;
+  font-weight: bold;
+
+  border: none;
+  border-radius: 6px;
+  color: var(--text-color);
+  background-color: var(--body-color);
+}
+
+.sectionAppointmentsLeft{
+  width: 70%;
+}
+.sectionAppointmentsRight{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 30%;
+}
+
+.surgeryMapButton{
+  width: 80%;
+  height: 6vh;
+
+  color: var(--body-color);
+  background-color: var(--text-color);
+  transition: var(--tran-04);
+}
+.surgeryMapButton:hover{
+  color: var(--text-color);
+  background-color: var(--body-color);
+  border: 1px solid var(--text-color);
+}

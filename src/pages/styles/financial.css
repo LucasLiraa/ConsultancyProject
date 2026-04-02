@@ -1,0 +1,995 @@
+/* ===========================
+   Compatibilidade com sidebar
+=========================== */
+.sectionFinancial{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  height: 100vh;
+
+  background-color: var(--body-color);
+  transition: var(--tran-04);
+}
+
+/* Compatível com sidebar */
+.sidebar.open ~ .sectionFinancial{
+  margin-left: 220px;
+}
+
+.sidebar.closed ~ .sectionFinancial{
+    margin-left: 80px;
+}
+
+/* ===========================
+   Container principal da página
+=========================== */
+.financial-container {
+  display: flex;
+  flex-direction: column;
+
+  width: 96%;
+  height: 100vh;
+
+  gap: 20px;
+  color: #0f172a;
+}
+
+/* ===========================
+   Cabeçalho (título + filtros)
+=========================== */
+.financial-header{
+  display: flex;
+  flex-direction: column;
+  margin-top: 26px;
+  border-radius: 12px;
+  padding: 20px;
+  gap: 15px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #e6eef8;
+}
+.financial-header h2{
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Filtros (aproveita o componente existente) */
+.filters-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.filters-bar button {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 500;
+  color: #0f172a;
+}
+.filters-bar button:hover { background: #f4f8ff; }
+.filters-bar .ativo {
+  background: #00bfa6;
+  color: #ffffff;
+  border-color: #00bfa6;
+}
+
+/* ===========================
+   Cards principais (wrapper roxo no print → card branco clean)
+   — inclui o novo layout com “Disponível” grande à esquerda
+=========================== */
+.financial-summary {
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #e6eef8;
+}
+
+/* layout dos cards (SummaryCards.jsx) */
+.summary-wrapper {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  margin-bottom: 4px; /* espaço interno discreto */
+  border: 1px solid #e6eef8;
+}
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr; /* esquerda maior */
+  gap: 18px;
+}
+
+/* Esquerda: card maior "Disponível" */
+.summary-left {
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+  border: 1px solid #e6eef8;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.available-card .card-header h3 {
+  font-size: 1.06rem;
+  color: #0f172a;
+  font-weight: 600;
+  margin: 0;
+}
+
+.amount-big {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #0b6bff;
+  margin: 8px 0 10px;
+  letter-spacing: 0.3px;
+}
+
+.subinfo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  background: #ffffff;
+  border: 1px dashed #dbe7ff;
+  border-radius: 10px;
+  padding: 12px;
+}
+.subinfo .label {
+  display: block;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+.subinfo .value {
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+.subinfo .value.positive { color: #00bfa6; }
+.subinfo .value.negative { color: #ff6b6b; }
+
+/* Direita: dois mini-cards empilhados */
+.summary-right {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px;
+}
+
+.mini-card {
+  background: #ffffff;
+  border: 1px solid #e7eef7;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 10px rgba(16, 24, 40, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-header h4 {
+  font-size: 0.98rem;
+  color: #0f172a;
+  font-weight: 600;
+  margin: 0;
+}
+
+.amount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 6px 0 4px;
+  color: #0b6bff;
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: #667085;
+}
+
+/* Pontinhos de status */
+.dot { width: 10px; height: 10px; border-radius: 999px; display: inline-block; }
+.dot-blue  { background: #0b6bff; }
+.dot-green { background: #00bfa6; }
+.dot-red   { background: #ff6b6b; }
+
+/* ===========================
+   Grid principal 60/40 (conteúdo abaixo dos cards)
+=========================== */
+.financial-grid {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: 25px;
+}
+/* Coluna esquerda */
+.financial-left {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+/* Coluna direita */
+.financial-right {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* ===========================
+   Cards de categorias (Próteses, Hospitais, Tecnologias, Profissionais)
+=========================== */
+.financial-categories {
+  border-radius: 12px;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #e6eef8;
+}
+
+.expense-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+.expense-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 15px 18px;
+  text-align: left;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  border: 1px solid #e7eef7;
+}
+
+.expense-card:hover { transform: translateY(-2px); }
+
+.expense-card h4 {
+  font-size: 0.95rem;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.expense-card p {
+  font-weight: 600;
+  color: #0b6bff;
+  margin: 0;
+}
+
+/* ===========================
+   Lista de transações (com ações rápidas)
+=========================== */
+.financial-list {
+  border-radius: 12px;
+  padding: 20px;
+  height: 46vh;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #e6eef8;
+}
+
+.transactions-list {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 15px;
+  overflow: hidden;
+  border: 1px solid #edf2f7;
+}
+
+.transactions-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+  font-weight: 600;
+  color: #64748b;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+.transaction-row { border-bottom: 1px solid #f1f5f9; }
+
+.row-main {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr auto;
+  align-items: center;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.row-main:hover { background: #f8fafc; }
+
+.tipo { font-weight: 600; }
+.tipo.entrada { color: #00bfa6; }
+.tipo.saida   { color: #ff6b6b; }
+
+/* Detalhes abaixo da linha (menu de ações) */
+.row-details {
+  background: #f9fbfd;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  border: 1px dashed #e2e8f0;
+}
+
+.actions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.details-btn {
+  background: #00bfa6;
+  border: none;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.details-btn.neutral {
+  background: #e7eef7;
+  color: #0f172a;
+}
+
+.details-btn.green { background: #22c55e; }
+.details-btn.gray  { background: #d1d5db; color: #374151; }
+
+.details-btn:hover { opacity: 0.92; }
+
+/* ===========================
+   Painel lateral de detalhes (overlay)
+   — movido pra este CSS pra ficar tudo unificado
+=========================== */
+.overlay-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  z-index: 9000;
+}
+
+
+.details-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100%;
+  background: #ffffff;
+  z-index: 9999; /* <- aumenta para ficar sobre tudo */
+  border-radius: 12px 0 0 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  border-bottom: 1px solid #e5eaf0;
+  background: #f9fbfd;
+}
+
+.panel-header h3 {
+  font-size: 1.1rem;
+  color: #0f172a;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #475569;
+  transition: 0.2s;
+}
+.close-btn:hover { color: #0b6bff; }
+
+.panel-content {
+  padding: 22px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.detail-item span {
+  font-weight: 600;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.detail-item p {
+  margin: 0;
+  color: #1e293b;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.detail-item p.entrada { color: #00bfa6; font-weight: 700; }
+.detail-item p.saida   { color: #ff6b6b; font-weight: 700; }
+
+.documents-section { margin-top: 30px; }
+.documents-section h4 {
+  display: flex; align-items: center; gap: 8px;
+  color: #007aff; font-weight: 600; margin: 0 0 12px 0;
+}
+
+.doc-placeholder {
+  background: #f8fafc;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* ===========================
+   Área de gráficos (coluna direita)
+=========================== */
+.financial-chart-top,
+.financial-chart-bottom {
+  border-radius: 12px;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e6eef8;
+
+  /* 🔹 Altura proporcional à tela */
+  width: 97%;
+  height: 28vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* garante que o gráfico ocupe o espaço disponível */
+.financial-chart-top canvas,
+.financial-chart-bottom canvas {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Caso use o ChartsSection com dois gráficos internos lado a lado */
+.charts-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+}
+
+.chart-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.chart-card h4 {
+  color: #007aff;
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.chart-wrapper {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ===========================
+   Responsividade
+=========================== */
+@media (max-width: 1200px) {
+  .financial-grid { grid-template-columns: 1fr; }
+  .financial-right { flex-direction: column; }
+}
+
+@media (max-width: 1024px) {
+  .summary-grid { grid-template-columns: 1fr; }
+  .summary-right { grid-template-rows: unset; grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .summary-right { grid-template-columns: 1fr; }
+  .amount-big { font-size: 1.6rem; }
+  .transactions-header {
+    grid-template-columns: 1fr 1.5fr 0.8fr 1fr 1fr;
+    font-size: 0.85rem;
+  }
+  .row-main {
+    grid-template-columns: 1fr 1.5fr 0.8fr 1fr 1fr auto;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .financial-chart-top,
+  .financial-chart-bottom {
+    height: auto;
+  }
+}
+
+/* ===========================
+   Botão adicionar registro
+=========================== */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.add-btn {
+  background: #007aff;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-btn:hover {
+  background: #0063d1;
+}
+
+/* ===========================
+   🔹 Modal de Novo Registro (versão final)
+   Centralizado, responsivo e com animações suaves
+=========================== */
+
+/* Fundo escuro que cobre toda a tela */
+.overlay-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  z-index: 9990;
+}
+
+
+/* Wrapper para centralizar o modal no meio da tela */
+.modal-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeWrapper 0.25s ease;
+}
+
+/* Modal em si */
+.add-modal {
+  width: 420px;
+  max-width: 90%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  z-index: 10000;
+  animation: fadeIn 0.25s ease;
+}
+
+/* Cabeçalho com botão de fechar */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.modal-header h3 {
+  font-size: 1.2rem;
+  color: #0f172a;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #475569;
+  transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+  color: #007aff;
+}
+
+/* Campos do formulário */
+.add-modal label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+.add-modal input,
+.add-modal select {
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: 0.2s;
+}
+
+.add-modal input:focus,
+.add-modal select:focus {
+  border-color: #007aff;
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.15);
+}
+
+/* Ações do modal (botões inferiores) */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.save-btn {
+  background: #00bfa6;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background: #00a68f;
+}
+
+.cancel-btn {
+  background: #e7eef7;
+  color: #0f172a;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #dbe8ff;
+}
+
+/* Travar scroll do body quando o modal estiver aberto */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ===========================
+   🔸 Animações
+=========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeWrapper {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===========================
+   🔹 Responsividade
+=========================== */
+@media (max-width: 480px) {
+  .add-modal {
+    width: 90%;
+    padding: 18px;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+  }
+
+  .add-modal label {
+    font-size: 0.85rem;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    padding: 7px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+
+.opcional {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.opcional label {
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.opcional-bloco {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.opcional-bloco input,
+.opcional-bloco select {
+  padding: 6px 8px;
+  border: 1px solid #dbeafe;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.valor-pendente {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.msg-sucesso {
+  margin-top: 8px;
+  color: #0f9d58;
+  font-weight: 600;
+  animation: fadeSuccess 0.3s ease;
+}
+
+@keyframes fadeSuccess {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===========================================
+   ✅ Overlay com BLUR (Glassmorphism)
+=========================================== */
+.overlay-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(6px); /* ← Blur do fundo */
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9000 !important;
+}
+
+/* ===========================================
+   ✅ Modal Wrapper (centralização e animação)
+=========================================== */
+.modal-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998 !important;
+}
+
+/* ===========================================
+   ✅ Card do Modal (Design Premium)
+=========================================== */
+.add-modal {
+  width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  background: #ffffff;
+  border-radius: 18px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.05),
+    0 8px 30px rgba(0, 0, 0, 0.12);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  animation: modalPop 0.25s ease;
+}
+
+/* Smooth entrance animation */
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===========================================
+   ✅ Cabeçalho
+=========================================== */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: 0.2s;
+}
+
+.close-modal-btn:hover {
+  color: #2563eb;
+  transform: scale(1.15);
+}
+
+/* ===========================================
+   ✅ Inputs modernos
+=========================================== */
+.add-modal label {
+  font-weight: 600;
+  margin-top: 10px;
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+.add-modal input,
+.add-modal select,
+.add-modal textarea {
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  background: #f8fafc;
+  transition: 0.2s;
+}
+
+.add-modal textarea {
+  resize: none;
+}
+
+.add-modal input:focus,
+.add-modal select:focus,
+.add-modal textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+  background: #fff;
+}
+
+/* ===========================================
+   ✅ Botões
+=========================================== */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  gap: 12px;
+}
+
+.save-btn {
+  background: #00bfa6;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  color: white;
+  transition: 0.2s;
+}
+
+.save-btn:hover {
+  background: #009e8b;
+  transform: translateY(-2px);
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 2px solid #e2e8f0;
+  color: #334155;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #f1f5f9;
+}
+
+/* Mensagem de sucesso */
+.msg-sucesso {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #00bfa6;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(90deg, #007aff, #00bfa6);
+  border-radius: 8px;
+  transition: width 0.25s;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.review-box {
+  background: #f8fafc;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+  color: #334155;
+}
